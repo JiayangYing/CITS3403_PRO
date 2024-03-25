@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% if title %}
+    <title>{{ title }} - Microblog</title>
+    {% else %}
+    <title>Microblog</title>
+    {% endif %}
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',
+filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="header">Microblog: <a href="/index">Home</a></div>
+    <hr />
+    {% block content %}{% endblock %}
+  </body>
+</html>
