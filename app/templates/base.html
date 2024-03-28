@@ -6,14 +6,12 @@
     {% else %}
     <title>Microblog</title>
     {% endif %}
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static',
-filename='style.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}" />
   </head>
   <body>
-    <div class="header">Microblog: <a href="/index">Home</a></div>
+    <div class="header">
+      Microblog: <a href="/login">Login</a>
+    </div>
     <hr />
     {% block content %}{% endblock %}
   </body>

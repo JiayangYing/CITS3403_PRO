@@ -1,0 +1,69 @@
+.bg-gradient {
+  background-color: #4e73df;
+  background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+}
+
+.login-container h1 {
+  letter-spacing: 5px;
+}
+
+.login-container .p-5 {
+  min-height: 489px;
+  color: #858796;
+}
+
+.form-control {
+  height: calc(1.5em + .75rem + 2px);
+}
+
+  .form-control::placeholder {
+      color: #d1d3e2;
+  }
+
+form.user .form-control-user {
+  font-size: .8rem;
+  padding: 1.2rem 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.btn {
+  white-space: nowrap;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+  .btn-block + .btn-block {
+      margin-top: .5rem;
+  }
+
+.logo-waving {
+  animation: logowaving 2s ease infinite;
+}
+
+@keyframes logowaving {
+  30% {
+      transform: scale(1.2);
+  }
+
+  40%, 60% {
+      transform: rotate(-20deg) scale(1.2);
+  }
+
+  50% {
+      transform: rotate(20deg) scale(1.2);
+  }
+
+  70% {
+      transform: rotate(0deg) scale(1.2);
+  }
+
+  100% {
+      transform: scale(1);
+  }
+}
