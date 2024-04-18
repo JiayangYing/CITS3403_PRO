@@ -1,0 +1,39 @@
+.dark_mode {
+    background-color: #222;
+    color: #fff;
+}
+
+.dark_mode .logo {
+    color: #fff;
+}
+
+.dark_mode .navbar {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark_mode .nav-link {
+    color: #fff;
+}
+
+.dark_mode .navbar .nav-link:hover {
+    color: #aaa;
+}
+
+.dark_mode .dropdown-menu {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark_mode .dropdown-item {
+    color: #fff;
+}
+
+.dark_mode .dropdown-item:hover,
+.dark_mode .dropdown-item:focus {
+    background-color: #555;
+}
+
+.dark_mode .navbar-toggler-icon {
+    filter: invert(1);
+}

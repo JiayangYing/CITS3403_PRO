@@ -42,6 +42,10 @@ form.user .form-control-user {
       margin-top: .5rem;
   }
 
+.logo {
+  color: #858796;
+}
+  
 .logo-waving {
   animation: logowaving 2s ease infinite;
 }
@@ -65,5 +69,54 @@ form.user .form-control-user {
 
   100% {
       transform: scale(1);
+  }
+}
+
+.topbar .topbar-brand {
+  height: 4.375rem;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .05rem;
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+  .topbar .topbar-brand #weather_mode.fa-sun {
+    color: #FDB813;
+  }
+  
+  .topbar .topbar-brand #weather_mode.fa-moon {
+    color: #3AA8C2;
+  }
+
+  .topbar .topbar-brand #weather_mode {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      transform: rotate(137deg) translate(-50px);
+  }
+
+@keyframes curvedpath {
+  0% {
+    transform: rotate(137deg) translate(-50px);
+  }
+  25% {
+    transform: rotate(227deg) translate(-50px);
+  }
+  50% {
+    transform: rotate(317deg) translate(-50px);
+  }
+  75% {
+    transform: rotate(407deg) translate(-50px);
+  }
+  100% {
+    transform: rotate(497deg) translate(-50px);
   }
 }
