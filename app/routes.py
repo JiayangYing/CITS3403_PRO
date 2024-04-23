@@ -10,3 +10,8 @@ def login():
 def home():
     company = "Name1"
     return render_template('/base.html', company=company)
+
+@app.route('/signup')
+def signup():
+    company = "Name1"
+    return render_template('/users/signup.html', company=company)
