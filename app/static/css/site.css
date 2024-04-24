@@ -45,32 +45,6 @@ form.user .form-control-user {
 .logo {
   color: #858796;
 }
-  
-.logo-waving {
-  animation: logowaving 2s ease infinite;
-}
-
-@keyframes logowaving {
-  30% {
-      transform: scale(1.2);
-  }
-
-  40%, 60% {
-      transform: rotate(-20deg) scale(1.2);
-  }
-
-  50% {
-      transform: rotate(20deg) scale(1.2);
-  }
-
-  70% {
-      transform: rotate(0deg) scale(1.2);
-  }
-
-  100% {
-      transform: scale(1);
-  }
-}
 
 .topbar .topbar-brand {
   height: 4.375rem;
@@ -119,4 +93,30 @@ form.user .form-control-user {
   100% {
     transform: rotate(497deg) translate(-50px);
   }
+}
+
+.logo-word {
+    font-weight: 900;
+    font-size: 0.4em;
+    position: absolute;
+}
+
+.pos-up {
+    top: -27.5%;
+    left: 42.5%;
+}
+
+.pos-down {
+    top: 27.5%;
+    left: 42.5%;
+}
+
+.login-container .company-logo {
+    --fa-animation-duration: 3.5s;
+}
+
+.company-logo {
+  color:#8AFF8A;
+  --fa-animation-duration: 0s;
+  font-size: 2.5em;
 }

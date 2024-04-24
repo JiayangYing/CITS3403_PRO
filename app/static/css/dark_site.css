@@ -93,3 +93,7 @@
 .dark_mode .small {
     color: #fff; 
 }
+
+.dark_mode .company-logo{
+    color: #00A300;
+}

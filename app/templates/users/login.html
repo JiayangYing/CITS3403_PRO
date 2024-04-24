@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dark_site.css') }}" type="text/css" />
 </head>
 <body class="bg-gradient">
+    {% block content %}
+    {% include '/layout/nav_bar.html' %}
+    {% endblock %}
     <div class="container login-container">
         <div class="row justify-content-center">
             <div class="col-xl-6 col-lg-6 col-md-6">
@@ -20,7 +23,7 @@
                         <div class="row justify-content-center">
                             <div class="p-5">
                                 <div class="text-center">
-                                    <i class="fa-3x fas fa-shop logo logo-waving"></i>
+                                    <span class="company-logo"></span>
                                     <br /><br />
                                     <h1 class="h4 mb-4">LOGIN</h1>
                                 </div>
