@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Home {% endblock %}
+
+{% block content %}
+    {% include "/home/sdg.html" %}
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/home/home.js') }}"></script>
+{% endblock %}
