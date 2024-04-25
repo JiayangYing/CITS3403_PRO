@@ -1,6 +1,6 @@
 function setLogo() {
-    $(".company-logo").replaceWith(
-        `<span class="company-logo fa-stack fa-flip">
+    $(".login-container .company-logo").replaceWith(
+        `<span class="company-logo fa-stack fa-flip fa-4x">
             <span class="fa-layers fa-fw">
                 <span class="logo-word pos-up">Eco</span>
                 <span class="logo-word pos-down">HUB</span>

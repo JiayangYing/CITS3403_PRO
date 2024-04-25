@@ -53,7 +53,6 @@ form.user .form-control-user {
   font-weight: 800;
   padding: 1.5rem 1rem;
   text-align: center;
-  text-transform: uppercase;
   letter-spacing: .05rem;
   z-index: 1;
   position: relative;
@@ -102,12 +101,12 @@ form.user .form-control-user {
 }
 
 .pos-up {
-    top: -27.5%;
+    top: -29%;
     left: 42.5%;
 }
 
 .pos-down {
-    top: 27.5%;
+    top: 29%;
     left: 42.5%;
 }
 
@@ -118,5 +117,8 @@ form.user .form-control-user {
 .company-logo {
   color:#8AFF8A;
   --fa-animation-duration: 0s;
+}
+
+.fa-2p5x {
   font-size: 2.5em;
 }
