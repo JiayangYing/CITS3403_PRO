@@ -6,6 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/site.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/users/signup.js') }}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}" type="text/css" />
@@ -25,39 +26,50 @@
                                 <div class="text-center">
                                     <span class="company-logo"></span>
                                     <br /><br />
-                                    <h1 class="h4 mb-4">LOGIN</h1>
+                                    <h1 class="h4 mb-4">SIGN UP</h1>
                                 </div>
                                 <div id="AlertModalDiv" class="hidden">
                                 </div>
-                                <form class="user" action="{{ url_for('login') }}" method="POST" 
+                                <form class="user" action="{{ url_for('signup') }}" method="POST" 
                                     data-ajax="true" data-ajax-method="POST" 
-                                    data-ajax-failure="onFailure" data-ajax-success="onSuccess">
-                                    <div class="form-group">
-                                        <input class="form-control form-control-user" placeholder="Enter Username..." name="username" />
-                                    </div>
-                                    <div class="form-group">
-                                       <input type="password" class="form-control form-control-user" placeholder="Password" name="password" />
-                                    </div>
-                                    <div class="form-group">
-                                        <div>
-                                            <input type="checkbox" id="customCheck">
-                                            <label class="small" for="customCheck">Remember Me</label>
+                                    data-ajax-failure="onFailure" data-ajax-success="onSuccess">                             
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <input class="form-control form-control-user" placeholder="First Name" name="first_name" />
+                                        </div>
+                                    <div class="col">
+                                        <input class="form-control form-control-user" placeholder="Last Name" name="last_name" />
                                         </div>
                                     </div>
-                                    <button class="btn btn-outline-secondary btn-block" type="submit">Login</button>
+                                    <div class="form-group">
+                                        <input class="form-control form-control-user" placeholder="Email Address" name="email_address" />
+                                    </div>
+                                    <div class="form-group">
+                                       <input type="password" class="form-control form-control-user" placeholder="Enter New Password" name="password" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user" placeholder="Re-type New Password" name="re-password" />
+                                     </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="customCheck">
+                                        <label class="form-check-label" for="customCheck">
+                                            Become a seller? <p>
+                                        </label>
+                                    </div>
+                                     <div class="form-group" id="shopNameGroup" style="display: none;">
+                                        <input type="text" class="form-control form-control-user" id="shopName" placeholder="Shop Name (Optional)" name="shop_name">
+                                    </div>       
+                                    <button class="btn btn-outline-secondary btn-block" type="submit">Create an account</button>
                                     <hr>
                                     <a href="index" class="btn btn-outline-danger btn-block">
-                                        <i class="fab fa-google fa-fw"></i> Login with Google
+                                        <i class="fab fa-google fa-fw"></i> Signup with Google
                                     </a>
                                     <a href="index" class="btn btn-outline-primary btn-block">
-                                        <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
+                                        <i class="fab fa-facebook-f fa-fw"></i> Signup with Facebook
                                     </a>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="btn btn-link" href="index">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="btn btn-link" href="signup">Sign up now!</a>
+                                        <a class="btn btn-link" href="login">Already have an account? Sign in</a>
                                     </div>
                                 </form>
                             </div>

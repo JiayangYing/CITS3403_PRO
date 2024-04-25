@@ -1,0 +1,99 @@
+.dark_mode {
+    background-color: #222;
+    color: #fff;
+}
+
+.dark_mode .logo {
+    color: #fff;
+}
+
+.dark_mode .navbar {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark_mode .nav-link {
+    color: #fff;
+}
+
+.dark_mode .navbar .nav-link:hover {
+    color: #aaa;
+}
+
+.dark_mode .dropdown-menu {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark_mode .dropdown-item {
+    color: #fff;
+}
+
+.dark_mode .dropdown-item:hover,
+.dark_mode .dropdown-item:focus {
+    background-color: #555;
+}
+
+.dark_mode .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+.dark_mode .form-control {
+    background-color: #555;
+    color: #fff;
+    border-color:  #777;
+}
+
+.dark_mode .container.login-container {
+    color: #fff;
+}
+
+.dark_mode .card {
+    background-color: #1e1e1e;
+    color: #fff;
+}
+
+.dark_mode .form-control-user {
+    background-color: #303030;
+    color: #fff;
+    border-color: #555;
+}
+
+.dark_mode .btn-outline-secondary,
+.dark_mode .btn-outline-danger,
+.dark_mode .btn-outline-primary {
+    color: #fff;
+    border-color: #fff;
+}
+
+.dark_mode .fa-fw {
+    margin-right: 5px;
+}
+
+.dark_mode a {
+    color: #fff;
+}
+
+.dark_mode a:hover {
+    color: #cccccc;
+}
+
+.dark_mode label {
+    color: #fff;
+}
+
+.dark_mode #customCheck {
+    border-color: #fff;
+}
+
+.dark_mode #customCheck.form-check-input {
+    background-color:#333;
+}
+
+.dark_mode .small {
+    color: #fff; 
+}
+
+.dark_mode .company-logo{
+    color: #00A300;
+}
