@@ -5,7 +5,18 @@
 {% block content %}
     {% include "/home/sdg.html" %}
 {% endblock %}
+{% block content2 %}
+    {% include "/home/categories.html" %}
+{% endblock %}
+{% block content3 %}
+    {% include "/home/values.html" %}
+{% endblock %}
+
 
 {% block javascript %}
     <script src="{{ url_for('static', filename='js/home/home.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+    <script src="{{ url_for('static', filename='css/home/home.css') }}"></script>
 {% endblock %}

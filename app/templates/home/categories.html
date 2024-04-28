@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop range of products</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    /* Custom CSS */
+    .category {
+      transition: background-color 0.3s ease; /* Add transition for smooth color change */
+    }
+    
+    .category:hover {
+      background-color: #e5e5e5; /* Change background color slightly on hover */
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-poppins">
+  <div class="container mx-auto px-4 py-16">
+    <h2 class="text-3xl font-semibold text-center">Shop range of products</h2>
+    <div class="grid grid-cols-6 gap-4 mt-8">
+      <div class="rounded-lg shadow-lg p-4 flex flex-col items-center justify-center category" onclick="location.href='#'"> <!-- Add 'category' class here -->
+        <i class="fas fa-tshirt text-4xl mb-4"></i>
+        <p class="text-lg font-semibold">Clothing & Accessories</p>
+      </div>
+      <div class="rounded-lg shadow-lg p-4 flex flex-col items-center justify-center category" onclick="location.href='#'"> <!-- Add 'category' class here -->
+        <i class="fas fa-home text-4xl mb-4"></i>
+        <p class="text-lg font-semibold">Home & Garden</p>
+      </div>
+      <div class="rounded-lg shadow-lg p-4 flex flex-col items-center justify-center category" onclick="location.href='#'"> <!-- Add 'category' class here -->
+        <i class="fas fa-desktop text-4xl mb-4"></i>
+        <p class="text-lg font-semibold">Electronics</p>
+      </div>
+      <div class="rounded-lg shadow-lg p-4 flex flex-col items-center justify-center category" onclick="location.href='#'"> <!-- Add 'category' class here -->
+        <i class="fas fa-book text-4xl mb-4"></i>
+        <p class="text-lg font-semibold">Books & Media</p>
+      </div>
+      <div class="rounded-lg shadow-lg p-4 flex flex-col items-center justify-center category" onclick="location.href='#'"> <!-- Add 'category' class here -->
+        <i class="fas fa-futbol text-4xl mb-4"></i>
+        <p class="text-lg font-semibold">Sports & Leisure</p>
+      </div>
+      <div class="rounded-lg shadow-lg p-4 flex flex-col items-center justify-center category" onclick="location.href='#'"> <!-- Add 'category' class here -->
+        <i class="fas fa-ellipsis-h text-4xl mb-4"></i>
+        <p class="text-lg font-semibold">Many more ...</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
