@@ -97,3 +97,15 @@
 .dark_mode .company-logo{
     color: #00A300;
 }
+
+.dark_mode .modal-content {
+    background-color: #333;
+}
+
+.dark_mode .btn-close {
+    filter: invert(100%) grayscale(100%) brightness(200%);
+}
+
+.dark_mode .btn-close:hover {
+    color: #eee;
+}

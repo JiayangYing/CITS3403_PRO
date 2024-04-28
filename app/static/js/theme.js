@@ -1,8 +1,4 @@
 $(document).ready(function() {
-    const darkModeClass = 'dark_mode'
-    if (stringToBool(localStorage.getItem(darkModeClass))) {
-        document.querySelector("body").classList.add(darkModeClass);
-    }
     const lightSwitch = document.getElementById("toggleDarkTheme");
     const toggleSpan = lightSwitch.querySelector("i");
     const textSpan = lightSwitch.querySelector("span");
@@ -34,8 +30,6 @@ $(document).ready(function() {
                 weatherSpan.classList.replace("fa-moon", "fa-sun");
             }
         }, 750);
-
-        getSdgImageDirs(isDarkMode);
     };
 
     lightSwitch.addEventListener("click", () => {

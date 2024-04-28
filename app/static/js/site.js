@@ -1,5 +1,3 @@
-const ErrorCodeNoError = "NoError";
-
 function setLogo() {
     $(".login-container .company-logo").replaceWith(
         `<span class="company-logo fa-stack fa-flip fa-4x">
@@ -108,6 +106,10 @@ function stringToBool(str) {
     return str === 'true' || str === 'yes' || str === '1';
 }
 
+const darkModeClass = 'dark_mode'
 $(document).ready(function() {
     setLogo();
+    if (stringToBool(localStorage.getItem(darkModeClass))) {
+        document.querySelector("body").classList.add(darkModeClass);
+    }
 });

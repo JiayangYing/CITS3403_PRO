@@ -18,9 +18,9 @@ def home():
 @app.route('/sdg_img_dirs', methods=['POST'])
 def test():
     is_dark_mode = request.json.get('isDarkMode')
-    path = 'web'
+    path = 'web-inverted'
     if is_dark_mode:
-        path = 'web-inverted'
+        path = 'web'
     img_dir = os.path.join(app.root_path, 'static', 'img', 'sdg', path)
     sdg_images = [path+'/'+img for img in os.listdir(img_dir) if img.endswith('png')]
     return jsonify({'sdg_images': sdg_images})

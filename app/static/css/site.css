@@ -122,3 +122,28 @@ form.user .form-control-user {
 .fa-2p5x {
   font-size: 2.5em;
 }
+
+.btn-close {
+  float: right;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
+}
+
+.btn-close:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+.btn-close:not(:disabled):not(.disabled):hover, .btn-close:not(:disabled):not(.disabled):focus {
+  opacity: .75;
+}
+
+button.btn-close {
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+}
