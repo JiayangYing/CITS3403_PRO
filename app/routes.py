@@ -16,7 +16,7 @@ def home():
     return render_template('/home/home.html')
 
 @app.route('/sdg_img_dirs', methods=['POST'])
-def test():
+def get_sdg_img_dirs():
     is_dark_mode = request.json.get('isDarkMode')
     path = 'web-inverted'
     if is_dark_mode:
