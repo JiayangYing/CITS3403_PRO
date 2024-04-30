@@ -1,5 +1,5 @@
 .bg-gradient {
-  background-color: #4e73df;
+  background-color: #fcfcfc;
   background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
 }
 
@@ -13,15 +13,15 @@
 }
 
 .form-control {
-  height: calc(1.5em + .75rem + 2px);
+  height: calc(1.5em + 0.75rem + 2px);
 }
 
-  .form-control::placeholder {
-      color: #d1d3e2;
-  }
+.form-control::placeholder {
+  color: #d1d3e2;
+}
 
 form.user .form-control-user {
-  font-size: .8rem;
+  font-size: 0.8rem;
   padding: 1.2rem 1rem;
 }
 
@@ -38,32 +38,87 @@ form.user .form-control-user {
   width: 100%;
 }
 
-  .btn-block + .btn-block {
-      margin-top: .5rem;
-  }
-
-.logo-waving {
-  animation: logowaving 2s ease infinite;
+.btn-block + .btn-block {
+  margin-top: 0.5rem;
 }
 
-@keyframes logowaving {
-  30% {
-      transform: scale(1.2);
-  }
+.logo {
+  color: #858796;
+}
 
-  40%, 60% {
-      transform: rotate(-20deg) scale(1.2);
-  }
+.topbar .topbar-brand {
+  height: 4.375rem;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  letter-spacing: 0.05rem;
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+}
 
+.topbar .topbar-brand #weather_mode.fa-sun {
+  color: #fdb813;
+}
+
+.topbar .topbar-brand #weather_mode.fa-moon {
+  color: #3aa8c2;
+}
+
+.topbar .topbar-brand #weather_mode {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: rotate(137deg) translate(-50px);
+}
+
+@keyframes curvedpath {
+  0% {
+    transform: rotate(137deg) translate(-50px);
+  }
+  25% {
+    transform: rotate(227deg) translate(-50px);
+  }
   50% {
-      transform: rotate(20deg) scale(1.2);
+    transform: rotate(317deg) translate(-50px);
   }
-
-  70% {
-      transform: rotate(0deg) scale(1.2);
+  75% {
+    transform: rotate(407deg) translate(-50px);
   }
-
   100% {
-      transform: scale(1);
+    transform: rotate(497deg) translate(-50px);
   }
+}
+
+.logo-word {
+  font-weight: 900;
+  font-size: 0.4em;
+  position: absolute;
+}
+
+.pos-up {
+  top: -29%;
+  left: 42.5%;
+}
+
+.pos-down {
+  top: 29%;
+  left: 42.5%;
+}
+
+.login-container .company-logo {
+  --fa-animation-duration: 3.5s;
+}
+
+.company-logo {
+  color: #8aff8a;
+  --fa-animation-duration: 0s;
+}
+
+.fa-2p5x {
+  font-size: 2.5em;
 }
