@@ -1,111 +1,163 @@
 .dark_mode {
-    background-color: #222;
-    color: #fff;
+  background-color: #222;
+  color: #fff;
 }
 
-.dark_mode .logo {
-    color: #fff;
-}
+  .dark_mode .logo {
+      color: #fff;
+  }
 
-.dark_mode .navbar {
-    background-color: #333;
-    color: #fff;
-}
+  .dark_mode footer.page-footer {
+      background-color: #222 !important;
+      color: #fff;
+  }
 
-.dark_mode .nav-link {
-    color: #fff;
-}
+  .dark_mode .navbar {
+      background-color: #333;
+      color: #fff;
+  }
 
-.dark_mode .navbar .nav-link:hover {
-    color: #aaa;
-}
 
-.dark_mode .dropdown-menu {
-    background-color: #333;
-    color: #fff;
-}
+  .dark_mode .nav-link {
+      color: #fff;
+  }
 
-.dark_mode .dropdown-item {
-    color: #fff;
-}
+  .dark_mode .navbar .nav-link:hover {
+      color: #aaa;
+  }
 
-.dark_mode .dropdown-item:hover,
-.dark_mode .dropdown-item:focus {
-    background-color: #555;
-}
+  .dark_mode .dropdown-menu {
+      background-color: #333;
+      color: #fff;
+  }
 
-.dark_mode .navbar-toggler-icon {
-    filter: invert(1);
-}
+  .dark_mode .dropdown-item {
+      color: #fff;
+  }
 
-.dark_mode .form-control {
-    background-color: #555;
-    color: #fff;
-    border-color:  #777;
-}
+      .dark_mode .dropdown-item:hover,
+      .dark_mode .dropdown-item:focus {
+          background-color: #555;
+      }
 
-.dark_mode .container.login-container {
-    color: #fff;
-}
+  .dark_mode .navbar-toggler-icon {
+      filter: invert(1);
+  }
 
-.dark_mode .card {
-    background-color: #1e1e1e;
-    color: #fff;
-}
+  .dark_mode .form-control {
+      background-color: #555;
+      color: #fff;
+      border-color: #777;
+  }
 
-.dark_mode .form-control-user {
-    background-color: #303030;
-    color: #fff;
-    border-color: #555;
-}
+  .dark_mode .container.login-container {
+      color: #fff;
+  }
 
-.dark_mode .btn-outline-secondary,
-.dark_mode .btn-outline-danger,
-.dark_mode .btn-outline-primary {
-    color: #fff;
-    border-color: #fff;
-}
+  .dark_mode .card {
+      background-color: #1e1e1e;
+      color: #fff;
+      border-color: #fff;
+  }
 
-.dark_mode .fa-fw {
-    margin-right: 5px;
-}
+  .dark_mode .form-control-user {
+      background-color: #303030;
+      color: #fff;
+      border-color: #555;
+  }
 
-.dark_mode a {
-    color: #fff;
-}
+  .dark_mode .btn-outline-secondary,
+  .dark_mode .btn-outline-danger,
+  .dark_mode .btn-outline-primary {
+      color: #fff;
+      border-color: #fff;
+  }
 
-.dark_mode a:hover {
-    color: #cccccc;
-}
+  .dark_mode .fa-fw {
+      margin-right: 5px;
+  }
 
-.dark_mode label {
-    color: #fff;
-}
+  .dark_mode a {
+      color: #fff;
+  }
 
-.dark_mode #customCheck {
-    border-color: #fff;
-}
+      .dark_mode a:hover {
+          color: #cccccc;
+      }
 
-.dark_mode #customCheck.form-check-input {
-    background-color:#333;
-}
+  .dark_mode label {
+      color: #fff;
+  }
 
-.dark_mode .small {
-    color: #fff; 
-}
+  .dark_mode #customCheck {
+      border-color: #fff;
+  }
 
-.dark_mode .company-logo{
-    color: #00A300;
-}
+      .dark_mode #customCheck.form-check-input {
+          background-color: #333;
+      }
 
-.dark_mode .modal-content {
-    background-color: #333;
-}
+  .dark_mode .small {
+      color: #fff;
+  }
 
-.dark_mode .btn-close {
-    filter: invert(100%) grayscale(100%) brightness(200%);
-}
+  .dark_mode .company-logo {
+      color: #00A300;
+  }
 
-.dark_mode .btn-close:hover {
-    color: #eee;
-}
+  .dark_mode .modal-content {
+      background-color: #333;
+  }
+
+  .dark_mode .btn-close {
+      filter: invert(100%) grayscale(100%) brightness(200%);
+  }
+
+      .dark_mode .btn-close:hover {
+          color: #eee;
+      }
+
+  .dark_mode .display-product hr {
+      background-color: #ccc;
+  }
+
+  .dark_mode .display-container,
+  .dark_mode .display-card {
+      background-color: #333;
+  }
+
+      .dark_mode .display-card hr {
+          background-color: #fff;
+      }
+
+  .dark_mode .overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .dark_mode #productGrid {
+      background-color: #333;
+  }
+
+  .dark_mode #productFilterBar {
+      border-color: #fff;
+  }
+
+  .dark_mode .btn-outline-primary {
+      background-color: #333;
+      border-color: #333;
+  }
+
+      .dark_mode .btn-outline-primary.focus,
+      .dark_mode .btn-outline-primary:focus {
+          box-shadow: 0 0 0 0.2rem rgb(95 104 129 / 50%);
+      }
+
+  .dark_mode .btn-secondary {
+      background-color: #333;
+      border-color: #333;
+      color: #fff;
+  }
+
+  .dark_mode .dropdown-item {
+      color: #fff;
+  }
