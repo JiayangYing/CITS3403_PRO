@@ -108,8 +108,13 @@ function stringToBool(str) {
 
 const darkModeClass = 'dark_mode'
 $(document).ready(function() {
+    const lightSwitch = document.getElementById("toggleDarkTheme");
+    const toggleSpan = lightSwitch.querySelector("i");
+    const textSpan = lightSwitch.querySelector("span");
     setLogo();
     if (stringToBool(localStorage.getItem(darkModeClass))) {
         document.querySelector("body").classList.add(darkModeClass);
+        toggleSpan.classList.replace("fa-moon", "fa-sun");
+        textSpan.textContent = textSpan.dataset.light;
     }
 });
