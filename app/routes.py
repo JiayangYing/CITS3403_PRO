@@ -34,3 +34,12 @@ def get_sdg_img_dirs():
 @app.route('/signup')
 def signup():
     return render_template('/users/signup.html', hideNav=True)
+products = [
+    {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'static/img/product_image/image.jpg'},
+    {'title': 'Cloth 2', 'price': 39.99, 'quantity': 1, 'location': 'East Perth', 'img':'static/img/product_image/image2.jpg'},
+    {'title': 'Cloth 3', 'price': 19.99, 'quantity': 3, 'location': 'Nedlands', 'img':'static/img/product_image/image3.jpg'}
+]
+
+@app.route('/product')
+def product():
+    return render_template('/product/product.html', products=products)
