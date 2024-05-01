@@ -147,3 +147,7 @@ button.btn-close {
   background-color: transparent;
   border: 0;
 }
+
+footer.page-footer {
+  padding: 2rem 0;
+}

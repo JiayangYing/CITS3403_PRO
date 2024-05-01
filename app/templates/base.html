@@ -13,13 +13,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dark_site.css') }}" type="text/css" />
     {% block javascript %} {% endblock %}
     {% block css %} {% endblock %}
-
 </head>
-
-{% block nav_bar %}
-{% include '/layout/nav_bar.html' %}
-{% endblock %}
 <body>
+    {% block nav_bar %}
+        {% include '/layout/nav_bar.html' %}
+    {% endblock %}
+
     {% block content %} {% endblock %}
+
+    {% block footer %}
+        {% include '/layout/footer.html' %}
+    {% endblock %}
 </body>
 </html>
