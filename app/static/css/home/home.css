@@ -2,88 +2,10 @@ body {
     font-family: Arial, sans-serif;
   }
   
-  .container {
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .category-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-  }
-  
-  .category {
-    width: calc(33.33% - 20px);
-    background-color: #f0f0f0; 
-    padding: 20px; 
-    text-align: center;
-    font-weight: 600;
-    margin: 15px auto;
-  }
-  
-  @media only screen and (max-width: 768px) {
-    .category {
-      width: calc(50% - 20px);
-    }
-  }
-  
-  @media only screen and (max-width: 480px) {
-    .category {
-      width: calc(100% - 20px);
-    }
-  }
-  
-  .category i {
-    font-size: 3em;
-    margin-bottom: 10px;
-  }  
-  
-  .category:hover {
-    background-color: #8AFF8A;
-    cursor: pointer;
-  }
-  
-  .values-container {
-    padding: 25px 20px;
-    max-width: 1200px; 
-    margin: 0 auto;
-  }
-  
-  .values-heading {
-    font-size: 2rem; 
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .values-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-  }
-  
-  .value-item {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .value-icon {
-    font-size: 3rem;
-    margin-bottom: 10px;
-  }
-  
-  .value-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  
-  .value-description {
-    color: #666;
-    margin-top: 10px;
-  }
-  
+.category-body > div {
+  height: 100%;
+}
+
+.values-body {
+  height: 100%;
+}
