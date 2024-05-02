@@ -43,3 +43,11 @@ products = [
 @app.route('/product')
 def product():
     return render_template('/product/product.html', products=products)
+
+@app.route('/categories')
+def categories():
+    categories = [
+        {'Men': products },
+        {'Women': [{}] }
+    ]
+    return render_template('/product/categories.html', categories=categories)
