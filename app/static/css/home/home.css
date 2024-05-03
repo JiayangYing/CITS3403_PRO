@@ -1,0 +1,11 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+.category-body > div {
+  height: 100%;
+}
+
+.values-body {
+  height: 100%;
+}

@@ -10,48 +10,111 @@ function setLogo() {
     )
 }
 
-$(document).ready(function() {
-    const darkModeClass = 'dark_mode'
-    if (localStorage.getItem(darkModeClass)==='true') {
-        document.querySelector("body").classList.add(darkModeClass);
+function CallPost(url, data, callbackSuccess, callbackError) {
+    window.$.ajax({
+        type: "POST",
+        contentType: 'application/json',
+        url: url,
+        data: JSON.stringify(data),
+        success: callbackSuccess,
+        error: function (xhr, status, error) {
+            callbackError?.(xhr, status, error);
+        }
+    });
+}
+
+const OnAjaxError = (xhr) => {
+    var response;
+    try {
+        if (xhr.status && xhr.status === 404) {
+            GenerateDangerAlertDiv("Failed!", `ErrorCode: ${xhr.status}. The requested page cannot be found.`);
+            return;
+        }
+
+        response = JSON.parse(xhr.responseText);
+
+        if (response) {
+            GenerateDangerAlertDiv("Failed!", response.message);
+        }
+    } catch (e) {
+        GenerateDangerAlertDiv("Failed!", xhr.responseText);
     }
-    
+}
+
+function GenerateSuccessAlertDiv(title, message, divId) {
+    if (!divId) {
+        divId = "#AlertModalDiv";
+    }
+
+    window.$(divId).removeClass().addClass("alert alert-success alert-dismissible");
+    window.$(divId).html(`<button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('${divId}')">&times;</button>\n
+                                <h4><i class="icon fa fa-check"></i>${title}</h4>\n
+                                <span id="AlertMessage">${message}</span>`);
+    ScrollToTopPage();
+}
+
+function GenerateInfoAlertDiv(title, message, divId) {
+    if (!divId) {
+        divId = "#AlertModalDiv";
+    }
+
+    window.$(divId).removeClass().addClass("alert alert-info alert-dismissible");
+    window.$(divId).html(`<button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('${divId}')">&times;</button>\n
+                                <h4><i class="icon fa fa-info-circle"></i>${title}</h4>\n
+                                <span id="AlertMessage">${message}</span>`);
+    ScrollToTopPage();
+}
+
+function GenerateWarningAlertDiv(title, message, divId) {
+    if (!divId) {
+        divId = "#AlertModalDiv";
+    }
+
+    window.$(divId).removeClass().addClass("alert alert-warning alert-dismissible");
+    window.$(divId).html(`<button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('${divId}')">&times;</button>\n
+                                        <h4><i class="icon fa fa-exclamation-triangle"></i>${title}</h4>\n
+                                        <span id="AlertMessage">${message}</span>`);
+    ScrollToTopPage();
+}
+
+function GenerateDangerAlertDiv(title, message, divId) {
+    if (!divId) {
+        divId = "#AlertModalDiv";
+    }
+
+    window.$(divId).removeClass().addClass("alert alert-danger alert-dismissible");
+    window.$(divId).html(`<button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('${divId}')">&times;</button>\n
+                                    <h4><i class="icon fa fa-ban"></i>${title}</h4>\n
+                                    <span id="AlertMessage">${message}</span>`);
+    ScrollToTopPage();
+}
+
+function CloseAlertDiv(divId) {
+    if (!divId) {
+        divId = "#AlertModalDiv";
+    }
+
+    window.$(divId).addClass("hidden");
+}
+
+function ScrollToTopPage() {
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+}
+
+function stringToBool(str) {
+    str = str.toLowerCase().trim();
+    return str === 'true' || str === 'yes' || str === '1';
+}
+
+const darkModeClass = 'dark_mode'
+$(document).ready(function() {
     const lightSwitch = document.getElementById("toggleDarkTheme");
     const toggleSpan = lightSwitch.querySelector("i");
     const textSpan = lightSwitch.querySelector("span");
-
-    const modeToggle = () => {
-        const weatherSpan = document.querySelector("#weather_mode");
-        const body = document.querySelector("body");
-
-        if (body.classList.contains(darkModeClass)) {
-            body.classList.remove(darkModeClass);
-            localStorage.setItem(darkModeClass, false);
-            toggleSpan.classList.replace("fa-sun", "fa-moon");
-            textSpan.textContent = textSpan.dataset.dark;
-        } else {
-            body.classList.add(darkModeClass);
-            localStorage.setItem(darkModeClass, true);
-            toggleSpan.classList.replace("fa-moon", "fa-sun");
-            textSpan.textContent = textSpan.dataset.light;
-        }
-
-        weatherSpan.style.removeProperty("animation");
-        setTimeout(function () {
-            weatherSpan.style.animation = "curvedpath 1.75s linear 1";
-        }, 100);
-        setTimeout(function () {
-            if (weatherSpan.classList.contains("fa-sun")) {
-                weatherSpan.classList.replace("fa-sun", "fa-moon");
-            } else {
-                weatherSpan.classList.replace("fa-moon", "fa-sun");
-            }
-        }, 750);
-    };
-
-    lightSwitch.addEventListener("click", () => {
-        modeToggle();
-    });
-
     setLogo();
+    if (stringToBool(localStorage.getItem(darkModeClass))) {
+        document.querySelector("body").classList.add(darkModeClass);
+        toggleSpan.classList.replace("fa-moon", "fa-sun");
+        textSpan.textContent = textSpan.dataset.light;
+    }
 });

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Home {% endblock %}
+
+{% block content %}
+    <div id="AlertModalDiv" class="hidden"> </div>
+    {% include "/home/categories.html" %}
+    <hr>
+    {% include "/home/values.html" %}
+    <hr>
+    <br/>
+    {% include "/home/sdg.html" %}
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/home/home.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/home.css') }}" type="text/css" />
+{% endblock %}
