@@ -29,39 +29,68 @@
                                     <h1 class="h4 mb-4">SIGN UP</h1>
                                 </div>
                                 <div id="AlertModalDiv" class="hidden"></div>
-                                <form class="user" method="POST" action="/signup" onsubmit="return validatePasswordLength()">
+                                <form class="user" method="POST" action="/signup">
                                     {{ form.hidden_tag() }}
                                     <div class="form-group row">
                                         <div class="col">
                                             {{ form.first_name.label(class="form-control-label") }}
                                             {{ form.first_name(class="form-control form-control-user") }}
+                                            {% for error in form.first_name.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
                                         </div>
                                         <div class="col">
                                             {{ form.last_name.label(class="form-control-label") }}
                                             {{ form.last_name(class="form-control form-control-user") }}
+                                            {% for error in form.last_name.errors %}
+                                                <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        {{ form.username.label(class="form-control-label") }}
+                                        {{ form.username(class="form-control form-control-user") }}
+                                        {% for error in form.username.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="form-group">
                                         {{ form.email_address.label(class="form-control-label") }}
                                         {{ form.email_address(class="form-control form-control-user") }}
+                                        {% for error in form.email_address.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
                                     </div>
                                     <div class="form-group">
                                         {{ form.password.label(class="form-control-label") }}
                                         {{ form.password(class="form-control form-control-user", id="password") }}
+                                        {% for error in form.password.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
                                     </div>
                                     <div class="form-group">
                                         {{ form.re_password.label(class="form-control-label") }}
                                         {{ form.re_password(class="form-control form-control-user") }}
+                                        {% for error in form.re_password.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
                                     </div>
                                     <div class="form-check">
                                         {{ form.become_seller(class="form-check-input", id="customCheck") }}
                                         {{ form.become_seller.label(class="form-check-label") }}
+                                        {% for error in form.become_seller.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
                                     </div>
                                     <div class="form-group" id="shopNameGroup" style="display: none;">
                                         {{ form.shop_name.label(class="form-control-label") }}
                                         {{ form.shop_name(class="form-control form-control-user") }}
+                                        {% for error in form.shop_name.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
                                     </div>
-                                    <button class="btn btn-outline-secondary btn-block" type="submit">Create an account</button>
+                                    {{ form.submit(class="btn btn-outline-secondary btn-block") }}
                                     <hr>
                                     <a href="index" class="btn btn-outline-danger btn-block">
                                         <i class="fab fa-google fa-fw"></i> Signup with Google
