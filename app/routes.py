@@ -19,11 +19,15 @@ def login():
 
 @app.route('/home')
 def home():
+    print('aaaaa')
     return render_template('/home/home.html',hideNav = True)
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegistrationForm()
+    if form.validate_on_submit():
+        flash('regsiter successfully {}'.format(form.username.data))
+        return redirect(url_for('home'))
     return render_template('/users/signup.html', form=form,hideNav=True)
 
 @app.route('/sdg_img_dirs', methods=['POST'])
