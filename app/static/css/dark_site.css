@@ -126,7 +126,8 @@
       background-color: #333;
   }
 
-      .dark_mode .display-card hr {
+      .dark_mode .display-card hr,
+      .dark_mode .display-list hr {
           background-color: #fff;
       }
 
@@ -145,6 +146,7 @@
   .dark_mode .btn-outline-primary {
       background-color: #333;
       border-color: #333;
+      border-color: #fff;
   }
 
       .dark_mode .btn-outline-primary.focus,
@@ -161,3 +163,29 @@
   .dark_mode .dropdown-item {
       color: #fff;
   }
+
+  .dark_mode .list-group-item {
+    background-color: #1e1e1e;
+    color: #fff;
+  }
+  
+  .dark_mode .list-group-item.list-group-item-action:hover {
+    color: #222;
+    background-color: #999;
+  }
+
+.dark_mode .page-item.disabled .page-link {
+    background-color: #666;
+    border-color: #888;
+    color: #333;
+}
+
+.dark_mode .page-item .page-link {
+    background-color: #333;
+    color: #fff;
+    border-color: #fff;
+}
+
+.dark_mode .page-item.active .page-link {
+    background-color: #03f !important;
+}

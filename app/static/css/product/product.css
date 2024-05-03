@@ -50,11 +50,13 @@
   line-height:15px;
 }
 
-.display-card:hover h5 {
+.display-card:hover h5,
+.display-list a:hover h2 {
   text-decoration: underline;
 }
 
-.display-card hr {
+.display-card hr,
+.display-list hr {
   border: none;
   height: 2px;
   background-color: #000;
@@ -112,5 +114,27 @@
 }
 
 #productGrid .display-card:hover {
+  font-size: 15px;
+}
+
+.display-list img {
+  width: 100%;
+  height: 200px;
+}
+
+.multi-line-text-truncate {
+  overflow: hidden;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin: 20px auto;
+}
+
+.display-list p.card-text {
+  font-size: 30px;
+}
+
+.display-list span {
   font-size: 15px;
 }

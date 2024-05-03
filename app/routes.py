@@ -35,8 +35,10 @@ def get_sdg_img_dirs():
 def signup():
     return render_template('/users/signup.html', hideNav=True)
 products = [
-    {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'static/img/product_image/image.jpg'},
-    {'title': 'Cloth 2', 'price': 39.99, 'quantity': 1, 'location': 'East Perth', 'img':'static/img/product_image/image2.jpg'},
+    {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'static/img/product_image/image.jpg',
+     'description':'This is the description of the Cloth1.'*10},
+    {'title': 'Cloth 2', 'price': 39.99, 'quantity': 1, 'location': 'East Perth', 'img':'static/img/product_image/image2.jpg',
+     'description':'Cloth2.'*5},
     {'title': 'Cloth 3', 'price': 19.99, 'quantity': 3, 'location': 'Nedlands', 'img':'static/img/product_image/image3.jpg'}
 ]
 
@@ -47,7 +49,16 @@ def product():
 @app.route('/categories')
 def categories():
     categories = [
-        {'Men': products },
-        {'Women': [{}] }
+        {'Men': products[0:2] },
+        {'Women': products[1:] }
     ]
-    return render_template('/product/categories.html', categories=categories)
+    page = request.args.get('page', 1, type=int)
+    view = request.args.get('view', 'grid', type=str)
+    if page==2:
+        print(view)
+        categories = [
+            {'Men': [products[0]] },
+            {'Women': [products[2]] }
+        ]
+    pages=[1,2]
+    return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
