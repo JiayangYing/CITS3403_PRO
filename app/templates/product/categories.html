@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Category {% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="mb-2 mr-2 d-flex justify-content-end">
+                    <div class="btn-group" role="group" aria-label="View Toggle">
+                        {% if view == 'grid' %}
+                            <input type="radio" class="btn-check" name="btnradio" id="gridViewBtn" autocomplete="off" checked>
+                        {% else %}
+                            <input type="radio" class="btn-check" name="btnradio" id="gridViewBtn" autocomplete="off">
+                        {% endif %}
+                        <label class="btn btn-outline-primary" for="gridViewBtn">Grid View</label>
+                        {% if view == 'list' %}
+                            <input type="radio" class="btn-check" name="btnradio" id="listViewBtn" autocomplete="off" checked>
+                        {% else %}
+                            <input type="radio" class="btn-check" name="btnradio" id="listViewBtn" autocomplete="off">
+                        {% endif %}
+                        <label class="btn btn-outline-primary" for="listViewBtn">List View</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% include "/product/filter_bar.html" %}
+            <div class="col-12 col-xl-10">
+                {% if view == 'grid' %}
+                    <!-- Product display (grid view) -->
+                    <div class="row d-flex justify-content-around" id="productGrid">
+                        {% for category in categories %}
+                            {% for cat, products in category.items() %}
+                                {% for product in products %}
+                                    {% if product %}
+                                    {% include "/product/display_card.html" %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% elif view == 'list' %}
+                    <!-- Product display (list view) - initially hidden -->
+                    <div class="row" id="productList">
+                        <div class="list-group display-list ms-1">
+                            {% for category in categories %}
+                                {% for cat, products in category.items() %}
+                                    {% for product in products %}
+                                        {% if product %}
+                                            {% include "/product/display_list.html" %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="mt-2 mr-2 d-flex justify-content-end">
+                    <nav aria-label="ProductPageNav">
+                        <ul id="ProductPageNavBar" class="pagination">
+                          <li class="page-item"><a class="page-link" href="{{ url_for('categories', view=view, page=page-1) }}">Previous</a></li>
+                          {% for page in pages %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('categories', view=view, page=page) }}">{{ page }}</a></li>
+                          {% endfor %}
+                          <li class="page-item"><a class="page-link" href="{{ url_for('categories', view=view, page=page+1) }}">Next</a></li>
+                        </ul>
+                      </nav>
+                </div>
+            </div>
+        </div>
+      </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/product/categories.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/product/product.css') }}" type="text/css" />
+{% endblock %}
