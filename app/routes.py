@@ -1,8 +1,8 @@
 from app import app
-from flask import render_template, flash, redirect, request, jsonify
-from app.forms import LoginForm
+from flask import render_template, flash, redirect,request,jsonify,url_for
+from app.forms import LoginForm,RegistrationForm
 import os
-
+    
 @app.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
@@ -14,26 +14,29 @@ def login():
     if form.validate_on_submit():
         flash('Login requested for user {}, remember_me={}'.format(
             form.username.data, form.remember_me.data))
-        return redirect(url_for('index'))
-    return render_template('users/login.html', title='Sign In', form=form)
+        return redirect(url_for('home'))
+    return render_template('users/login.html', title='Sign In', form=form, hideNav = True)
 
 @app.route('/home')
 def home():
-    return render_template('/home/home.html')
+    print('aaaaa')
+    return render_template('/home/home.html',hideNav = True)
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash('regsiter successfully {}'.format(form.username.data))
+        return redirect(url_for('home'))
+    return render_template('/users/signup.html', form=form,hideNav=True)
 
 @app.route('/sdg_img_dirs', methods=['POST'])
 def get_sdg_img_dirs():
-    is_dark_mode = request.json.get('isDarkMode')
-    path = 'web-inverted'
-    if is_dark_mode:
-        path = 'web'
-    img_dir = os.path.join(app.root_path, 'static', 'img', 'sdg', path)
-    sdg_images = [path+'/'+img for img in os.listdir(img_dir) if img.endswith('png')]
-    return jsonify({'sdg_images': sdg_images})
+    data = request.json
+    sdg_id = data.get('sdg_id')
+    image_dirs = ['sdg_images/dir1', 'sdg_images/dir2', 'sdg_images/dir3']
+    return jsonify({'image_dirs': image_dirs})
 
-@app.route('/signup')
-def signup():
-    return render_template('/users/signup.html', hideNav=True)
 products = [
     {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'product_image/image.jpg',
      'description':'This is the description of the Cloth1.'*10},
