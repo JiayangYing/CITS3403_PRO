@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     is_active : so.Mapped[bool] = so.mapped_column(unique=False, default=True)
     email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-    postcode: so.Mapped[int] = so.mapped_column(unique=False)
+    postcode: so.Mapped[int] = so.mapped_column(unique=False, nullable=True)
     shop_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,unique=True, nullable=True)
     def __repr__(self):
         return '<User {}>'.format(self.username)
