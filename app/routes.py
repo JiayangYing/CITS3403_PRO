@@ -38,11 +38,11 @@ def get_sdg_img_dirs():
     return jsonify({'image_dirs': image_dirs})
 
 products = [
-    {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'static/img/product_image/image.jpg',
+    {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'product_image/image.jpg',
      'description':'This is the description of the Cloth1.'*10},
-    {'title': 'Cloth 2', 'price': 39.99, 'quantity': 1, 'location': 'East Perth', 'img':'static/img/product_image/image2.jpg',
+    {'title': 'Cloth 2', 'price': 39.99, 'quantity': 1, 'location': 'East Perth', 'img':'product_image/image2.jpg',
      'description':'Cloth2.'*5},
-    {'title': 'Cloth 3', 'price': 19.99, 'quantity': 3, 'location': 'Nedlands', 'img':'static/img/product_image/image3.jpg'}
+    {'title': 'Cloth 3', 'price': 19.99, 'quantity': 3, 'location': 'Nedlands', 'img':'product_image/image3.jpg'}
 ]
 
 @app.route('/product')
@@ -65,3 +65,10 @@ def categories():
         ]
     pages=[1,2]
     return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
+
+@app.route('/product/<product_id>')
+def product_detail(product_id):
+    print(product_id)
+    product = {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
+               'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10}
+    return render_template('/product/product_detail.html', product=product)

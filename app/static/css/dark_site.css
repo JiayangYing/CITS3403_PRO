@@ -50,6 +50,12 @@
       border-color: #777;
   }
 
+  .dark_mode .form-control:disabled {
+    background-color: #333;
+    border-color: #555; 
+    color: #666;
+}
+
   .dark_mode .container.login-container {
       color: #fff;
   }
@@ -155,9 +161,13 @@
       }
 
   .dark_mode .btn-secondary {
-      background-color: #333;
+      background-color: #444;
       border-color: #333;
       color: #fff;
+  }
+
+  .dark_mode .btn-secondary:hover {
+      background-color: #555;
   }
 
   .dark_mode .dropdown-item {
@@ -188,4 +198,22 @@
 
 .dark_mode .page-item.active .page-link {
     background-color: #03f !important;
+}
+
+.dark_mode .carousel-control-prev,
+.dark_mode .carousel-control-next,
+.dark_mode .carousel-indicators {
+  background-color: #888;
+  opacity: 0.65
+}
+
+.dark_mode .form-select {
+    background-color: #555;
+    color: #fff;
+    border-color: #777;
+}
+
+.dark_mode .form-select option {
+    background-color: #555;
+    color: #fff;
 }
