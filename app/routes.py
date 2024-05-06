@@ -25,8 +25,6 @@ def login():
     if form.validate_on_submit():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
-        
-        print(user)
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -38,27 +36,12 @@ def login():
     return render_template('users/login.html', title='Sign In', form=form)
 
 
+
 @app.route('/home')
 @login_required
 def home():
     print('aaaaa')
     return render_template('/home/home.html',hideNav = True)
-
-
-
-# @app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('index'))
-#     form = RegistrationForm()
-#     if form.validate_on_submit():
-#         user = User(username=form.username.data, email=form.email.data)
-#         user.set_password(form.password.data)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash('Congratulations, you are now a registered user!')
-#         return redirect(url_for('login'))
-#     return render_template('register.html', title='Register', form=form)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
