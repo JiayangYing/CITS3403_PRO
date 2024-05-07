@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Seller {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Manage Product Page</h1>
+        </div>
+    
+        {% include "/seller/product_table.html" %}
+        {% include "/seller/product_order_table.html" %}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/seller/product.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/seller/product.css') }}" type="text/css" />
+{% endblock %}
