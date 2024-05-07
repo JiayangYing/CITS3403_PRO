@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(() => {
     $('#gridViewBtn').on('click', function() {
       updateUrlParameter('view', 'grid');
     });

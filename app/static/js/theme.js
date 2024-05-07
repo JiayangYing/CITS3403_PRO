@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(() => {
     const lightSwitch = document.getElementById("toggleDarkTheme");
     const toggleSpan = lightSwitch.querySelector("i");
     const textSpan = lightSwitch.querySelector("span");
