@@ -1,7 +1,10 @@
-from app import app
-from flask import render_template, flash, redirect,request,jsonify,url_for
-from app.forms import LoginForm,RegistrationForm
+from app import app,db
+from app.forms import LoginForm,RegistrationForm,ProductForm
+from app.models import Product
 import os
+from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
+from flask_login import current_user, login_user,login_required,logout_user
+
     
 @app.context_processor
 def inject_global_variable():
@@ -72,3 +75,59 @@ def product_detail(product_id):
     product = {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
                'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10}
     return render_template('/product/product_detail.html', product=product)
+
+@app.route('/add_product', methods=['GET', 'POST'])
+@login_required
+def add_product():
+    form = ProductForm()
+    if form.validate_on_submit():
+        product = Product(
+            product_name=form.product_name.data,
+            category=form.category.data,
+            price=form.price.data,
+            quantity=form.quantity.data,
+            condition=form.condition.data,
+            location=form.location.data  # Handling new field
+        )
+        db.session.add(product)
+        db.session.commit()
+        flash('Product added successfully!')
+        return redirect(url_for('index'))
+    return render_template('add_product.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/')
+@app.route('/index')
+@login_required
+def index():
+    return render_template('index.html', title='Home')
+
+@app.route('/add_product', methods=['GET', 'POST'])
+@login_required
+def add_product():
+    form = ProductForm()
+    if form.validate_on_submit():
+        product = Product(
+            product_name=form.product_name.data,
+            category=form.category.data,
+            price=form.price.data,
+            quantity=form.quantity.data,
+            condition=form.condition.data,
+            location=form.location.data 
+        )
+        db.session.add(product)
+        db.session.commit()
+        flash('Product added successfully!')
+        return redirect(url_for('index'))
+    return render_template('add_product.html', form=form)
+
+
+
+    
+            
+
