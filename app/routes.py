@@ -1,15 +1,11 @@
 from app import app
-from flask import render_template, flash, redirect,request,jsonify,url_for
+from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
+from flask_login import current_user, login_user,login_required,logout_user
 from app.forms import LoginForm,RegistrationForm
-import os
-
-from flask_login import current_user, login_user
 import sqlalchemy as sa
 from app import db
 from app.models import User
-from flask_login import login_required
-
-from flask import request
+import os
 from urllib.parse import urlsplit
 
 @app.context_processor
@@ -100,3 +96,22 @@ def product_detail(product_id):
     product = {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
                'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10}
     return render_template('/product/product_detail.html', product=product)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/')
+@app.route('/index')
+@login_required
+def index():
+    return render_template('index.html', title='Home')
+
+
+    
+            
+    }
+
+ 
