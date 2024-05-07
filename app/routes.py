@@ -51,3 +51,11 @@ def categories():
         {'Women': [{}] }
     ]
     return render_template('/product/categories.html', categories=categories)
+
+@app.route('/profile')
+def profile():
+    return render_template('/users/profile.html', profile=profile)
+
+@app.route('/edit_profile')
+def edit_profile():
+    return render_template('/users/edit_profile.html', edit_profile=edit_profile)

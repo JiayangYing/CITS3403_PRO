@@ -88,8 +88,7 @@
                     <button
                       class="btn btn-outline-secondary btn-block"
                       type="submit"
-                      >Login</button
-                    >
+                      >Login</button>
                     <hr />
                     <a href="index" class="btn btn-outline-danger btn-block">
                       <i class="fab fa-google fa-fw"></i> Login with Google
@@ -113,5 +112,8 @@
         </div>
       </div>
     </div>
+    {% block footer %}
+    {% include '/layout/footer.html' %}
+    {% endblock %}
   </body>
 </html>

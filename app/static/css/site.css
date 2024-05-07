@@ -151,3 +151,32 @@ button.btn-close {
 footer.page-footer {
   padding: 2rem 0;
 }
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+.change-avatar-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 5px;
+  transform: translate(50%, 50%);
+  background: transparent;
+  border: none;
+  color: #000;
+}
+
+i.fa-rounded{
+  display: inline-block;
+  border-radius: 100px;
+  box-shadow: 0 0 2px #888;
+  padding: 0.3em 0.37em;
+}
+
+.verified {
+  color: #8aff8a;
+}
+
+.unverified {
+  color: #ff0000;
+}
