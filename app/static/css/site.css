@@ -287,6 +287,7 @@ table tr td .action-container .delete {
   background-color: transparent;
   border: 0;
   padding: 0;
+}
 
 .avatar-container {
   position: relative;
@@ -315,4 +316,8 @@ i.fa-rounded{
 
 .unverified {
   color: #ff0000;
+}
+
+.bg-success {
+  background-color: #8aff8a !important;
 }

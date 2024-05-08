@@ -346,3 +346,7 @@
     background-color: #999;
     border: 0;
 }
+
+.dark_mode .bg-success{
+    background-color: #8aff8a !important; 
+}
