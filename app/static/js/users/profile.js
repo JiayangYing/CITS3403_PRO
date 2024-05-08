@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+$(() => {
     // Handle Deactivate Account Button Click
     document.getElementById('deactivateAccountBtn').addEventListener('click', function() {
         // Show confirmation modal
@@ -22,9 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Close the modal
         $('#confirmDeactivateModal').modal('hide');
     })
-});
-
-document.addEventListener("DOMContentLoaded", function() {
+    
     // Handle Become a Seller Checkbox Change
     document.getElementById('gridCheck').addEventListener('change', function() {
         var sellerForm = document.getElementById('sellerForm');
@@ -69,4 +67,3 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.reload();
     });
 });
-

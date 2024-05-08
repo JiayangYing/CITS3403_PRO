@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(() => {
     // Handle avatar selection
     $('.modal-body i').click(function () {
         var avatarClass = $(this).attr('class');
