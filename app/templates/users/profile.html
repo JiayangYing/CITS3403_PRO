@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Product {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h1>Your Profile</h1>
+                        </div>
+                        <div class="text-center mb-4">
+                            <i class="fa-rounded fa-solid fa-user-secret fa-4x"></i>
+                        </div>
+                        <form class="row g-3">
+                            <div class="col-md-6">
+                              <label for="firstName" class="form-label">First Name:</label>
+                              <input type="text" class="form-control" id="inputEmail4" value="Taylor" disabled>
+                            </div>
+                            <div class="col-md-6">
+                              <label for="lastName" class="form-label">Last Name:</label>
+                              <input type="text" class="form-control" id="inputPassword4" value="Swift" disabled>
+                            </div>
+                            <div class="col-12">
+                              <label for="emailAddress" class="form-label">Email Address:</label>
+                              <input type="email" class="form-control" id="emailAddress" value="taylor@example.com" disabled>
+                            </div>
+                            <div class="col-10">
+                              <label for="address" class="form-label">Address:</label>
+                              <input type="text" class="form-control" id="address" value="65 Stirling Highway" disabled>
+                            </div>
+                            <div class="col-md-2">
+                              <label for="postcode" class="form-label">Postcode:</label>
+                              <input type="number" class="form-control" id="postcode" value="6000" disabled>
+                            </div>
+                            <div class="col-mb-3">
+                                <label for="accountType" class="form-label">Account Type:</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="accountCheck"><i class="verified fa-regular fa-circle-check" title="Verified"></i></span>
+                                <input type="text" class="form-control" placeholder="User/Seller/User & Seller" aria-label="accountTypes" aria-describedby="accountType" readonly disabled>
+                              </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="gridCheck" data-bs-toggle="collapse" data-bs-target="#sellerForm" aria-expanded="false" aria-controls="sellerForm">
+                                    <label class="form-check-label" for="gridCheck">
+                                        Become a seller?
+                                    </label>
+                                </div>
+                                <div class="collapse" id="sellerForm">
+                                    <form class="p-4">
+                                        <div class="mb-3">
+                                            <label for="exampleCheckboxFormPassword" class="form-label">Confirm Your Password:</label>
+                                            <input type="password" class="form-control" id="sellerPassword" placeholder="Password">
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-check-reverse">
+                                                <input type="radio" class="form-check-input" id="sellerAgreement">
+                                                <label class="form-check-label" for="sellerAgreement">
+                                                    I agree to the terms and conditions.
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary" id="confirmSelletBtn">Submit</button>
+                                    </form>
+                                </div>
+                            </div>                            
+                            <!-- Edit Profile Button -->
+                            <hr>
+                            <div class="text-end d-grid gap-2 d-lg-flex justify-content-md-end">
+                            <a class="btn btn-primary" href="edit_profile">Edit Profile</a>
+                            <a class="btn btn-danger ms-lg-2" href="#" id="deactivateAccountBtn">Deactivate Account</a>
+                        </div>
+                          </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeactivateModal" tabindex="-1" aria-labelledby="confirmDeactivateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeactivateModalLabel">
+                        <span class="text-danger"><i class="fas fa-exclamation-triangle"></i></span>
+                        Confirm Deactivation
+                    </h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Please enter your password to confirm account deactivation:</p>
+                    <input type="password" class="form-control mb-3" id="deactivatePassword" placeholder="Your Password">
+                    <p>CAUTION: Your profile will be permanently deleted and cannot be recovered.</p>
+                </div>
+                <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button class="btn btn-primary me-md-2" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-danger" type="button" id="confirmDeactivateBtn">Deactivate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/users/profile.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+{% endblock %}

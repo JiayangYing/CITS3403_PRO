@@ -160,11 +160,15 @@
           box-shadow: 0 0 0 0.2rem rgb(95 104 129 / 50%);
       }
 
-  .dark_mode .btn-secondary {
-      background-color: #444;
+  .dark_mode .btn-secondary,
+    .dark_mode .btn-danger {
+      background-color: #333;
       border-color: #333;
       color: #fff;
   }
+  .dark_mode .btn-danger:hover {
+    background-color: #e20404;
+}
 
   .dark_mode .btn-secondary:hover {
       background-color: #555;
@@ -315,4 +319,30 @@
 
 .dark_mode .table-border-left-red {
   border-left: 0.25rem solid #a6180b !important;
+}
+  .dark_mode .avatar-container {
+    position: relative;
+    display: inline-block;
+  }
+  .dark_mode .change-avatar-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
+    transform: translate(50%, 50%);
+    background: transparent;
+    border: none;
+    color: #ffffff;
+  }
+  
+.dark_mode .btn-link:hover {
+    color: #0a6cff;
+}
+
+.dark_mode i.fa-rounded{
+    box-shadow: 0 0 4px #fff;
+}
+
+.dark_mode .input-group-text{
+    background-color: #999;
+    border: 0;
 }

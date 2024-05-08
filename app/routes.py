@@ -111,3 +111,11 @@ def seller():
                'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10,
                'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
     return render_template('/seller/product.html', products=products)
+
+@app.route('/profile')
+def profile():
+    return render_template('/users/profile.html', profile=profile)
+
+@app.route('/edit_profile')
+def edit_profile():
+    return render_template('/users/edit_profile.html', edit_profile=edit_profile)

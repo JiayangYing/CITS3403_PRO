@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(() => {
     $("#customCheck").on("change", function() {
         // if checked, show name group, otherwise hide it
         if (this.checked) {
@@ -6,5 +6,5 @@ $(document).ready(function() {
         } else {
             $("#shopNameGroup").hide()
         }
-    })
-})
+    });
+});
