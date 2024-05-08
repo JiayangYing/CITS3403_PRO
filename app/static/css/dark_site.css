@@ -187,3 +187,8 @@
 .dark_mode i.fa-rounded{
     box-shadow: 0 0 4px #fff;
 }
+
+.dark_mode .input-group-text{
+    background-color: #999;
+    border: 0;
+}
