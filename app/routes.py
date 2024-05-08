@@ -111,3 +111,7 @@ def seller():
                'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10,
                'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
     return render_template('/seller/product.html', products=products)
+
+@app.route('/manage_product/add')
+def add_product():
+    return render_template('/manage_product/add.html')

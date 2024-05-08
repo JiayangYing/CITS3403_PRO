@@ -1,0 +1,119 @@
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Add Product</h6>
+    </div>
+    <form id="addProductForm" class="card-body">
+        <div id="AlertModalDiv" class="hidden">
+        </div>
+        <div class="standard-form-table-container">
+            <div class="standard-form-table-column">
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        Product Name
+                    </span>
+                    <span class="standard-form-value">
+                        <input class="form-control" />
+                    </span>
+                </div>
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        Category
+                    </span>
+                    <span class="standard-form-value">
+                        <input asp-for="FdTicket" class="form-control" />
+                        <span asp-validation-for="FdTicket"></span>
+                    </span>
+                </div>
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        Price
+                    </span>
+                    <span class="standard-form-value">
+                        <input asp-for="FdTicket" class="form-control" />
+                        <span asp-validation-for="FdTicket"></span>
+                    </span>
+                </div>
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        Condition
+                    </span>
+                    <span class="standard-form-value">
+                        <input asp-for="FdTicket" class="form-control" />
+                        <span asp-validation-for="FdTicket"></span>
+                    </span>
+                </div>
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        Location
+                    </span>
+                    <span class="standard-form-value">
+                        <input asp-for="FdTicket" class="form-control" />
+                        <span asp-validation-for="FdTicket"></span>
+                    </span>
+                </div>
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        Qty
+                    </span>
+                    <span class="standard-form-value">
+                        <input asp-for="FdTicket" class="form-control" />
+                        <span asp-validation-for="FdTicket"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="standard-form-table-column">
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        Description
+                    </span>
+                    <span class="standard-form-value">
+                        <textarea class="form-control mh-100" id="remark" rows="3" placeholder="Enter Description (Optional)" style="height: 100px;"></textarea>
+                    </span>
+                </div>
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        <span>
+                            Main Image<br />
+                            <small class="title-details">
+                                [636x165px]<br />
+                                Format-[PNG, JPG, JPEG]
+                            </small>
+                        </span>
+                    </span>
+                    <span class="standard-form-value">
+                        <div class="input-group file-upload-group">
+                            <div name="ManualUpload">
+                                <input type="file" class="custom-file-input" accept="image/*">
+                                <label class="custom-file-label" for="RegisterSplashImage">Upload</label>
+                            </div>
+                            <img src="" class="custom-file-preview" alt="" />
+                        </div>
+                    </span>
+                </div>
+                <div class="standard-form-row">
+                    <span class="standard-form-label">
+                        <span>
+                            Images<br />
+                            <small class="title-details">
+                                [636x165px]<br />
+                                Format-[PNG, JPG, JPEG]
+                            </small>
+                        </span>
+                    </span>
+                    <span class="standard-form-value">
+                        <div class="input-group file-upload-group">
+                            <div name="ManualUpload">
+                                <input type="file" class="custom-file-input" accept="image/*">
+                                <label class="custom-file-label" for="RegisterSplashImage">Upload</label>
+                            </div>
+                            <img src="" class="custom-file-preview" alt="" />
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <input type="submit" value="Add Product" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
