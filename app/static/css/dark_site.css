@@ -88,7 +88,7 @@
   }
 
       .dark_mode a:hover {
-          color: #cccccc;
+          color: #ccc;
       }
 
   .dark_mode label {
@@ -216,4 +216,103 @@
 .dark_mode .form-select option {
     background-color: #555;
     color: #fff;
+}
+
+.dark_mode .table-card {
+    background-color: #444 !important;
+    border-color: #444 !important;
+}
+
+.dark_mode .text-primary {
+    color: #fff !important;
+}
+
+.dark_mode .table-card .card-header {
+    background-color: #333;
+    border-color: #444;
+}
+
+.dark_mode .table {
+    --bs-table-color: #fff;
+    --bs-table-border-color: #444;
+    --bs-table-bg: #444;
+}
+
+.dark_mode .table-card {
+  border-width: 3px;
+}
+
+.dark_mode table.table-bordered th,
+.dark_mode table.table-bordered td,
+.dark_mode table.table-bordered tr .card  {
+  border-width: 2px;
+}
+
+.dark_mode .table thead th,
+.dark_mode .table-bordered,
+.dark_mode .table-bordered td,
+.dark_mode .table-bordered th {
+    border-color: #555;
+}
+
+.dark_mode table.table-bordered tr .card {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-color: #777;
+    color: #999 !important;
+}
+
+.dark_mode .text-secondary {
+    color: #999 !important;
+}
+
+.dark_mode table.dataTable tbody > tr.selected,
+.dark_mode table.dataTable tbody > tr > .selected {
+    background-color: #333;
+}
+
+.dark_mode table.dataTable tr td.dt-control:before,
+.dark_mode table .action-fa-icon {
+    color: #03f;
+}
+
+.dark_mode div.dataTables_wrapper div.dataTables_processing {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark_mode .table-footer-container {
+    background-color: #444;
+    border-color: #555;
+}
+
+.dark_mode .table-footer-container .add_domain:hover,
+.dark_mode .table-footer-container .remove_domain:hover,
+.dark_mode .table-footer-container .add_domain:hover i,
+.dark_mode .table-footer-container .remove_domain:hover i {
+    background-color: #444;
+    color: #03f;
+}
+
+.dark_mode table .checkbox-switch input[type=checkbox] ~ label {
+    background: linear-gradient(to left, #9c0d10 50%, #333 30%);
+}
+
+.dark_mode table .checkbox-switch input[type=checkbox]:checked ~ label {
+    background: linear-gradient(to left, #333 50%, #007a3d 50%)
+}
+
+.dark_mode .table-border-left-blue {
+  border-left: 0.25rem solid #363ecc !important;
+}
+
+.dark_mode .table-border-left-yellow {
+  border-left: 0.25rem solid #cd970d !important;
+}
+
+.dark_mode .table-border-left-green {
+  border-left: 0.25rem solid #0e8157 !important;
+}
+
+.dark_mode .table-border-left-red {
+  border-left: 0.25rem solid #a6180b !important;
 }
