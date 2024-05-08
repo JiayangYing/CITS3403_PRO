@@ -6,32 +6,18 @@ from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import login
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
 
-
-class User(db.Model):
-    __tablename__ = 'users'
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-
-class User(db.Model):
+class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,
-                                                unique=True)
-    email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True,
-                                             unique=True)
+    username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
+    first_name: so.Mapped[str] = so.mapped_column(sa.String(64), unique=False)
+    last_name: so.Mapped[str] = so.mapped_column(sa.String(64), unique=False)
+    is_seller : so.Mapped[bool] = so.mapped_column(unique=False, default=False)
+    is_active : so.Mapped[bool] = so.mapped_column(unique=False, default=True)
+    email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-
+    postcode: so.Mapped[int] = so.mapped_column(unique=False, nullable=True)
+    shop_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=False, nullable=True)
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
@@ -45,7 +31,7 @@ class User(db.Model):
     def check_password(self, password):
         
         return check_password_hash(self.password_hash, password)
-
+    
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(100), nullable=False)
@@ -57,7 +43,8 @@ class Product(db.Model):
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
     
-    
+
+
 
 
 
