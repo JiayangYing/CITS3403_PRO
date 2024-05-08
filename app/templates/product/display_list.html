@@ -1,0 +1,23 @@
+<a href="#" class="list-group-item list-group-item-action">
+    <div class="row">
+        <div class="d-flex">
+            <div class="col-3">
+                <img src=/static/img/{{ product.img }} alt="{{ product.title }}" class="rounded">
+            </div>
+            <div class="ms-2 col-9">
+                <h2 class="text-truncate product-title">{{ product.title }} </h2>
+                <div class="d-flex justify-content-between me-2">
+                    <div class="justify-content-start">
+                        <p class="card-text">AUD {{ product.price }}</p>
+                    </div>
+                    <div class="justify-content-end">
+                        <span class="d-flex justify-content-start mb-2">Qty: {{ product.quantity }}</span>
+                        <span><i class="fa-solid fa-location-dot me-1"></i>{{ product.location }}</span>
+                    </div>
+                </div>
+                <hr>
+                <p class="multi-line-text-truncate">{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+</a>

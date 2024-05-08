@@ -1,11 +1,23 @@
-$(document).ready(function() {
+$(() => {
     $('#gridViewBtn').on('click', function() {
-      $('#productGrid').removeClass('d-none');
-      $('#productList').addClass('d-none');
+      updateUrlParameter('view', 'grid');
     });
   
     $('#listViewBtn').on('click', function() {
-      $('#productList').removeClass('d-none');
-      $('#productGrid').addClass('d-none');
+      updateUrlParameter('view', 'list');
     });
+  
+    $('#listViewBtn').on('click', function() {
+      updateUrlParameter('view', 'list');
+    });
+
+    var url = new URL(window.location.href);
+    pageNum = url.searchParams.get('page')
+    $('#ProductPageNavBar a').each(function(i, a){
+      $a = $(a)
+      if(`${$a.text()}` === pageNum){
+        $a.parent().addClass('active')
+        return false
+      }
+    })
 });

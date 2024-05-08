@@ -34,7 +34,7 @@ function getSdgImageDirs(isDarkMode) {
     CallPost("/sdg_img_dirs", { isDarkMode : isDarkMode }, onSuccess, OnAjaxError);
 }
 
-$(document).ready(function() {
+$(() => {
     const body = document.querySelector("body");
     getSdgImageDirs(body.classList.contains(darkModeClass));
 

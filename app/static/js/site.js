@@ -1,3 +1,5 @@
+const DefaultValueWhenNull = "-";
+
 function setLogo() {
     $(".login-container .company-logo").replaceWith(
         `<span class="company-logo fa-stack fa-flip fa-4x">
@@ -107,7 +109,7 @@ function stringToBool(str) {
 }
 
 const darkModeClass = 'dark_mode'
-$(document).ready(function() {
+$(() => {
     const lightSwitch = document.getElementById("toggleDarkTheme");
     const toggleSpan = lightSwitch.querySelector("i");
     const textSpan = lightSwitch.querySelector("span");
@@ -118,3 +120,9 @@ $(document).ready(function() {
         textSpan.textContent = textSpan.dataset.light;
     }
 });
+
+function updateUrlParameter(key, value) {
+    var url = new URL(window.location.href);
+    url.searchParams.set(key, value);
+    window.location.href = url.toString();
+}
