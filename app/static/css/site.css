@@ -511,3 +511,7 @@ table .on-hover:hover .underline {
   color: #007bff;
   text-decoration: underline;
 }
+
+.text-xs{
+  font-size: 0.8rem;
+}
