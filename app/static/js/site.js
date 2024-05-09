@@ -1,3 +1,5 @@
+const DefaultValueWhenNull = "-";
+
 function setLogo() {
     $(".login-container .company-logo").replaceWith(
         `<span class="company-logo fa-stack fa-flip fa-4x">

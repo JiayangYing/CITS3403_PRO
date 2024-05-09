@@ -1,0 +1,70 @@
+<div class="card table-card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Product Listing</h6>
+    </div>
+    <div class="card-body">
+        <div id="AlertModalDiv" class="hidden">
+        </div>
+        <div class="table-responsive">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="product-table"
+                           class="table table-bordered"
+                           width="100%"
+                           role="grid"
+                           aria-describedby="dataTable_info"
+                           style="width: 100%;">
+                        <thead>
+                            <tr role="row">
+                                <th></th>
+                                <th>Product Title</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>Is Active</th>
+                                <th>Condition</th>
+                                <th>Location</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pro in products %}
+                                {% set inputChecked = "" %}
+                                {% set status = "Off" %}
+                                {% if pro.isActive %}
+                                    {% set inputChecked = "checked" %}
+                                    {% set status = "On" %}
+                                {% endif %}
+                                <tr class="odd">
+                                    <td class="dt-control"></td>
+                                    <td>{{ pro.title }}</td>
+                                    <td>{{ pro.category }}</td>
+                                    <td>{{ pro.price }}</td>
+                                    <td>{{ pro.quantity }}</td>
+                                    <td>
+                                        <div class="checkbox-switch"><input id="isActive_{{pro.id}}" onclick="switchIsActive({{pro.id}})" name="isActive[{{pro.id}}]" type="checkbox" value="{{pro.isActive}}" {{inputChecked}}>
+                                            <label data-label-off="Off" for="isActive_{{pro.id}}" data-label-on="On"></label>
+                                        </div>
+                                    </td>
+                                    <td>{{ pro.location }}</td>
+                                    <td>{{ pro.condition }}</td>
+                                    <td>
+                                        <div class="action-container">
+                                            <button class="edit ms-2" title="Edit" onclick="editProduct({{pro.id}})"><span><i class="fa-lg fa-solid fa-pen-to-square"></i></span></button>
+                                            <button class="delete ms-2" title="Delete" onclick="deleteProdcut({{pro.id}})"><span><i class="fa-lg fa-solid fa-trash-can"></i></span></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="d-none text-small">
+                                    <td colspan="10">
+                                        {% include "/seller/product_table_child.html" %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,6 +2,8 @@ from app import app
 from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
 from flask_login import current_user, login_user,login_required,logout_user
 from app.forms import LoginForm,RegistrationForm
+from datetime import datetime
+from flask_login import current_user, login_user
 import sqlalchemy as sa
 from app import db
 from app.models import User
@@ -56,10 +58,13 @@ def signup():
 
 @app.route('/sdg_img_dirs', methods=['POST'])
 def get_sdg_img_dirs():
-    data = request.json
-    sdg_id = data.get('sdg_id')
-    image_dirs = ['sdg_images/dir1', 'sdg_images/dir2', 'sdg_images/dir3']
-    return jsonify({'image_dirs': image_dirs})
+    is_dark_mode = request.json.get('isDarkMode')
+    path = 'web-inverted'
+    if is_dark_mode:
+        path = 'web'
+    img_dir = os.path.join(app.root_path, 'static', 'img', 'sdg', path)
+    sdg_images = [path+'/'+img for img in os.listdir(img_dir) if img.endswith('png')]
+    return jsonify({'sdg_images': sdg_images})
 
 products = [
     {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'product_image/image.jpg',
@@ -97,6 +102,20 @@ def product_detail(product_id):
                'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10}
     return render_template('/product/product_detail.html', product=product)
 
+@app.route('/seller')
+def seller():
+    products = [{'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
+               'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10,
+               'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
+    return render_template('/seller/product.html', products=products)
+
+@app.route('/profile')
+def profile():
+    return render_template('/users/profile.html', profile=profile)
+
+@app.route('/edit_profile')
+def edit_profile():
+    return render_template('/users/edit_profile.html', edit_profile=edit_profile)
 @app.route('/logout')
 @login_required
 def logout():
@@ -108,10 +127,3 @@ def logout():
 @login_required
 def index():
     return render_template('index.html', title='Home')
-
-
-    
-            
-    }
-
- 

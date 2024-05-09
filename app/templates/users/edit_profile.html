@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Product {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h1>Edit Your Profile</h1>
+                        </div>
+                        <div class="text-center mb-4">
+                            <!-- User Image -->
+                            <div class="avatar-container">
+                                <i class="fa-rounded fa-solid fa-user-secret fa-4x"></i>
+                                <button type="button" class="btn btn-link change-avatar-btn" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <form class="row g-3">
+                            <!-- First Name -->
+                            <div class="col-md-6">
+                                <label for="editFirstName" class="form-label">First Name:</label>
+                                <input type="text" class="form-control" id="editFirstName" value="Taylor">
+                            </div>
+                            <!-- Last Name -->
+                            <div class="col-md-6">
+                                <label for="editLastName" class="form-label">Last Name:</label>
+                                <input type="text" class="form-control" id="editLastName" value="Swift">
+                            </div>
+                            <!-- Email Address -->
+                            <div class="col-12">
+                                <label for="editEmail" class="form-label">Email Address:</label>
+                                <input type="email" class="form-control" id="editEmail" value="taylor@example.com">
+                            </div>
+                            <!-- Address -->
+                            <div class="col-10">
+                                <label for="editAddress" class="form-label">Address:</label>
+                                <input type="text" class="form-control" id="editAddress" value="65 Stirling Highway">
+                            </div>
+                            <!-- Postcode -->
+                            <div class="col-md-2 mb-3">
+                                <label for="editSuburb" class="form-label">Postcode:</label>
+                                <input type="number" class="form-control" id="editSuburb" value="6000">
+                            </div>
+                            <!-- Edit Profile Button -->
+                            <div class="text-end col-md-12">
+                                <button class="btn btn-primary" type="button">Update</button>
+                                <a class="btn btn-danger ms-2" href="profile">Cancel</a>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="text-center mt-4 mb-4">
+                            <h3>Change Your Password</h3>
+                        </div>
+                        <form class="row g-3">
+                            <!-- Current Password -->
+                            <div class="col-12">
+                                <label for="editPassword" class="form-label">Current Password:</label>
+                                <input type="password" class="form-control" id="currentPassword" placeholder="******">
+                            </div>
+                            <!-- New Password -->
+                            <div class="col-md-6">
+                                <label for="editPassword" class="form-label">New Password:</label>
+                                <input type="password" class="form-control" id="newPassword" placeholder="******">
+                            </div>
+                            <!-- Re-type New Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="editPassword" class="form-label">Retype New Password:</label>
+                                <input type="password" class="form-control" id="reTypeNewPassword" placeholder="******">
+                            </div>
+                            <!-- Update Password Button -->
+                            <div class="text-end col-12">
+                                <button class="btn btn-primary" type="button">Update Password</button>
+                                <a class="btn btn-danger ms-2" href="profile">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <!-- Modal -->
+ <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title ms-2" id="avatarModalLabel">Choose Avatar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Avatar options -->
+                <div class="row">
+                    <div class="col text-center">
+                        <i class="fa-solid fa-user-tie fa-rounded fa-3x"></i>
+                        <p>Avatar 1</p>
+                    </div>
+                    <div class="col text-center">
+                        <i class="fa-solid fa-user-graduate fa-rounded fa-3x"></i>
+                        <p>Avatar 2</p>
+                    </div>
+                    <div class="col text-center">
+                        <i class="fa-solid fa-user-nurse fa-rounded fa-3x"></i>
+                        <p>Avatar 3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/users/edit_profile.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
