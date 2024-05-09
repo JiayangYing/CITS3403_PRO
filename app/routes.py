@@ -108,6 +108,10 @@ def seller():
                'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
     return render_template('/seller/product.html', products=products)
 
+@app.route('/manage_product/add')
+def add_product_page():
+    return render_template('/manage_product/add.html')
+
 @app.route('/profile')
 def profile():
     return render_template('/users/profile.html', profile=profile)
