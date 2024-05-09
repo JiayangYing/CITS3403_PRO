@@ -34,8 +34,6 @@ def login():
         return redirect(next_page)
     return render_template('users/login.html', title='Sign In', form=form)
 
-
-
 @app.route('/home')
 @login_required
 def home():
@@ -105,10 +103,14 @@ def product_detail(product_id):
 
 @app.route('/seller')
 def seller():
-    products = [{'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
+    products = [{ 'id':1,'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
                'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10,
                'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
     return render_template('/seller/product.html', products=products)
+
+@app.route('/manage_product/add')
+def add_product_page():
+    return render_template('/manage_product/add.html')
 
 @app.route('/profile')
 def profile():
@@ -126,12 +128,13 @@ def add_product():
             price=form.price.data,
             quantity=form.quantity.data,
             condition=form.condition.data,
-            location=form.location.data  # Handling new field
+            location=form.location.data,  # Handling new field
+            owner = current_user
         )
         db.session.add(product)
         db.session.commit()
         flash('Product added successfully!')
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     return render_template('add_product.html', form=form)
 
 @app.route('/logout')

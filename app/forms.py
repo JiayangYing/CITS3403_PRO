@@ -34,6 +34,7 @@ class RegistrationForm(FlaskForm):
         user = db.session.scalar(sa.select(User).where(User.email_address == email.data))
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
         
     def validate_shop_name(self, shopname):
         print(not shopname.data)
