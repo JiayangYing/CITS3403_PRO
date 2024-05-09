@@ -1,15 +1,14 @@
-from app import app
 from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
 from flask_login import current_user, login_user,login_required,logout_user
-from app.forms import LoginForm,RegistrationForm
 from datetime import datetime
 from flask_login import current_user, login_user
 import sqlalchemy as sa
-from app import db
-from app.models import User
+from app.models import User,Product
 import os
 from urllib.parse import urlsplit
-
+from app import app,db
+from app.forms import LoginForm,RegistrationForm,ProductForm
+    
 @app.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
@@ -116,6 +115,26 @@ def profile():
 @app.route('/edit_profile')
 def edit_profile():
     return render_template('/users/edit_profile.html', edit_profile=edit_profile)
+    
+@app.route('/add_product', methods=['GET', 'POST'])
+@login_required
+def add_product():
+    form = ProductForm()
+    if form.validate_on_submit():
+        product = Product(
+            product_name=form.product_name.data,
+            category=form.category.data,
+            price=form.price.data,
+            quantity=form.quantity.data,
+            condition=form.condition.data,
+            location=form.location.data  # Handling new field
+        )
+        db.session.add(product)
+        db.session.commit()
+        flash('Product added successfully!')
+        return redirect(url_for('index'))
+    return render_template('add_product.html', form=form)
+
 @app.route('/logout')
 @login_required
 def logout():
