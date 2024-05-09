@@ -18,6 +18,9 @@ class User(UserMixin, db.Model):
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     postcode: so.Mapped[int] = so.mapped_column(unique=False, nullable=True)
     shop_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=False, nullable=True)
+    products: so.WriteOnlyMapped['Product'] = so.relationship(
+        back_populates='owner')
+    
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
@@ -32,15 +35,22 @@ class User(UserMixin, db.Model):
         
         return check_password_hash(self.password_hash, password)
     
-class Product(db.Model):
+
     
+class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Numeric, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    condition = db.Column(db.String(10), nullable=False)
-    location = db.Column(db.String(100), nullable=False) 
+    condition = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(50), nullable=False)
+    timestamp: so.Mapped[datetime] = so.mapped_column(
+        index=True, default=lambda: datetime.now())
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                               index=True)
+    owner: so.Mapped[User] = so.relationship(back_populates='products')
+
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
     
