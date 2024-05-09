@@ -1,24 +1,17 @@
-<div class="modal fade modal-server-listing" id="deploymentWhitelabelModal" tabindex="-1" role="dialog" aria-labelledby="deploymentWhitelabelModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal fade" id="productOrderModal" tabindex="-1" role="dialog" aria-labelledby="productOrderModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content shadow-lg">
             <div class="modal-header text-center">
-                <h5 class="modal-title">  <span id="popup-whitelabel-appPoolName" class="text-warning">Deployment Pending Whitelabel</span></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title">Product Order:<span id="popup-product-name" class="ms-2">NAME</span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div id="deploymentWhitelabel_AlertModalDiv" class="hidden">
+            <div id="productOrder_AlertModalDiv">
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-4">
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <div id="dataTable_wrapper" class="dataTables_wrapper ">
-                        <div class="row">
-                            <table id="deployment-whitelabel-table"
+                <div class="table-responsive shadow">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="product-order-table"
                                    class="table table-bordered"
                                    width="100%"
                                    role="grid"
@@ -27,7 +20,14 @@
                                 <thead>
                                     <tr role="row">
                                         <th>No.</th>
-                                        <th>WhitelabelId</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Contact No.</th>
+                                        <th>Created On</th>
+                                        <th>Qty</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -36,6 +36,8 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="modal-footer">
             </div>
         </div>
     </div>

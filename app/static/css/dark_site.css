@@ -412,6 +412,20 @@
 .dark_mode .card-header {
     border-color: #fff;
 }
+
+.dark_mode tbody tr:not([class*="text-small"]):hover td {
+    background-color: rgba(99, 99, 99, 0.3);
+    color: #fff;
+}
+
+.dark_mode tr .text-uppercase a {
+    color: #65c4ff;
+}
+
+.dark_mode .shadow {
+    box-shadow: 0 0.15rem 0.35rem 0 rgba(199, 199, 202, .15) !important
+}
+
   .dark_mode .avatar-container {
     position: relative;
     display: inline-block;

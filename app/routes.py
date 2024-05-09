@@ -32,8 +32,6 @@ def login():
         return redirect(next_page)
     return render_template('users/login.html', title='Sign In', form=form)
 
-
-
 @app.route('/home')
 @login_required
 def home():
@@ -103,7 +101,7 @@ def product_detail(product_id):
 
 @app.route('/seller')
 def seller():
-    products = [{'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
+    products = [{ 'id':1,'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
                'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10,
                'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
     return render_template('/seller/product.html', products=products)
@@ -145,3 +143,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/get_orders/<product_id>', methods=['POST'])
+def get_product_orders(product_id):
+    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'created_on': datetime.now(), 'qty': 2, 'status':'pending'}]*2
+    return jsonify({'orders': orders})
