@@ -465,3 +465,29 @@ i.fa-rounded{
   font-style: italic;
   color: #4e73df;
 }
+
+table tr td .view-listing {
+  padding-left: 5px;
+}
+
+table tbody .success {
+  color: #00a650;
+}
+
+table tbody .pending {
+  color: #fdcf5c;
+}
+
+table tbody .rejected {
+  color: #e81d23;
+}
+
+tbody tr:not([class*="text-small"]):hover td {
+    background-color: rgba(211, 211, 211, 0.3);
+    color: #000;
+}
+
+table .on-hover:hover .underline {
+  color: #007bff;
+  text-decoration: underline;
+}
