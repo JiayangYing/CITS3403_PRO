@@ -127,12 +127,13 @@ def add_product():
             price=form.price.data,
             quantity=form.quantity.data,
             condition=form.condition.data,
-            location=form.location.data  # Handling new field
+            location=form.location.data,  # Handling new field
+            owner = current_user
         )
         db.session.add(product)
         db.session.commit()
         flash('Product added successfully!')
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     return render_template('add_product.html', form=form)
 
 @app.route('/logout')
