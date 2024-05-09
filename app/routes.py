@@ -1,16 +1,13 @@
 from app import app
-from flask import render_template, flash, redirect,request,jsonify,url_for
+from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
+from flask_login import current_user, login_user,login_required,logout_user
 from app.forms import LoginForm,RegistrationForm
-import os
 from datetime import datetime
-
 from flask_login import current_user, login_user
 import sqlalchemy as sa
 from app import db
 from app.models import User
-from flask_login import login_required
-
-from flask import request
+import os
 from urllib.parse import urlsplit
 
 @app.context_processor
@@ -119,3 +116,9 @@ def profile():
 @app.route('/edit_profile')
 def edit_profile():
     return render_template('/users/edit_profile.html', edit_profile=edit_profile)
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
