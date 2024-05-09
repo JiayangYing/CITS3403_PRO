@@ -24,6 +24,23 @@ class RegistrationForm(FlaskForm):
     shop_name = StringField('Shop Name')
     submit = SubmitField('Register')
 
+
+    def validate_username(self, username):
+        user = db.session.scalar(sa.select(User).where(
+            User.username == username.data))
+        if user is not None:
+            raise ValidationError('Please use a different username.')
+
+    def validate_email_address(self, email):
+        user = db.session.scalar(sa.select(User).where(User.email_address == email.data))
+        if user is not None:
+            raise ValidationError('Please use a different email address.')
+
+    def validate_shop_name(self, shopname):
+        print(not shopname.data)
+        if self.become_seller.data and not shopname.data:
+            raise ValidationError('Please enter a shop name if you wish to become a seller.')
+
 class ProductForm(FlaskForm):
     product_name = StringField('Product Name', validators=[
         DataRequired(), Length(min=1, max=100)])
@@ -38,3 +55,4 @@ class ProductForm(FlaskForm):
     location = StringField('Location', validators=[
         DataRequired(), Length(min=1, max=100)])
     submit = SubmitField('Submit')
+
