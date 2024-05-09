@@ -32,4 +32,24 @@ class User(UserMixin, db.Model):
         
         return check_password_hash(self.password_hash, password)
     
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.String(100), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    price = db.Column(db.Numeric, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    condition = db.Column(db.String(10), nullable=False)
+    location = db.Column(db.String(100), nullable=False) 
+    def __repr__(self):
+        return '<Product {}>'.format(self.product_name)
+    
+
+
+
+
+
+
+
+
+    
 

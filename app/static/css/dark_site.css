@@ -60,7 +60,85 @@
     color: #fff;
 }
 
-.dark_mode .card {
+  .dark_mode .small {
+      color: #fff;
+  }
+
+  .dark_mode .company-logo {
+      color: #00A300;
+  }
+
+  .dark_mode .modal-content {
+      background-color: #333;
+  }
+
+  .dark_mode .btn-close {
+      filter: invert(100%) grayscale(100%) brightness(200%);
+  }
+
+      .dark_mode .btn-close:hover {
+          color: #eee;
+      }
+
+  .dark_mode .display-product hr {
+      background-color: #ccc;
+  }
+
+  .dark_mode .display-container,
+  .dark_mode .display-card {
+      background-color: #333;
+  }
+
+      .dark_mode .display-card hr,
+      .dark_mode .display-list hr {
+          background-color: #fff;
+      }
+
+  .dark_mode .overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .dark_mode #productGrid {
+      background-color: #333;
+  }
+
+  .dark_mode #productFilterBar {
+      border-color: #fff;
+  }
+
+  .dark_mode .btn-outline-primary {
+      background-color: #333;
+      border-color: #333;
+      border-color: #fff;
+  }
+
+      .dark_mode .btn-outline-primary.focus,
+      .dark_mode .btn-outline-primary:focus {
+          box-shadow: 0 0 0 0.2rem rgb(95 104 129 / 50%);
+      }
+
+  .dark_mode .btn-secondary,
+    .dark_mode .btn-danger {
+      background-color: #333;
+      border-color: #333;
+      color: #fff;
+  }
+  .dark_mode .btn-danger:hover {
+    background-color: #e20404;
+}
+
+  .dark_mode .btn-secondary:hover {
+      background-color: #555;
+  }
+
+  .dark_mode .dropdown-item {
+      color: #fff;
+  }
+	.dark_mode .list-group-item {
+	    background-color: #1e1e1e;
+	    color: #fff;
+	}
+  .dark_mode .card {
     background-color: #1e1e1e;
     color: #fff;
     border-color: #fff;
@@ -333,4 +411,34 @@
 
 .dark_mode .card-header {
     border-color: #fff;
+}
+  .dark_mode .avatar-container {
+    position: relative;
+    display: inline-block;
+  }
+  .dark_mode .change-avatar-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
+    transform: translate(50%, 50%);
+    background: transparent;
+    border: none;
+    color: #ffffff;
+  }
+  
+.dark_mode .btn-link:hover {
+    color: #0a6cff;
+}
+
+.dark_mode i.fa-rounded{
+    box-shadow: 0 0 4px #fff;
+}
+
+.dark_mode .input-group-text{
+    background-color: #999;
+    border: 0;
+}
+
+.dark_mode .bg-success{
+    background-color: #8aff8a !important; 
 }
