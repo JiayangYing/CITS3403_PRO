@@ -466,6 +466,26 @@ i.fa-rounded{
   color: #4e73df;
 }
 
+.custom-file-preview {
+  width: 100px;
+  height: 100px;
+  margin-top: 5px;
+}
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-container {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.main-image-checkbox {
+  margin-left: 5px;
+}
+
 table tr td .view-listing {
   padding-left: 5px;
 }
