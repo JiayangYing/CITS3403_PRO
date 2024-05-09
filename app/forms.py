@@ -13,12 +13,6 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
-class SignupForm(FlaskForm):
-    username = StringField('Username',validators=[DataRequired()])
-    password = PasswordField('Password',validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password',validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Sign Up')
-
 class RegistrationForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
@@ -46,8 +40,13 @@ class ProductForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-    def validate_email(self, email):
-        user = db.session.scalar(sa.select(User).where(User.email == email.data))
+    def validate_email_address(self, email):
+        user = db.session.scalar(sa.select(User).where(User.email_address == email.data))
         if user is not None:
             raise ValidationError('Please use a different email address.')
+        
+    def validate_shop_name(self, shopname):
+        print(not shopname.data)
+        if self.become_seller.data and not shopname.data:
+            raise ValidationError('Please enter a shop name if you wish to become a seller.')
 
