@@ -544,3 +544,30 @@ table .on-hover:hover .underline {
 .text-xs{
   font-size: 0.8rem;
 }
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.error {
+  color: #5a5c69;
+  font-size: 7rem;
+  position: relative;
+  line-height: 1;
+  width: 12.5rem;
+  animation: shake 0.5s ease-in-out infinite;
+}

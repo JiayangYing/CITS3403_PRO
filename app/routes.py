@@ -15,6 +15,11 @@ from flask import Blueprint
 def inject_global_variable():
     return dict(company="EcoHUB")
 
+@app.route('/error')
+@app.errorhandler(404)
+def error(error = None):
+    return render_template('/layout/page_not_found.html'), 404
+
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -32,6 +37,7 @@ def login():
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('home')
         session['is_seller'] = user.is_seller
+        flash('Successfully login!', 'success')
         return redirect(next_page)
     return render_template('users/login.html', title='Sign In', form=form)
 
@@ -101,21 +107,21 @@ def product_detail(product_id):
     return render_template('/product/product_detail.html', product=product)
 
 @app.route('/seller')
+@login_required
 def seller():
-    if(current_user.is_seller):
-        page = request.args.get('page', 1, type=int)
-        products = db.paginate(current_user.get_products(), page=page,
-                            per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-        
-        next_url = url_for('seller', page=products.next_num) \
-            if products.has_next else None
-        prev_url = url_for('seller', page=products.prev_num) \
-            if products.has_prev else None
-        return render_template('/seller/product.html', title=current_user.username,
-                            posts=products.items, next_url=next_url,
-                            prev_url=prev_url)
-    else:
-        return 'You are not seller.'
+    if(not current_user.is_seller):
+        return redirect(url_for('error'))
+    page = request.args.get('page', 1, type=int)
+    products = db.paginate(current_user.get_products(), page=page,
+                        per_page=app.config['POSTS_PER_PAGE'], error_out=False)
+    
+    next_url = url_for('seller', page=products.next_num) \
+        if products.has_next else None
+    prev_url = url_for('seller', page=products.prev_num) \
+        if products.has_prev else None
+    return render_template('/seller/product.html', title=current_user.username,
+                        posts=products.items, next_url=next_url,
+                        prev_url=prev_url)
 
 @app.route('/manage_product/add')
 def add_product_page():

@@ -29,7 +29,7 @@
                 {% endif %}
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                {% if (not current_user.is_anonymous) and session['is_seller'] %}
+                {% if (not current_user.is_anonymous) and current_user.is_seller %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('seller') }}">
                             <i class="fa-solid fa-diagram-predecessor"></i> Products
@@ -52,7 +52,7 @@
                 {% if not current_user.is_anonymous %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-solid fa-user"></i>
+                            <i class="fa-solid fa-user"></i> {{current_user.username}}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="profile">Profile</a></li>
