@@ -117,14 +117,21 @@
           box-shadow: 0 0 0 0.2rem rgb(95 104 129 / 50%);
       }
 
+      .dark_mode .btn-secondary,
+      .dark_mode .btn-success {
+        background-color: #0e8157;
+        border-color: #0e8157;
+    }
+    .dark_mode .btn-success:hover {
+      background-color: #10af75;
+  }
   .dark_mode .btn-secondary,
     .dark_mode .btn-danger {
-      background-color: #333;
-      border-color: #333;
-      color: #fff;
+      background-color: #a6180b;
+      border-color: #a6180b;
   }
   .dark_mode .btn-danger:hover {
-    background-color: #e20404;
+    background-color: #ca1606;
 }
 
   .dark_mode .btn-secondary:hover {
@@ -144,6 +151,9 @@
     border-color: #fff;
 }
 
+.dark_mode .btn-group label {
+    border-color: #fff !important;
+}
 .dark_mode .form-control-user {
     background-color: #303030;
     color: #fff;
@@ -257,9 +267,9 @@
     color: #fff;
 }
 
-    .dark_mode .list-group-item.list-group-item-action:hover {
-        color: #222;
-        background-color: #999;
+    .dark_mode .list-group-item.list-group-item-action:hover .row {
+        color: #eee;
+        background-color: #35353563;
     }
 
 .dark_mode .page-item.disabled .page-link {
@@ -460,3 +470,12 @@
 .dark_mode #swipeSupport{
     color: #fff;
 }
+
+.dark_mode table .on-hover .underline {
+    color: #74b7ff;
+  }
+
+  .dark_mode table .on-hover:hover .underline {
+    color: #2793fe;
+    text-decoration: underline;
+  }
