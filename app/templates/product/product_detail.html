@@ -33,7 +33,7 @@
                 <div class="d-flex align-items-start flex-column h-100">
                     <div>
                         <h2>{{ product.title }}</h2>
-                        <p class="price">AUD <span id="ProductPrice">{{ product.price }}</span></p>
+                        <p class="price">AUD <span id="ProductPrice">{{ '%0.2f'|format(product.price|float) }}</span></p>
                             
                         <p>Qty: {{ product.quantity }}</p>
                         <p><i class="fa-solid fa-location-dot me-2"></i>{{ product.location }}</p>
