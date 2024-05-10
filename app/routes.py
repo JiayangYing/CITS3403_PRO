@@ -72,6 +72,8 @@ products = [
 
 @app.route('/product')
 def product():
+    query = sa.select(Product).order_by(Product.timestamp.desc()).limit(10)
+    products = db.session.scalars(query).all()
     return render_template('/product/product.html', products=products)
 
 @app.route('/categories')
