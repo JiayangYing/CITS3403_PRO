@@ -93,9 +93,7 @@ def categories():
 
 @app.route('/product/<product_id>')
 def product_detail(product_id):
-    print(product_id)
-    product = {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
-               'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10}
+    product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
     return render_template('/product/product_detail.html', product=product)
 
 @app.route('/seller')
