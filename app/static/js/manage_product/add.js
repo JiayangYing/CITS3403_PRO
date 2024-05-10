@@ -8,9 +8,10 @@ function handleFileSelect(event) {
 
     // Clear any existing content in the preview container
     preview.innerHTML = '';
+
+    const n = files.length>=6 ? 6 : files.length
     for (let i = 0; i < files.length; i++) { 
         const file = files[i]; 
-
         if (!file.type.match('image.*')) { 
             continue; 
         }
@@ -26,13 +27,13 @@ function handleFileSelect(event) {
                 </div>
             `;
             preview.innerHTML += containerHTML;
+
+            $(".form-check input:checkbox").on('change', function(e){
+                $(".form-check input:checkbox").prop('checked', false)
+                $(this).prop('checked', true)
+            });
+    
         }; 
-
-        $(".form-check input:checkbox").on('change', function(e){
-            $(".form-check input:checkbox").prop('checked', false)
-            $(this).prop('checked', true)
-        });
-
         reader.readAsDataURL(file); 
     }
 }
