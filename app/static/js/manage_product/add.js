@@ -10,7 +10,7 @@ function handleFileSelect(event) {
     preview.innerHTML = '';
 
     const n = files.length>=6 ? 6 : files.length
-    for (let i = 0; i < files.length; i++) { 
+    for (let i = 0; i < n; i++) { 
         const file = files[i]; 
         if (!file.type.match('image.*')) { 
             continue; 
