@@ -3,6 +3,31 @@
   background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
 }
 
+.alert-dismissible .close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  padding: .75rem 1.25rem;
+  color: inherit;
+}
+
+button.close {
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+}
+
+.close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
+}
+
 .login-container h1 {
   letter-spacing: 5px;
 }
@@ -505,6 +530,10 @@ table tbody .rejected {
 tbody tr:not([class*="text-small"]):hover td {
     background-color: rgba(211, 211, 211, 0.3);
     color: #000;
+}
+
+table .on-hover .underline {
+  color: #004c9ea2;
 }
 
 table .on-hover:hover .underline {
