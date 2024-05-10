@@ -456,3 +456,7 @@
 .dark_mode .bg-success{
     background-color: #8aff8a !important; 
 }
+
+.dark_mode #swipeSupport{
+    color: #fff;
+}
