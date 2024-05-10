@@ -467,6 +467,10 @@
     background-color: #8aff8a !important; 
 }
 
+.dark_mode #swipeSupport{
+    color: #fff;
+}
+
 .dark_mode table .on-hover .underline {
     color: #74b7ff;
   }
