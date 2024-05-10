@@ -102,10 +102,20 @@ def product_detail(product_id):
 
 @app.route('/seller')
 def seller():
-    products = [{ 'id':1,'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
-               'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10,
-               'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
-    return render_template('/seller/product.html', products=products)
+    if(current_user.is_seller):
+        page = request.args.get('page', 1, type=int)
+        products = db.paginate(current_user.get_products(), page=page,
+                            per_page=app.config['POSTS_PER_PAGE'], error_out=False)
+        
+        next_url = url_for('seller', page=products.next_num) \
+            if products.has_next else None
+        prev_url = url_for('seller', page=products.prev_num) \
+            if products.has_prev else None
+        return render_template('/seller/product.html', title=current_user.username,
+                            posts=products.items, next_url=next_url,
+                            prev_url=prev_url)
+    else:
+        return 'You are not seller.'
 
 @app.route('/manage_product/add')
 def add_product_page():
