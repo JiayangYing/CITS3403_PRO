@@ -1,16 +1,12 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint, session
 from flask_login import current_user, login_user,login_required,logout_user
-from datetime import datetime
-from flask_login import current_user, login_user
-import sqlalchemy as sa
-from app.models import User,Product
-import os
-from urllib.parse import urlsplit
 from app import app,db
+from app.models import User,Product
 from app.forms import LoginForm,RegistrationForm,ProductForm,EditProfileForm
-from flask import Blueprint
-
-    
+from urllib.parse import urlsplit
+import os
+import sqlalchemy as sa
+  
 @app.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
@@ -131,7 +127,6 @@ def add_product_page():
 def profile():
     return render_template('/users/profile.html', profile=profile)
 
-    
 @app.route('/add_product', methods=['GET', 'POST'])
 @login_required
 def add_product():
@@ -158,8 +153,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-
-
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -176,7 +169,6 @@ def edit_profile():
     return render_template('users/profile.html', title='Edit Profile',
                            form=form)
 
-
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
@@ -186,6 +178,3 @@ def login():
 @auth.route('/logout')
 def logout():
     return "You have been logged out."
-
-
-
