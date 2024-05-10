@@ -28,7 +28,9 @@
                                     <br /><br />
                                     <h1 class="h4 mb-4">SIGN UP</h1>
                                 </div>
-                                <div id="AlertModalDiv" class="hidden"></div>
+                                <div id="AlertModalDiv">
+                                    {% include "/layout/alert_modal.html" %}
+                                </div>
                                 <form class="user" method="POST" action="/signup">
                                     {{ form.hidden_tag() }}
                                     <div class="form-group row">

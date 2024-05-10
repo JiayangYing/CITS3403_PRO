@@ -25,7 +25,9 @@
                     <br /><br />
                     <h1 class="h4 mb-4">LOGIN</h1>
                   </div>
-                  <div id="AlertModalDiv" class="hidden"> </div>
+                  <div id="AlertModalDiv">
+                    {% include "/layout/alert_modal.html" %}
+                  </div>
                   <form class="user" action="/login"  method="POST">
                   {{ form.hidden_tag() }}
                   <div class="form-group">
@@ -45,7 +47,7 @@
                   <div class="form-group">
                     <div>
                       {{ form.remember_me(class="form-check-input") }}
-                      <label class="small" for="customCheck">Remember Me</label>
+                      <label class="small" for="remember_me">Remember Me</label>
                     </div>
                   </div>
                   {{ form.submit(class="btn btn-outline-secondary btn-block") }}
