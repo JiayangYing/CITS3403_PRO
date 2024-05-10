@@ -20,8 +20,14 @@
                         Category
                     </span>
                     <span class="standard-form-value">
-                        <input asp-for="FdTicket" class="form-control" />
-                        <span asp-validation-for="FdTicket"></span>
+                        <div class="input-group">
+                            <select class="form-select" id="inputGroupSelect01">
+                                <option selected>Clothing & Accessories</option>
+                                <option value="1">Home & Garden</option>
+                                <option value="2">Electronics</option>
+                                <option value="3">Other</option>
+                            </select>
+                        </div>
                     </span>
                 </div>
                 <div class="standard-form-row">
@@ -29,8 +35,10 @@
                         Price
                     </span>
                     <span class="standard-form-value">
-                        <input asp-for="FdTicket" class="form-control" />
-                        <span asp-validation-for="FdTicket"></span>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input class="form-control" />
+                        </div>
                     </span>
                 </div>
                 <div class="standard-form-row">
@@ -38,8 +46,14 @@
                         Condition
                     </span>
                     <span class="standard-form-value">
-                        <input asp-for="FdTicket" class="form-control" />
-                        <span asp-validation-for="FdTicket"></span>
+                        <div class="input-group">
+                            <select class="form-select" id="inputGroupSelect01">
+                                <option selected>Brand New</option>
+                                <option value="1">Used - Good</option>
+                                <option value="2">Used - Fair</option>
+                                <option value="3">Other</option>
+                            </select>
+                        </div>
                     </span>
                 </div>
                 <div class="standard-form-row">
@@ -47,8 +61,7 @@
                         Location
                     </span>
                     <span class="standard-form-value">
-                        <input asp-for="FdTicket" class="form-control" />
-                        <span asp-validation-for="FdTicket"></span>
+                        <input class="form-control" />
                     </span>
                 </div>
                 <div class="standard-form-row">
@@ -56,8 +69,7 @@
                         Qty
                     </span>
                     <span class="standard-form-value">
-                        <input asp-for="FdTicket" class="form-control" />
-                        <span asp-validation-for="FdTicket"></span>
+                        <input class="form-control" type"number" />
                     </span>
                 </div>
             </div>
@@ -67,27 +79,7 @@
                         Description
                     </span>
                     <span class="standard-form-value">
-                        <textarea class="form-control mh-100" id="remark" rows="3" placeholder="Enter Description (Optional)" style="height: 100px;"></textarea>
-                    </span>
-                </div>
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        <span>
-                            Main Image<br />
-                            <small class="title-details">
-                                [636x165px]<br />
-                                Format-[PNG, JPG, JPEG]
-                            </small>
-                        </span>
-                    </span>
-                    <span class="standard-form-value">
-                        <div class="input-group file-upload-group">
-                            <div name="ManualUpload">
-                                <input type="file" class="custom-file-input" accept="image/*">
-                                <label class="custom-file-label" for="RegisterSplashImage">Upload</label>
-                            </div>
-                            <img src="" class="custom-file-preview" alt="" />
-                        </div>
+                        <textarea class="form-control mh-100" id="remark" rows="3" placeholder="Enter Description" style="height: 100px;"></textarea>
                     </span>
                 </div>
                 <div class="standard-form-row">
@@ -103,10 +95,17 @@
                     <span class="standard-form-value">
                         <div class="input-group file-upload-group">
                             <div name="ManualUpload">
-                                <input type="file" class="custom-file-input" accept="image/*">
-                                <label class="custom-file-label" for="RegisterSplashImage">Upload</label>
+                                <input type="file" class="custom-file-input" id="imageInput" accept="image/*" multiple>
+                                <label class="custom-file-label" for="imageInput">Upload</label>
                             </div>
-                            <img src="" class="custom-file-preview" alt="" />
+                            <div class="alert alert-info alert-dismissible">
+                                <h5><i class="icon fa fa-info-circle"></i> Information:</h5>
+                                <div class="text-xs">
+                                    <p class="mb-1">1. Max. 6 Images per Product</p>
+                                    <p class="mb-1">2. Tick the box beside the image to set it as the main image.</p>
+                                </div>
+                            </div>
+                            <div id="imagePreview" class="image-preview"></div>
                         </div>
                     </span>
                 </div>

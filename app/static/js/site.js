@@ -96,7 +96,7 @@ function CloseAlertDiv(divId) {
         divId = "#AlertModalDiv";
     }
 
-    window.$(divId).addClass("hidden");
+    window.$(divId).addClass("d-none");
 }
 
 function ScrollToTopPage() {

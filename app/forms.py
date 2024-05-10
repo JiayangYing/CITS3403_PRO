@@ -12,7 +12,7 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    submit = SubmitField('Log In')
 
 class RegistrationForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
@@ -23,7 +23,7 @@ class RegistrationForm(FlaskForm):
     re_password = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     become_seller = BooleanField('Become a Seller')
     shop_name = StringField('Shop Name')
-    submit = SubmitField('Register')
+    submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
         user = db.session.scalar(sa.select(User).where(User.username == username.data))

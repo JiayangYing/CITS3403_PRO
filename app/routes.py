@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
+from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint, session
 from flask_login import current_user, login_user,login_required,logout_user
 from datetime import datetime
 from flask_login import current_user, login_user
@@ -25,20 +25,19 @@ def login():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('home')
+        session['is_seller'] = user.is_seller
         return redirect(next_page)
     return render_template('users/login.html', title='Sign In', form=form)
 
 @app.route('/home')
-@login_required
 def home():
-    print('aaaaa')
-    return render_template('/home/home.html',hideNav = True)
+    return render_template('/home/home.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -51,9 +50,9 @@ def signup():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('regsiter successfully {}'.format(form.username.data))
-        return redirect(url_for('home'))
-    return render_template('/users/signup.html', form=form,hideNav=True)
+        flash('regsiter successfully {}'.format(form.username.data), 'success')
+        return redirect(url_for('login'))
+    return render_template('/users/signup.html', form=form)
 
 @app.route('/sdg_img_dirs', methods=['POST'])
 def get_sdg_img_dirs():
