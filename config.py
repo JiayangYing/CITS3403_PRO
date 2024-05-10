@@ -7,10 +7,11 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'app.db')
     
 class DevelopmentConfig(Config):
-    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir,'app.db')
 
 class TestingConfig(Config):
-    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory"
+    TESING = True
     
 class ProductionConfig(Config):
     pass
