@@ -105,9 +105,6 @@ def seller():
                'category':'cloth', 'condition':'new', 'isActive':False, 'createdOn': datetime.now(), 'createdBy': 'user1'}]*2
     return render_template('/seller/product.html', products=products)
 
-@app.route('/manage_product/add')
-def add_product_page():
-    return render_template('/manage_product/add.html')
 
 @app.route('/profile')
 def profile():
@@ -117,7 +114,7 @@ def profile():
 def edit_profile():
     return render_template('/users/edit_profile.html', edit_profile=edit_profile)
     
-@app.route('/add_product', methods=['GET', 'POST'])
+@app.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
     form = ProductForm()
@@ -134,8 +131,8 @@ def add_product():
         db.session.add(product)
         db.session.commit()
         flash('Product added successfully!')
-        return redirect(url_for('home'))
-    return render_template('add_product.html', form=form)
+        return redirect(url_for('seller'))
+    return render_template('/manage_product/add.html', form=form)
 
 @app.route('/logout')
 @login_required
