@@ -54,7 +54,7 @@
                       <label class="small" for="remember_me">Remember Me</label>
                     </div>
                   </div>
-                  {{ form.submit(class="btn btn-outline-secondary btn-block") }}
+                  {{ form.submit(class="btn btn-outline-secondary btn-block", onclick="saveCredentials()") }}
                   <hr />
                     <a href="index" class="btn btn-outline-danger btn-block">
                       <i class="fab fa-google fa-fw"></i> Login with Google
@@ -100,4 +100,31 @@
     {% include '/layout/footer.html' %}
     {% endblock %}
   </body>
+  <script>
+    // Function to save user credentials to local storage
+    function saveCredentials() {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        var rememberMe = document.getElementById('remember_me').checked;
+
+        if (rememberMe) {
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password);
+        } else {
+            localStorage.removeItem('username');
+            localStorage.removeItem('password');
+        }
+    }
+
+    // Function to populate form fields with stored credentials
+    window.onload = function() {
+        var username = localStorage.getItem('username');
+        var password = localStorage.getItem('password');
+        if (username && password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            document.getElementById('remember_me').checked = true;
+        }
+    }
+</script>
 </html>
