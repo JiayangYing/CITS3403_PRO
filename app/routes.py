@@ -52,7 +52,7 @@ def signup():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('regsiter successfully {}'.format(form.username.data), 'success')
+        flash('Register successfully {}'.format(form.username.data), 'success')
         return redirect(url_for('login'))
     return render_template('/users/signup.html', form=form)
 
