@@ -544,3 +544,13 @@ table .on-hover:hover .underline {
 .text-xs{
   font-size: 0.8rem;
 }
+
+.sdg-container {
+  font-size: 16px;
+}
+
+#sdgImages img {
+  padding: 0;
+  width: 100%;
+  height: auto;
+}

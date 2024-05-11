@@ -7,7 +7,9 @@ from app.models import User,Product
 import os
 from urllib.parse import urlsplit
 from app import app,db
-from app.forms import LoginForm,RegistrationForm,ProductForm
+from app.forms import LoginForm,RegistrationForm,ProductForm,EditProfileForm
+from flask import Blueprint
+
     
 @app.context_processor
 def inject_global_variable():
@@ -110,9 +112,6 @@ def seller():
 def profile():
     return render_template('/users/profile.html', profile=profile)
 
-@app.route('/edit_profile')
-def edit_profile():
-    return render_template('/users/edit_profile.html', edit_profile=edit_profile)
     
 @app.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
@@ -141,7 +140,34 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/get_orders/<product_id>', methods=['POST'])
-def get_product_orders(product_id):
-    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'created_on': datetime.now(), 'qty': 2, 'status':'pending'}]*2
-    return jsonify({'orders': orders})
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+    return render_template('users/profile.html', title='Edit Profile',
+                           form=form)
+
+
+auth = Blueprint('auth', __name__)
+
+@auth.route('/login')
+def login():
+    return "This is the login page."
+
+@auth.route('/logout')
+def logout():
+    return "You have been logged out."
+
+
+
