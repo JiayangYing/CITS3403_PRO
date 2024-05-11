@@ -177,3 +177,10 @@ def login():
 @auth.route('/logout')
 def logout():
     return "You have been logged out."
+
+@app.route('/forget_password')
+def f_password():
+    return render_template('/users/f_password.html', forget_password=f_password)
+
+
+

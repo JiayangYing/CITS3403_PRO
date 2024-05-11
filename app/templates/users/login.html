@@ -64,7 +64,7 @@
                     </a>
                     <hr />
                     <div class="text-center">
-                      <a class="btn btn-link" href="index">Forgot Password?</a>
+                      <a class="btn btn-link" href="#" id="forgotPasswordBtn">Forgot Password?</a>
                     </div>
                     <div class="text-center">
                       <a class="btn btn-link" href="signup">Sign up now!</a>
@@ -77,6 +77,25 @@
         </div>
       </div>
     </div>
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h5>
+                  <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <p>Please enter your email address to reset your password:</p>
+                  <input type="email" class="form-control mb-3" id="forgotPasswordEmail" placeholder="Your Email">
+                  <p>If your email is valid and registed in our system, an email will be sent to reset your password.</p>
+              </div>
+              <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button class="btn btn-primary me-md-2" type="button" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-danger" type="button" id="confirmForgotPasswordBtn">Reset Password</button>
+              </div>
+          </div>
+      </div>
+  </div>
     {% block footer %}
     {% include '/layout/footer.html' %}
     {% endblock %}
