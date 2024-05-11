@@ -34,6 +34,8 @@ class User(UserMixin, db.Model):
         
         return check_password_hash(self.password_hash, password)
     
+    def get_products(self):
+        return sa.select(Product).where(Product.user_id == self.id)
 
     
 class Product(db.Model):
@@ -54,13 +56,3 @@ class Product(db.Model):
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
     
-
-
-
-
-
-
-
-
-    
-
