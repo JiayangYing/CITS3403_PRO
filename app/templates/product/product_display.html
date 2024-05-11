@@ -17,11 +17,9 @@
     </div>
     <div class="display-container">
         <div class="display-products">
-        {% for _ in range(3) %}
             {% for product in products %}
                 {% include "/product/display_card.html" %}
             {% endfor %}
-        {% endfor %}
         </div>
     </div>
 </div>
@@ -30,11 +28,9 @@
 <div class="row g-0 justify-content-center">
     <div class="display-container">
         <div class="display-products">
-        {% for _ in range(3) %}
             {% for product in products %}
                 {% include "/product/display_card.html" %}
             {% endfor %}
-        {% endfor %}
         </div>
     </div>
 </div>
@@ -43,11 +39,9 @@
 <div class="row g-0 justify-content-center">
     <div class="display-container">
         <div class="display-products">
-        {% for _ in range(3) %}
             {% for product in products %}
                 {% include "/product/display_card.html" %}
             {% endfor %}
-        {% endfor %}
         </div>
     </div>
 </div>
@@ -56,10 +50,8 @@
 <div class="row g-0 justify-content-center">
     <div class="display-container">
         <div class="display-products">
-        {% for _ in range(3) %}
-            {% for product in products %}
-                {% include "/product/display_card.html" %}
-            {% endfor %}
+        {% for product in products %}
+            {% include "/product/display_card.html" %}
         {% endfor %}
         </div>
     </div>

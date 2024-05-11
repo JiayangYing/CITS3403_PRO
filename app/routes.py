@@ -76,6 +76,8 @@ products = [
 
 @app.route('/product')
 def product():
+    query = sa.select(Product).order_by(Product.timestamp.desc()).limit(10)
+    products = db.session.scalars(query).all()
     return render_template('/product/product.html', products=products)
 
 @app.route('/categories')
@@ -97,9 +99,7 @@ def categories():
 
 @app.route('/product/<product_id>')
 def product_detail(product_id):
-    print(product_id)
-    product = {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 
-               'imgs':['product_image/image.jpg','product_image/image2.jpg','product_image/image3.jpg']*2, 'description':'This is the description of the Cloth1.'*10}
+    product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
     return render_template('/product/product_detail.html', product=product)
 
 @app.route('/seller')
@@ -119,15 +119,13 @@ def seller():
                         posts=products.items, next_url=next_url,
                         prev_url=prev_url)
 
-@app.route('/manage_product/add')
-def add_product_page():
-    return render_template('/manage_product/add.html')
 
 @app.route('/profile')
 def profile():
     return render_template('/users/profile.html', profile=profile)
 
-@app.route('/add_product', methods=['GET', 'POST'])
+    
+@app.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
     form = ProductForm()
@@ -139,13 +137,14 @@ def add_product():
             quantity=form.quantity.data,
             condition=form.condition.data,
             location=form.location.data,  # Handling new field
+            description = form.description.data,
             owner = current_user
         )
         db.session.add(product)
         db.session.commit()
         flash('Product added successfully!')
-        return redirect(url_for('home'))
-    return render_template('add_product.html', form=form)
+        return redirect(url_for('seller'))
+    return render_template('/manage_product/add.html', form=form)
 
 @app.route('/logout')
 @login_required

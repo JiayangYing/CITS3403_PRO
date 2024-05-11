@@ -42,11 +42,21 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please enter a shop name if you wish to become a seller.')
         
 class ProductForm(FlaskForm):
-    product_name = StringField('Product Name', validators=[DataRequired(), Length(min=2, max=100)])
-    category = SelectField('Category', choices=[('Electronics', 'Electronics'), ('Books', 'Books'), ('Clothing', 'Clothing'), ('Home', 'Home')], validators=[DataRequired()])
-    price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0.01)]) # type: ignore
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)]) # type: ignore
-    condition = SelectField('Condition', choices=[('New', 'New'), ('Used', 'Used')], validators=[DataRequired()])
+    product_name = StringField('Product Name', validators=[
+        DataRequired(), Length(min=1, max=100)])
+    price = DecimalField('Price', validators=[
+        DataRequired(), NumberRange(min=0)])
+    quantity = IntegerField('Quantity', validators=[
+        DataRequired(), NumberRange(min=1)])
+    condition = SelectField('Condition', choices=[
+        ('new', 'New'), ('used', 'Used')], validators=[DataRequired()])
+    category = SelectField('Category', choices=[
+        ('Electronics', 'Electronics'), ('Books', 'Books'), ('Clothing', 'Clothing'), ('Home', 'Home')], validators=[DataRequired()])
+    location = StringField('Location', validators=[
+        DataRequired(), Length(min=1, max=100)])
+    description = StringField('Description', validators=[
+        DataRequired(), Length(min=1, max=200)])
+    submit = SubmitField('Submit')
 
 class EditProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
