@@ -124,9 +124,6 @@ def seller():
 def profile():
     return render_template('/users/profile.html', profile=profile)
 
-@app.route('/edit_profile')
-def edit_profile():
-    return render_template('/users/edit_profile.html', edit_profile=edit_profile)
     
 @app.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
