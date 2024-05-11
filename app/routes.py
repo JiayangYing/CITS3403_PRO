@@ -1,19 +1,20 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint, session
 from flask_login import current_user, login_user,login_required,logout_user
-from datetime import datetime
-from flask_login import current_user, login_user
-import sqlalchemy as sa
-from app.models import User,Product
-import os
-from urllib.parse import urlsplit
 from app import app,db
+from app.models import User,Product
 from app.forms import LoginForm,RegistrationForm,ProductForm,EditProfileForm
-from flask import Blueprint
-
-    
+from urllib.parse import urlsplit
+import os
+import sqlalchemy as sa
+  
 @app.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
+
+@app.route('/error')
+@app.errorhandler(404)
+def error(error = None):
+    return render_template('/layout/page_not_found.html'), 404
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -32,6 +33,7 @@ def login():
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('home')
         session['is_seller'] = user.is_seller
+        flash('Successfully login!', 'success')
         return redirect(next_page)
     return render_template('users/login.html', title='Sign In', form=form)
 
@@ -101,21 +103,21 @@ def product_detail(product_id):
     return render_template('/product/product_detail.html', product=product)
 
 @app.route('/seller')
+@login_required
 def seller():
-    if(current_user.is_seller):
-        page = request.args.get('page', 1, type=int)
-        products = db.paginate(current_user.get_products(), page=page,
-                            per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-        
-        next_url = url_for('seller', page=products.next_num) \
-            if products.has_next else None
-        prev_url = url_for('seller', page=products.prev_num) \
-            if products.has_prev else None
-        return render_template('/seller/product.html', title=current_user.username,
-                            posts=products.items, next_url=next_url,
-                            prev_url=prev_url)
-    else:
-        return 'You are not seller.'
+    if(not current_user.is_seller):
+        return redirect(url_for('error'))
+    page = request.args.get('page', 1, type=int)
+    products = db.paginate(current_user.get_products(), page=page,
+                        per_page=app.config['POSTS_PER_PAGE'], error_out=False)
+    
+    next_url = url_for('seller', page=products.next_num) \
+        if products.has_next else None
+    prev_url = url_for('seller', page=products.prev_num) \
+        if products.has_prev else None
+    return render_template('/seller/product.html', title=current_user.username,
+                        posts=products.items, next_url=next_url,
+                        prev_url=prev_url)
 
 @app.route('/manage_product/add')
 def add_product_page():
@@ -125,7 +127,6 @@ def add_product_page():
 def profile():
     return render_template('/users/profile.html', profile=profile)
 
-    
 @app.route('/add_product', methods=['GET', 'POST'])
 @login_required
 def add_product():
@@ -152,8 +153,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-
-
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -170,7 +169,6 @@ def edit_profile():
     return render_template('users/profile.html', title='Edit Profile',
                            form=form)
 
-
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
@@ -180,6 +178,3 @@ def login():
 @auth.route('/logout')
 def logout():
     return "You have been logged out."
-
-
-
