@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dark_site.css') }}" type="text/css" />
+    <link rel="icon" href="{{ url_for('static', filename='img/company-logo-dark.ico') }}">
   </head>
   <body class="bg-gradient">
     {% block content %} {% include '/layout/nav_bar.html' %} {% endblock %}
