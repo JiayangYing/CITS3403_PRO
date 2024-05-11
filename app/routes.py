@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint, session
+from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
 from flask_login import current_user, login_user,login_required,logout_user
 from app import app,db
 from app.models import User,Product
@@ -32,7 +32,6 @@ def login():
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('home')
-        session['is_seller'] = user.is_seller
         flash('Successfully login!', 'success')
         return redirect(next_page)
     return render_template('users/login.html', title='Sign In', form=form)
@@ -150,6 +149,7 @@ def add_product():
 @login_required
 def logout():
     logout_user()
+    flash('Logout successfully', 'success')
     return redirect(url_for('login'))
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
