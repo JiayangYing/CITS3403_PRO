@@ -1,62 +1,81 @@
-<div class="container">
-    <h2>SDG 17: Partnerships for the Goals</h2>
+<div class="container sdg-container">
+    <h1>SDG 17: Partnerships for the Goals</h1>
     <p>Goal 17 aims to strengthen global partnerships to support and achieve the ambitious targets of the 2030 Agenda.</p>
     <div id="sdgImages" class="sdg-images">
     </div>
-</div>
-
-<div class="modal fade" id="SDG_13Modal" tabindex="-1" aria-labelledby="closedSDG_13ModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header text-center">
-                <h1 class="modal-title fs-5" id="SDG_13ModalLabel">
-                    13 CLIMATE ACTION
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Take urgent action to combat climate change and its impacts
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="SDG_14Modal" tabindex="-1" role="dialog" aria-labelledby="closedSDG_14ModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header text-center">
-                <h1 class="modal-title fs-5" id="SDG_14ModalLabel">
-                    14 LIFE BELOW WATER
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Conserve and sustainably use the oceans, seas and marine resources for sustainable development
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    {% set id = 8 %}
+    <div class="modal fade" id="SDG_{{id}}Modal" tabindex="-1" aria-labelledby="closedSDG_{{id}}ModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="SDG_{{id}}ModalLabel">
+                        8 DECENT WORK AND ECONOMIC GROWTH
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{company}} encourages responsible consumption and production by facilitating the exchange of pre-loved goods. Highlight the benefits of reducing waste and promoting circular economy practices, which align with Australia's commitment to sustainability and environmental stewardship.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-    
-<div class="modal fade" id="SDG_15Modal" tabindex="-1" role="dialog" aria-labelledby="closedSDG_15ModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header text-center">
-                <h1 class="modal-title fs-5" id="SDG_15ModalLabel">
-                    15 LIFE ON LAND
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    {% set id = 10 %}
+    <div class="modal fade" id="SDG_{{id}}Modal" tabindex="-1" aria-labelledby="closedSDG_{{id}}ModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="SDG_{{id}}ModalLabel">
+                        10 REDUCED INEQUALITIES
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{company}} supports economic growth by providing a platform for Australians to buy and sell second-hand items. Emphasize the economic opportunities for individuals and small businesses to earn income and contribute to the local economy through sustainable trade practices.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="modal-body">
-                Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss
+        </div>
+    </div>
+    {% set id = 12 %}
+    <div class="modal fade" id="SDG_{{id}}Modal" tabindex="-1" aria-labelledby="closedSDG_{{id}}ModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="SDG_{{id}}ModalLabel">
+                        12 RESPONSIBLE CONSUMPTION AND PRODUCTION
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{company}} encourages responsible consumption and production by facilitating the exchange of pre-loved goods. Highlight the benefits of reducing waste and promoting circular economy practices, which align with Australia's commitment to sustainability and environmental stewardship.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+    {% set id = 13 %}
+    <div class="modal fade" id="SDG_{{id}}Modal" tabindex="-1" aria-labelledby="closedSDG_{{id}}ModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="SDG_{{id}}ModalLabel">
+                        13 CLIMATE ACTION
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{company}} contributes to climate action by promoting the reuse and recycling of products, reducing the carbon footprint associated with manufacturing and transportation. Showcase the environmental benefits of choosing second-hand goods and encourage Australians to make eco-conscious purchasing decisions.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
