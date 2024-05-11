@@ -54,7 +54,7 @@ class ProductForm(FlaskForm):
         ('Electronics', 'Electronics'), ('Books', 'Books'), ('Clothing', 'Clothing'), ('Home', 'Home')], validators=[DataRequired()])
     location = StringField('Location', validators=[
         DataRequired(), Length(min=1, max=100)])
-    description = StringField('Product Name', validators=[
+    description = StringField('Description', validators=[
         DataRequired(), Length(min=1, max=200)])
     submit = SubmitField('Submit')
 
