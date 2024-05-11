@@ -12,20 +12,32 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if not current_user.is_anonymous %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Categories
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('product') }}">
+                            <i class="fa-solid fa-earth-oceania"></i> Explore
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-icons"></i> Categories
+                        </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Clothing & Accessories</a></li>
                             <li><a class="dropdown-item" href="#">Home & Garden</a></li>
                             <li><a class="dropdown-item" href="#">Electronics</a></li>
                             <li><a class="dropdown-item" href="#">Books & Media</a></li>
                             <li><a class="dropdown-item" href="#">Sports & Leisure</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Others</a></li>
-                            <!-- add more later la -->
+                          </ul>
                         </ul>
                     </li>
+                    <form class="d-flex justify-content-center" role="search">
+                        <div class="col-auto"></div>
+                        <input class="form-control me-2 col-8" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                        <div class="col-auto"></div>
+                    </form>
                 {% endif %}
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -35,16 +47,8 @@
                             <i class="fa-solid fa-diagram-predecessor"></i> Products
                         </a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
-                {% endif %}
-                {% if not hideNav %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-bell"></i> Notifications
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                {% endif %}
                     <a class="nav-link" href="#" id="toggleDarkTheme">
                         <i class="fas fa-moon"></i> <span data-dark="Dark" data-light="Light">Dark</span> Theme
                     </a>
