@@ -130,6 +130,8 @@ def add_product():
             condition=form.condition.data,
             location=form.location.data,  # Handling new field
             owner = current_user
+        
+
         )
         db.session.add(product)
         db.session.commit()

@@ -44,15 +44,18 @@ class RegistrationForm(FlaskForm):
 class ProductForm(FlaskForm):
     product_name = StringField('Product Name', validators=[
         DataRequired(), Length(min=1, max=100)])
-    category = StringField('Category', validators=[
-        DataRequired(), Length(min=1, max=50)])
     price = DecimalField('Price', validators=[
         DataRequired(), NumberRange(min=0)])
     quantity = IntegerField('Quantity', validators=[
         DataRequired(), NumberRange(min=1)])
     condition = SelectField('Condition', choices=[
         ('new', 'New'), ('used', 'Used')], validators=[DataRequired()])
+    category = SelectField('Category', choices=[
+        ('Electronics', 'Electronics'), ('Books', 'Books'), ('Clothing', 'Clothing'), ('Home', 'Home')], validators=[DataRequired()])
     location = StringField('Location', validators=[
         DataRequired(), Length(min=1, max=100)])
+    description = StringField('Product Name', validators=[
+        DataRequired(), Length(min=1, max=200)])
     submit = SubmitField('Submit')
+
 
