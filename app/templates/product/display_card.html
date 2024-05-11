@@ -1,4 +1,4 @@
-<div class="display-card">
+<div class="display-card" data-id="{{ product.id }}">
     <div class="card">
         <img class="rounded" src=/static/img/{{ product.img }} height="120" alt="{{ product.title }}">
         <div class="card-body">
@@ -8,7 +8,7 @@
                 </span>
             </h5>
             <div class="d-flex justify-content-start">
-                <p class="card-text">AUD {{ product.price }}</p>
+                <p class="card-text">AUD {{ '%0.2f'|format(product.price|float) }}</p>
             </div>
             <hr>
             <div class="d-flex justify-content-between">
