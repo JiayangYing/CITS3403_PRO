@@ -58,7 +58,6 @@ class ProductForm(FlaskForm):
         DataRequired(), Length(min=1, max=200)])
     submit = SubmitField('Submit')
 
-
 class EditProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
