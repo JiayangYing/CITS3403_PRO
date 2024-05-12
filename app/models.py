@@ -13,7 +13,7 @@ class User(UserMixin, db.Model):
     last_name: so.Mapped[str] = so.mapped_column(sa.String(64), unique=False)
     is_seller : so.Mapped[bool] = so.mapped_column(unique=False, default=False)
     is_active : so.Mapped[bool] = so.mapped_column(unique=False, default=True)
-    is_verified : so.Mapped[bool] = so.mapped_column(unique=False, nullable=True, default=False)
+    is_verified : so.Mapped[bool] = so.mapped_column(unique=False, default=False)
     email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     postcode: so.Mapped[int] = so.mapped_column(unique=False, nullable=True)
