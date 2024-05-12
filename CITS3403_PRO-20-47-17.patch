@@ -1,0 +1,494 @@
+diff --git forkSrcPrefix/app/templates/layout/alert_modal.html forkDstPrefix/app/templates/layout/alert_modal.html
+index a96212628282bf93a26c29cf1149b623ebb0593b..e8c6bb3a2c2c2274770a409f06691c993e2565fe 100644
+--- forkSrcPrefix/app/templates/layout/alert_modal.html
++++ forkDstPrefix/app/templates/layout/alert_modal.html
+@@ -1,7 +1,11 @@
++{% if not divId %}
++    {% set divId = '#AlertModalDiv' %}
++{% endif %}
++
+ {% with errors = get_flashed_messages(category_filter=["error"]) %}
+     {% if errors or (form and form.errors) %}
+         <div class="alert alert-danger alert-dismissible">
+-            <button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('#AlertModalDiv')">&times;</button>
++            <button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('{{divId}}')">&times;</button>
+             <h4><i class="icon fa fa-ban me-2"></i>Failed</h4>
+             {% for msg in errors %}
+                 <div class="mb-1">{{ msg }}</div>
+@@ -20,7 +24,7 @@
+ {% with successes = get_flashed_messages(category_filter=["success"]) %}
+     {% if successes %}
+         <div class="alert alert-success alert-dismissible">
+-            <button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('#AlertModalDiv')">&times;</button>
++            <button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('{{divId}}')">&times;</button>
+             <h4><i class="icon fa fa-check me-2"></i>Success</h4>
+             {% for msg in successes %}
+                 <div class="mb-1">{{ msg }}</div>
+diff --git forkSrcPrefix/app/templates/users/edit_profile.html forkDstPrefix/app/templates/users/edit_profile.html
+index 111b521668b6e71aafc6e7f6202f1ef4eacfbf7c..cf2cf97e2a6f42dc4c2436555661c867cde0a4cf 100644
+--- forkSrcPrefix/app/templates/users/edit_profile.html
++++ forkDstPrefix/app/templates/users/edit_profile.html
+@@ -8,6 +8,11 @@
+             <div class="col-md-6">
+                 <div class="card border-0 shadow">
+                     <div class="card-body p-5">
++                        {% if not form.errors %}
++                            <div id="AlertModalDiv">
++                            {% include "/layout/alert_modal.html" %}
++                            </div>
++                        {% endif %}
+                         <div class="text-center mb-4">
+                             <h1>Edit Your Profile</h1>
+                         </div>
+@@ -20,35 +25,57 @@
+                                 </button>
+                             </div>
+                         </div>
+-                        <form class="row g-3">
++                        {% if form.errors %}
++                            <div id="edit_AlertModalDiv">
++                                {% set divId = '#edit_AlertModalDiv' %}
++                            {% include "/layout/alert_modal.html" %}
++                            </div>
++                        {% endif %}
++                        <form class="row g-3" action="/edit_profile"  method="POST">
++                            {{ form.hidden_tag() }}
+                             <!-- First Name -->
+                             <div class="col-md-6">
+-                                <label for="editFirstName" class="form-label">First Name:</label>
+-                                <input type="text" class="form-control" id="editFirstName" value="Taylor">
++                                {{ form.first_name.label(class="form-label", for="firstName") }}
++                                {{ form.first_name(class="form-control") }}
++                                {% for error in form.first_name.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- Last Name -->
+                             <div class="col-md-6">
+-                                <label for="editLastName" class="form-label">Last Name:</label>
+-                                <input type="text" class="form-control" id="editLastName" value="Swift">
++                                {{ form.last_name.label(class="form-label", for="lastName") }}
++                                {{ form.last_name(class="form-control") }}
++                                {% for error in form.last_name.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- Email Address -->
+                             <div class="col-12">
+-                                <label for="editEmail" class="form-label">Email Address:</label>
+-                                <input type="email" class="form-control" id="editEmail" value="taylor@example.com">
++                                {{ form.email.label(class="form-label", for="email") }}
++                                {{ form.email(class="form-control") }}
++                                {% for error in form.email.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- Address -->
+-                            <div class="col-10">
+-                                <label for="editAddress" class="form-label">Address:</label>
+-                                <input type="text" class="form-control" id="editAddress" value="65 Stirling Highway">
++                            <div class="col-9">
++                                {{ form.address.label(class="form-label", for="address") }}
++                                {{ form.address(class="form-control") }}
++                                {% for error in form.address.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- Postcode -->
+-                            <div class="col-md-2 mb-3">
+-                                <label for="editSuburb" class="form-label">Postcode:</label>
+-                                <input type="number" class="form-control" id="editSuburb" value="6000">
++                            <div class="col-md-3">
++                                {{ form.postcode.label(class="form-label", for="postcode") }}
++                                {{ form.postcode(class="form-control") }}
++                                {% for error in form.postcode.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- Edit Profile Button -->
+                             <div class="text-end col-md-12">
+-                                <button class="btn btn-primary" type="button">Update</button>
++                                {{ form.submit(class="btn btn-primary") }}
+                                 <a class="btn btn-danger ms-2" href="profile">Cancel</a>
+                             </div>
+                         </form>
+@@ -56,25 +83,42 @@
+                         <div class="text-center mt-4 mb-4">
+                             <h3>Change Your Password</h3>
+                         </div>
+-                        <form class="row g-3">
++                        {% set form = pass_form %}
++                        {% if form.errors %}
++                            <div id="pass_AlertModalDiv">
++                                {% set divId = '#pass_AlertModalDiv' %}
++                            {% include "/layout/alert_modal.html" %}
++                            </div>
++                        {% endif %}
++                        <form class="row g-3" action="/change_pass"  method="POST">
++                            {{ form.hidden_tag() }}
+                             <!-- Current Password -->
+                             <div class="col-12">
+-                                <label for="editPassword" class="form-label">Current Password:</label>
+-                                <input type="password" class="form-control" id="currentPassword" placeholder="******">
++                                {{ form.old_password.label(class="form-label", for="currentPassword") }}
++                                {{ form.old_password(class="form-control", placeholder="******") }}
++                                {% for error in form.old_password.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- New Password -->
+                             <div class="col-md-6">
+-                                <label for="editPassword" class="form-label">New Password:</label>
+-                                <input type="password" class="form-control" id="newPassword" placeholder="******">
++                                {{ form.new_password.label(class="form-label", for="editPassword") }}
++                                {{ form.new_password(class="form-control", placeholder="******") }}
++                                {% for error in form.new_password.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- Re-type New Password -->
+                             <div class="col-md-6 mb-3">
+-                                <label for="editPassword" class="form-label">Retype New Password:</label>
+-                                <input type="password" class="form-control" id="reTypeNewPassword" placeholder="******">
++                                {{ form.re_password.label(class="form-label", for="newPassword") }}
++                                {{ form.re_password(class="form-control", placeholder="******") }}
++                                {% for error in form.re_password.errors %}
++                                <span class="text-danger">{{ error }}</span>
++                                {% endfor %}
+                             </div>
+                             <!-- Update Password Button -->
+                             <div class="text-end col-12">
+-                                <button class="btn btn-primary" type="button">Update Password</button>
++                                {{ form.submit(class="btn btn-primary") }}
+                                 <a class="btn btn-danger ms-2" href="profile">Cancel</a>
+                             </div>
+                         </form>
+diff --git forkSrcPrefix/app/templates/users/profile.html forkDstPrefix/app/templates/users/profile.html
+index dace511aa9858e6fcf357505a8001b1048970bcb..69bad33953906350be91a424bffbdfc6079af795 100644
+--- forkSrcPrefix/app/templates/users/profile.html
++++ forkDstPrefix/app/templates/users/profile.html
+@@ -1,6 +1,6 @@
+ {% extends "base.html" %}
+ 
+-{% block title %}Product {% endblock %}
++{% block title %}Profile {% endblock %}
+ 
+ {% block content %}
+     <div class="container mt-5">
+@@ -16,30 +16,34 @@
+                         </div>
+                         <form class="row g-3">
+                             <div class="col-md-6">
+-                              <label for="firstName" class="form-label">First Name:</label>
+-                              <input type="text" class="form-control" id="inputEmail4" value="Taylor" disabled>
++                                {{ form.first_name.label(class="form-label", for="firstName") }}
++                                {{ form.first_name(class="form-control",disabled=True) }}
+                             </div>
+                             <div class="col-md-6">
+-                              <label for="lastName" class="form-label">Last Name:</label>
+-                              <input type="text" class="form-control" id="inputPassword4" value="Swift" disabled>
++                                {{ form.last_name.label(class="form-label", for="lastName") }}
++                                {{ form.last_name(class="form-control", disabled=True) }}
+                             </div>
+                             <div class="col-12">
+-                              <label for="emailAddress" class="form-label">Email Address:</label>
+-                              <input type="email" class="form-control" id="emailAddress" value="taylor@example.com" disabled>
++                                {{ form.email.label(class="form-label", for="email") }}
++                                {{ form.email(class="form-control", disabled=True) }}
+                             </div>
+                             <div class="col-9">
+-                              <label for="address" class="form-label">Address:</label>
+-                              <input type="text" class="form-control" id="address" value="65 Stirling Highway" disabled>
++                                {{ form.address.label(class="form-label", for="address") }}
++                                {{ form.address(class="form-control", disabled=True) }}
+                             </div>
+                             <div class="col-md-3">
+-                              <label for="postcode" class="form-label">Postcode:</label>
+-                              <input type="number" class="form-control" id="postcode" value="6000" disabled>
++                                {{ form.postcode.label(class="form-label", for="postcode") }}
++                                {{ form.postcode(class="form-control", disabled=True) }}
+                             </div>
+                             <div class="col-mb-3">
+-                                <label for="accountType" class="form-label">Account Type:</label>
++                                {{ form.account_type.label(class="form-label", for="accountType") }}
+                             <div class="input-group">
+-                                <span class="input-group-text" id="accountCheck"><i class="verified fa-regular fa-circle-check" title="Verified"></i></span>
+-                                <input type="text" class="form-control" placeholder="User/Seller/User & Seller" aria-label="accountTypes" aria-describedby="accountType" readonly disabled>
++                                {% if verified %}
++                                    <span class="input-group-text" id="accountCheck"><i class="verified fa-regular fa-circle-check" title="Verified"></i></span>
++                                {% else %}
++                                    <span class="input-group-text" id="accountCheck"><i class="unverified fa-regular fa-circle-check" title="Verified"></i></span>
++                                {% endif %}
++                                {{ form.account_type(class="form-control", disabled=True) }}
+                               </div>
+                             </div>
+                             <div class="col-12">
+@@ -50,10 +54,13 @@
+                                     </label>
+                                 </div>
+                                 <div class="collapse" id="sellerForm">
++                                    <div id="AlertModalDiv">
++                                      {% include "/layout/alert_modal.html" %}
++                                    </div>
+                                     <form class="p-4">
+                                         <div class="mb-3">
+                                             <label for="exampleCheckboxFormPassword" class="form-label">Confirm Your Password:</label>
+-                                            <input type="password" class="form-control" id="sellerPassword" placeholder="Password">
++                                            {{ form.confirm_password(type="password", class="form-control mb-3", id="deactivatePassword", placeholder="Your Password") }}
+                                         </div>
+                                         <div class="mb-3">
+                                             <div class="form-check form-check-reverse">
+@@ -63,7 +70,7 @@
+                                                 </label>
+                                             </div>
+                                         </div>
+-                                        <button type="submit" class="btn btn-primary" id="confirmSelletBtn">Submit</button>
++                                        {{ form.submit(class="btn btn-primary", id="confirmSelletBtn") }}
+                                     </form>
+                                 </div>
+                             </div>                            
+@@ -90,15 +97,21 @@
+                     </h5>
+                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+-                <div class="modal-body">
+-                    <p>Please enter your password to confirm account deactivation:</p>
+-                    <input type="password" class="form-control mb-3" id="deactivatePassword" placeholder="Your Password">
+-                    <p>CAUTION: Your profile will be permanently deleted and cannot be recovered.</p>
+-                </div>
+-                <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end">
+-                    <button class="btn btn-primary me-md-2" type="button" data-bs-dismiss="modal">Close</button>
+-                    <button class="btn btn-danger" type="button" id="confirmDeactivateBtn">Deactivate</button>
++                <div data-id="deactivate_AlertModalDiv">
++                    {% set divId = 'deactivate_AlertModalDiv' %}
++                  {% include "/layout/alert_modal.html" %}
+                 </div>
++                <form action="/deactivate"  method="POST">
++                    <div class="modal-body">
++                        <p>Please enter your password to confirm account deactivation:</p>
++                        {{ form.deactivate_password(type="password", class="form-control mb-3", id="deactivatePassword", placeholder="Your Password") }}
++                        <p>CAUTION: Your profile will be permanently deleted and cannot be recovered.</p>
++                    </div>
++                    <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end">
++                        <button class="btn btn-primary me-md-2" type="button" data-bs-dismiss="modal">Close</button>
++                        {{ form.submit(class="btn btn-danger", type="button", id="confirmDeactivateBtn") }}
++                    </div>
++                </form>
+             </div>
+         </div>
+     </div>
+diff --git forkSrcPrefix/app/forms.py forkDstPrefix/app/forms.py
+index 0631b0039e55be069a7542c709d2abab0cea1593..49be800244c4331fc291f44ac61da752127e8359 100644
+--- forkSrcPrefix/app/forms.py
++++ forkDstPrefix/app/forms.py
+@@ -1,12 +1,27 @@
+ from flask_wtf import FlaskForm
++from flask_login import current_user
+ from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField
+ from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
+ import sqlalchemy as sa
+ from app import db
+ from app.models import User
+-from flask import Flask
+-from flask_sqlalchemy import SQLAlchemy
+ 
++def validate_australian_postcode(postcode):
++    city_ranges = {
++        'Sydney, New South Wales': (2000, 2234),
++        'Melbourne, Victoria': (3000, 3996),
++        'Brisbane, Queensland': (4000, 4999),
++        'Perth, Western Australia': (6000, 6999),
++        'Adelaide, South Australia': (5000, 5799),
++        'Hobart, Tasmania': (7000, 7799),
++        'Canberra, Australian Capital Territory': (2600, 2639),
++        'Darwin, Northern Territory': (800, 832)  # Note: 0832 corresponds to 832
++    }
++
++    for city, (min_code, max_code) in city_ranges.items():
++        if min_code <= postcode <= max_code:
++            return
++    raise ValidationError('Invalid post code.')
+ 
+ class LoginForm(FlaskForm):
+     username = StringField('Username', validators=[DataRequired()])
+@@ -34,10 +49,8 @@ class RegistrationForm(FlaskForm):
+         user = db.session.scalar(sa.select(User).where(User.email_address == email.data))
+         if user is not None:
+             raise ValidationError('Please use a different email address.')
+-
+         
+     def validate_shop_name(self, shopname):
+-        print(not shopname.data)
+         if self.become_seller.data and not shopname.data:
+             raise ValidationError('Please enter a shop name if you wish to become a seller.')
+         
+@@ -58,9 +71,56 @@ class ProductForm(FlaskForm):
+         DataRequired(), Length(min=1, max=200)])
+     submit = SubmitField('Submit')
+ 
++class ProfileForm(FlaskForm):
++    first_name = StringField('First Name')
++    last_name = StringField('Last Name')
++    email = StringField('Email')
++    postcode = IntegerField('Post Code')
++    address = StringField('Address')
++    account_type = StringField('Account Type')
++    verified = BooleanField('Verified')
++    submit = SubmitField('Update Profile')
++    deactivate_password = PasswordField('Deactivate Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
++    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
++    submit_deactivate = SubmitField('Deactivate')
++
++    def set_form_data(self):
++        self.first_name.data = current_user.first_name
++        self.last_name.data = current_user.last_name
++        self.email.data = current_user.email_address
++        self.postcode.data = current_user.postcode
++        self.address.data = current_user.address
++        self.account_type.data = 'Seller' if current_user.is_seller else 'Buyer'
++        self.verified.data = current_user.is_verified
++
+ class EditProfileForm(FlaskForm):
+     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
+     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
+     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
+-    postal_code = StringField('Postal Code', validators=[DataRequired(), Length(min=3, max=10)])
+-    submit = SubmitField('Update Profile')
++    address = StringField('Address', validators=[Length(max=120)])
++    postcode = IntegerField('Post Code', validators=[DataRequired()])
++    submit = SubmitField('Update')
++
++    def validate_postcode(self, postcode):
++        validate_australian_postcode(postcode.data)
++
++    def set_form_data(self):
++        self.first_name.data = current_user.first_name
++        self.last_name.data = current_user.last_name
++        self.email.data = current_user.email_address
++        self.postcode.data = current_user.postcode
++        self.address.data = current_user.address
++
++class ChangePasswordForm(FlaskForm):
++    old_password = PasswordField('Current Password', validators=[DataRequired(), Length(min=6)])
++    new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
++    re_password = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('new_password')])
++    submit = SubmitField('Update Password')
++
++    def validate_old_password(self, old_password):
++        if old_password.data is None and not current_user.check_password(old_password.data):
++            raise ValidationError('Incorrect current password.')
++
++    def validate_old_password(self, old_password):
++        if old_password.data == self.new_password.data:
++            raise ValidationError('Current password same as new password. Please use a different password.')
+\ No newline at end of file
+diff --git forkSrcPrefix/app/models.py forkDstPrefix/app/models.py
+index b4a28b8048fce252edabf5ce6ea0359f6d41a7cb..97ba342dbfff8820133d40cd88af64d3ae9f15e5 100644
+--- forkSrcPrefix/app/models.py
++++ forkDstPrefix/app/models.py
+@@ -13,9 +13,11 @@ class User(UserMixin, db.Model):
+     last_name: so.Mapped[str] = so.mapped_column(sa.String(64), unique=False)
+     is_seller : so.Mapped[bool] = so.mapped_column(unique=False, default=False)
+     is_active : so.Mapped[bool] = so.mapped_column(unique=False, default=True)
++    is_verified : so.Mapped[bool] = so.mapped_column(unique=False, nullable=True, default=False)
+     email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
+     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
+     postcode: so.Mapped[int] = so.mapped_column(unique=False, nullable=True)
++    address: so.Mapped[str] = so.mapped_column(unique=False, nullable=True)
+     shop_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=False, nullable=True)
+     products: so.WriteOnlyMapped['Product'] = so.relationship(
+         back_populates='owner')
+@@ -31,13 +33,11 @@ class User(UserMixin, db.Model):
+         self.password_hash = generate_password_hash(password)
+ 
+     def check_password(self, password):
+-        
+         return check_password_hash(self.password_hash, password)
+     
+     def get_products(self):
+         return sa.select(Product).where(Product.user_id == self.id)
+ 
+-    
+ class Product(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     product_name = db.Column(db.String(100), nullable=False)
+@@ -55,4 +55,3 @@ class Product(db.Model):
+ 
+     def __repr__(self):
+         return '<Product {}>'.format(self.product_name)
+-    
+\ No newline at end of file
+diff --git forkSrcPrefix/app/routes.py forkDstPrefix/app/routes.py
+index 3df18d770cd1123581d72d2d93ddeb8e3fd535d0..66f80507c2440bee925a1afe696d3ab2cd63ef96 100644
+--- forkSrcPrefix/app/routes.py
++++ forkDstPrefix/app/routes.py
+@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect,request,jsonify,url_for,flash
+ from flask_login import current_user, login_user,login_required,logout_user
+ from app import app,db
+ from app.models import User,Product
+-from app.forms import LoginForm,RegistrationForm,ProductForm,EditProfileForm
++from app.forms import LoginForm,RegistrationForm,ProductForm,ProfileForm,EditProfileForm, ChangePasswordForm
+ from urllib.parse import urlsplit
+ import os
+ import sqlalchemy as sa
+@@ -118,11 +118,12 @@ def seller():
+                         posts=products.items, next_url=next_url,
+                         prev_url=prev_url)
+ 
+-
+ @app.route('/profile')
++@login_required
+ def profile():
+-    return render_template('/users/profile.html', profile=profile)
+-
++    form = ProfileForm()
++    form.set_form_data()
++    return render_template('/users/profile.html', form=form)
+     
+ @app.route('/manage_product/add', methods=['GET', 'POST'])
+ @login_required
+@@ -156,17 +157,35 @@ def logout():
+ @login_required
+ def edit_profile():
+     form = EditProfileForm()
+-    if form.validate_on_submit():
+-        current_user.username = form.username.data
+-        current_user.about_me = form.about_me.data
++    change_pass_form = ChangePasswordForm()
++    if request.method == 'GET':
++        form.set_form_data()
++    elif form.validate_on_submit():
++        current_user.first_name = form.first_name.data
++        current_user.last_name = form.last_name.data
++        current_user.email_address = form.email.data
++        current_user.postcode = form.postcode.data
++        current_user.address = form.address.data
++        db.session.commit()
++        flash('Your profile details have been saved.', 'success')
++        return redirect(url_for('edit_profile'))
++    return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
++
++@app.route('/change_pass', methods=['GET', 'POST'])
++@login_required
++def change_pass():
++    user = db.session.scalar(
++            sa.select(User).where(User.email_address == current_user.email_address))
++    form = EditProfileForm()
++    form.set_form_data()
++    change_pass_form = ChangePasswordForm()
++    if change_pass_form.validate_on_submit():
++        user.set_password(change_pass_form.new_password.data)
++        current_user.password_hash = user.password_hash
+         db.session.commit()
+-        flash('Your changes have been saved.')
++        flash('Your password has been changed.', 'success')
+         return redirect(url_for('edit_profile'))
+-    elif request.method == 'GET':
+-        form.username.data = current_user.username
+-        form.about_me.data = current_user.about_me
+-    return render_template('users/profile.html', title='Edit Profile',
+-                           form=form)
++    return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
+ 
+ auth = Blueprint('auth', __name__)
+ 
