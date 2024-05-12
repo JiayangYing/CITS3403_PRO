@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect,request,jsonify,url_for,flash
 from flask_login import current_user, login_user,login_required,logout_user
 from app import app,db
 from app.models import User,Product
-from app.forms import LoginForm,RegistrationForm,ProductForm,EditProfileForm
+from app.forms import LoginForm,RegistrationForm,ProductForm,ProfileForm,EditProfileForm, ChangePasswordForm
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
@@ -118,11 +118,12 @@ def seller():
                         posts=products.items, next_url=next_url,
                         prev_url=prev_url)
 
-
 @app.route('/profile')
+@login_required
 def profile():
-    return render_template('/users/profile.html', profile=profile)
-
+    form = ProfileForm()
+    form.set_form_data()
+    return render_template('/users/profile.html', form=form)
     
 @app.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
@@ -156,17 +157,35 @@ def logout():
 @login_required
 def edit_profile():
     form = EditProfileForm()
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.about_me = form.about_me.data
+    change_pass_form = ChangePasswordForm()
+    if request.method == 'GET':
+        form.set_form_data()
+    elif form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.email_address = form.email.data
+        current_user.postcode = form.postcode.data
+        current_user.address = form.address.data
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash('Your profile details have been saved.', 'success')
         return redirect(url_for('edit_profile'))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.about_me.data = current_user.about_me
-    return render_template('users/profile.html', title='Edit Profile',
-                           form=form)
+    return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
+
+@app.route('/change_pass', methods=['GET', 'POST'])
+@login_required
+def change_pass():
+    user = db.session.scalar(
+            sa.select(User).where(User.email_address == current_user.email_address))
+    form = EditProfileForm()
+    form.set_form_data()
+    change_pass_form = ChangePasswordForm()
+    if change_pass_form.validate_on_submit():
+        user.set_password(change_pass_form.new_password.data)
+        current_user.password_hash = user.password_hash
+        db.session.commit()
+        flash('Your password has been changed.', 'success')
+        return redirect(url_for('edit_profile'))
+    return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
 
 auth = Blueprint('auth', __name__)
 
