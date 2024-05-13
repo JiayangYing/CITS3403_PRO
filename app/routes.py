@@ -2,11 +2,12 @@ from flask import render_template, flash, redirect,request,jsonify,url_for,flash
 from flask_login import current_user, login_user,login_required,logout_user
 from app import app,db
 from app.models import User,Product
-from app.forms import LoginForm,RegistrationForm,ProductForm,ProfileForm,EditProfileForm, ChangePasswordForm
+from app.forms import LoginForm,RegistrationForm,ProductForm,ProfileForm,EditProfileForm, ChangePasswordForm,Orderform
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
-  
+from datetime import datetime
+
 @app.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
@@ -187,6 +188,11 @@ def change_pass():
         return redirect(url_for('edit_profile'))
     return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
 
+@app.route('/get_orders/<product_id>', methods=['POST'])
+def get_product_orders(product_id):
+    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'created_on': datetime.now(), 'qty': 2, 'status':'pending'}]*2
+    return jsonify({'orders': orders})
+
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
@@ -200,6 +206,53 @@ def logout():
 @app.route('/forget_password')
 def f_password():
     return render_template('/users/f_password.html', forget_password=f_password)
+
+@app.route('/order', methods=['GET', 'POST'])
+@login_required
+def order():
+    if request.method == 'POST':
+        if request.is_json:  # Check if the request contains JSON data
+            data = request.get_json()  # Get JSON data
+
+            # Update current user with JSON data
+            current_user.first_name = data.get('first_name', current_user.first_name)
+            current_user.last_name = data.get('last_name', current_user.last_name)
+            current_user.email_address = data.get('email_address', current_user.email_address)
+            current_user.postcode = data.get('postcode', current_user.postcode)
+            current_user.contact_no = data.get('contact_no', current_user.contact_no)
+            current_user.remarks = data.get('remarks', current_user.remarks)
+
+            db.session.commit()
+            return jsonify({'message': 'Your order has been updated!'}), 200
+
+        else:  # Handle regular form submission
+            form = Orderform()
+            if form.validate_on_submit():
+                current_user.first_name = form.first_name.data
+                current_user.last_name = form.last_name.data
+                current_user.email_address = form.email_address.data
+                current_user.postcode = form.postcode.data
+                current_user.contact_no = form.contact_no.data
+                current_user.remarks = form.remarks.data
+
+                db.session.commit()
+                flash('Your order has been updated!', 'success')
+                return redirect(url_for('some_route_after_success'))
+            else:
+                flash('There was an error with your form. Please check your information.', 'danger')
+
+    else:  # Pre-fill the form for GET request
+        form = Orderform()
+        form.set_form_data()
+        return render_template('order.html', title='Order Form', form=form)
+
+    return render_template('order.html', title='Order Form', form = Orderform())  # Default return for GET if no form is pre-filled
+
+
+
+
+
+
 
 
 

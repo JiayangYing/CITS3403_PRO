@@ -124,3 +124,24 @@ class ChangePasswordForm(FlaskForm):
     def validate_old_password(self, old_password):
         if old_password.data == self.new_password.data:
             raise ValidationError('Current password same as new password. Please use a different password.')
+class Orderform(FlaskForm):
+    quantity = IntegerField('quantity',validators =[DataRequired(),Length(min = 1)])
+    first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
+    email_address = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
+    postcode = IntegerField('Post Code', validators=[DataRequired()])
+    contact_no = StringField('contact_number', validators=[DataRequired()])
+    remarks = StringField('remarks',validators = [DataRequired()])
+
+    def set_form_data(self):
+        self.first_name.data = current_user.first_name
+        self.last_name.data = current_user.last_name
+        self.email.data = current_user.email_address
+        self.postcode.data = current_user.postcode
+        self.address.data = current_user.address
+
+
+
+
+    
+

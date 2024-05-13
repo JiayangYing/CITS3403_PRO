@@ -55,3 +55,18 @@ class Product(db.Model):
 
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
+    
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email_address = db.Column(db.String(120), nullable=False)
+    postcode = db.Column(db.Integer, nullable=False)
+    contact_no = db.Column(db.String(20), nullable=False)
+    remarks = db.Column(db.String(255))
+    address = db.Column(db.String(255), nullable=False)
+    def __repr__(self):
+        return '<Order {}>".format(self.product_name)'
+ 
+
