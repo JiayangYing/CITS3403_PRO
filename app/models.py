@@ -37,7 +37,11 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
     
     def get_products(self):
-        return sa.select(Product).where(Product.user_id == self.id)
+        return (
+            sa.select(Product)
+            .where(Product.user_id == self.id,)
+            .order_by(Product.created_on.desc())
+        )
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,10 +52,9 @@ class Product(db.Model):
     condition = db.Column(db.String(20), nullable=False)
     location = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(150), nullable=False)
-    timestamp: so.Mapped[datetime] = so.mapped_column(
-        index=True, default=lambda: datetime.now())
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
-                                               index=True)
+    created_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
+    modified_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     owner: so.Mapped[User] = so.relationship(back_populates='products')
 
     def __repr__(self):

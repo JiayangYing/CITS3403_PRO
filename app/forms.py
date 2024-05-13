@@ -1,10 +1,28 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField
+from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
 import sqlalchemy as sa
 from app import db
 from app.models import User
+
+class ProductConditionField(SelectField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize the choices for the field
+        self.choices = [
+            ('','--Selec Condition--'), ('Brand New', 'Brand New'), ('Used - Good', 'Used - Good'),
+            ('Used - Fair', 'Used - Fair'), ('Other', 'Other')
+        ]
+        
+class ProductCategoryField(SelectField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.choices = [
+            ('','--Selec Category--'), ('Clothing & Accessories', 'Clothing & Accessories'), ('Home & Garden', 'Home & Garden'), 
+            ('Electronics', 'Electronics'), ('Books & Media', 'Books & Media'), ('Sport & Leisure', 'Sport & Leisure'),
+            ('Others', 'Others')
+        ]
 
 def validate_australian_postcode(postcode):
     city_ranges = {
@@ -55,21 +73,21 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please enter a shop name if you wish to become a seller.')
         
 class ProductForm(FlaskForm):
-    product_name = StringField('Product Name', validators=[
-        DataRequired(), Length(min=1, max=100)])
-    price = DecimalField('Price', validators=[
-        DataRequired(), NumberRange(min=0)])
-    quantity = IntegerField('Quantity', validators=[
-        DataRequired(), NumberRange(min=1)])
-    condition = SelectField('Condition', choices=[
-        ('new', 'New'), ('used', 'Used')], validators=[DataRequired()])
-    category = SelectField('Category', choices=[
-        ('Electronics', 'Electronics'), ('Books', 'Books'), ('Clothing', 'Clothing'), ('Home', 'Home')], validators=[DataRequired()])
-    location = StringField('Location', validators=[
-        DataRequired(), Length(min=1, max=100)])
-    description = StringField('Description', validators=[
-        DataRequired(), Length(min=1, max=200)])
+    product_name = StringField('Product Name', validators=[DataRequired(), Length(min=1, max=100)])
+    price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0)])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
+    condition = ProductConditionField('Condition', validators=[DataRequired()])
+    category = ProductCategoryField('Category', validators=[DataRequired()])
+    location = IntegerField('Location', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
     submit = SubmitField('Submit')
+
+    def validate_location(self, postcode):
+        validate_australian_postcode(postcode.data)
+
+    def set_form_data(self):
+        print(current_user.postcode)
+        self.location.data = current_user.postcode
 
 class ProfileForm(FlaskForm):
     first_name = StringField('First Name')
@@ -80,9 +98,6 @@ class ProfileForm(FlaskForm):
     account_type = StringField('Account Type')
     verified = BooleanField('Verified')
     submit = SubmitField('Update Profile')
-    deactivate_password = PasswordField('Deactivate Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-    submit_deactivate = SubmitField('Deactivate')
 
     def set_form_data(self):
         self.first_name.data = current_user.first_name
@@ -92,6 +107,27 @@ class ProfileForm(FlaskForm):
         self.address.data = current_user.address
         self.account_type.data = 'Seller' if current_user.is_seller else 'Buyer'
         self.verified.data = current_user.is_verified
+
+class UpdateAccountForm(FlaskForm):
+    become_seller = BooleanField('Become a Seller?')
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
+    submit = SubmitField('Update Account')
+
+    def set_form_data(self):
+        self.become_seller.data = current_user.is_seller
+
+    def validate_confirm_password(self, confirm_password):
+        if not current_user.check_password(confirm_password.data):
+            raise ValidationError('Incorrect current password.')
+
+class DeactivateAccountForm(FlaskForm):
+    deactivate_password = PasswordField('Deactivate Password', validators=[DataRequired()])
+    submit = SubmitField('Deactivate')
+
+    def validate_deactivate_password(self, deactivate_password):
+        if not current_user.check_password(deactivate_password.data):
+            raise ValidationError('Incorrect current password.')
+
 
 class EditProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])

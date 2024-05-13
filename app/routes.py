@@ -1,8 +1,10 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
+from flask import render_template, flash, redirect,request,jsonify,url_for,Blueprint
 from flask_login import current_user, login_user,login_required,logout_user
 from app import app,db
 from app.models import User,Product
-from app.forms import LoginForm,RegistrationForm,ProductForm,ProfileForm,EditProfileForm, ChangePasswordForm
+from app.forms import \
+    LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
+    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
@@ -28,6 +30,9 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
+        if not user.is_active:
+            flash('User deactivated. Please contact admin.', 'error')
+            return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
@@ -46,8 +51,14 @@ def signup():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email_address=form.email_address.data, first_name = form.first_name.data,
-                    last_name = form.last_name.data, is_seller = form.become_seller.data, shop_name = form.shop_name.data,avatar = 0)
+        user = User(
+            username=form.username.data,
+            email_address=form.email_address.data, 
+            first_name = form.first_name.data,
+            last_name = form.last_name.data,
+            is_seller = form.become_seller.data, 
+            shop_name = form.shop_name.data
+        )
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -75,7 +86,7 @@ products = [
 
 @app.route('/product')
 def product():
-    query = sa.select(Product).order_by(Product.timestamp.desc()).limit(10)
+    query = sa.select(Product).order_by(Product.created_on.desc()).limit(10)
     products = db.session.scalars(query).all()
     return render_template('/product/product.html', products=products)
 
@@ -107,28 +118,37 @@ def seller():
     if(not current_user.is_seller):
         return redirect(url_for('error'))
     page = request.args.get('page', 1, type=int)
-    products = db.paginate(current_user.get_products(), page=page,
-                        per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-    
-    next_url = url_for('seller', page=products.next_num) \
-        if products.has_next else None
-    prev_url = url_for('seller', page=products.prev_num) \
-        if products.has_prev else None
-    return render_template('/seller/product.html', title=current_user.username,
-                        posts=products.items, next_url=next_url,
-                        prev_url=prev_url)
+    products = db.paginate(current_user.get_products(), page=page, 
+                           per_page=app.config['PRODUCT_LISTING_PER_PAGE'], 
+                           error_out=False)
+    next_url, prev_url, pages = None, None, []
+    if products.has_prev:
+        prev_url = url_for('seller', page=products.prev_num)
+        pages.append(page-1)
+    pages.append(page)
+    if products.has_next:
+        next_url = url_for('seller', page=products.next_num)
+        pages.append(page+1)
+    return render_template('/seller/product.html', products=products.items, pages = pages,
+                           next_url=next_url, prev_url=prev_url)
 
 @app.route('/profile')
 @login_required
 def profile():
     form = ProfileForm()
-    form.set_form_data()
-    return render_template('/users/profile.html', form=form)
+    account_form = UpdateAccountForm()
+    deactivate_form = DeactivateAccountForm()
+    if request.method == 'GET':
+        form.set_form_data()
+        account_form.set_form_data()
+    return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form)
     
 @app.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
     form = ProductForm()
+    if request.method == 'GET':
+        form.set_form_data()
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
@@ -136,13 +156,13 @@ def add_product():
             price=form.price.data,
             quantity=form.quantity.data,
             condition=form.condition.data,
-            location=form.location.data,  # Handling new field
+            location=form.location.data,
             description = form.description.data,
             owner = current_user
         )
         db.session.add(product)
         db.session.commit()
-        flash('Product added successfully!')
+        flash('Product added successfully!', 'success')
         return redirect(url_for('seller'))
     return render_template('/manage_product/add.html', form=form)
 
@@ -171,6 +191,36 @@ def edit_profile():
         flash('Your profile details have been saved.', 'success')
         return redirect(url_for('edit_profile'))
     return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
+
+@app.route('/update_account_type', methods=['GET', 'POST'])
+@login_required
+def update_account_type():
+    form = ProfileForm()
+    form.set_form_data()
+    account_form = UpdateAccountForm()
+    deactivate_form = DeactivateAccountForm()
+    user = db.session.scalar(sa.select(User).where(User.username == current_user.username))
+    if account_form.validate_on_submit():
+        current_user.is_seller = not user.is_seller
+        db.session.commit()
+        flash('Your account type has been changed.', 'success')
+        return redirect(url_for('profile'))
+    return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form, show=True)
+
+
+@app.route('/deactivate', methods=['GET', 'POST'])
+@login_required
+def deactivate():
+    form = ProfileForm()
+    form.set_form_data()
+    account_form = UpdateAccountForm()
+    deactivate_form = DeactivateAccountForm()
+    if deactivate_form.validate_on_submit():
+        current_user.is_active = False
+        db.session.commit()
+        flash('Your account is deactivated.', 'success')
+        return redirect(url_for('logout'))
+    return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form, show_modal=True)
 
 @app.route('/change_pass', methods=['GET', 'POST'])
 @login_required
@@ -202,6 +252,9 @@ def logout():
 def f_password():
     return render_template('/users/f_password.html', forget_password=f_password)
 
-
+@app.route('/get_orders/<product_id>', methods=['POST'])
+def get_product_orders(product_id):
+    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'qty': 2, 'status':'pending'}]*2
+    return jsonify({'orders': orders})
 
 
