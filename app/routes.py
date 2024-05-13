@@ -47,7 +47,7 @@ def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email_address=form.email_address.data, first_name = form.first_name.data,
-                    last_name = form.last_name.data, is_seller = form.become_seller.data, shop_name = form.shop_name.data)
+                    last_name = form.last_name.data, is_seller = form.become_seller.data, shop_name = form.shop_name.data,avatar = 0)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -166,6 +166,7 @@ def edit_profile():
         current_user.email_address = form.email.data
         current_user.postcode = form.postcode.data
         current_user.address = form.address.data
+        current_user.avatar = form.avatar.data
         db.session.commit()
         flash('Your profile details have been saved.', 'success')
         return redirect(url_for('edit_profile'))
@@ -200,6 +201,7 @@ def logout():
 @app.route('/forget_password')
 def f_password():
     return render_template('/users/f_password.html', forget_password=f_password)
+
 
 
 
