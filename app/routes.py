@@ -1,8 +1,10 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,flash,Blueprint
+from flask import render_template, flash, redirect,request,jsonify,url_for,Blueprint
 from flask_login import current_user, login_user,login_required,logout_user
 from app import app,db
 from app.models import User,Product
-from app.forms import LoginForm,RegistrationForm,ProductForm,ProfileForm,EditProfileForm, ChangePasswordForm
+from app.forms import \
+    LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
+    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
@@ -27,6 +29,9 @@ def login():
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
+            return redirect(url_for('login'))
+        if not user.is_active:
+            flash('User deactivated. Please contact admin.', 'error')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -122,8 +127,12 @@ def seller():
 @login_required
 def profile():
     form = ProfileForm()
-    form.set_form_data()
-    return render_template('/users/profile.html', form=form)
+    account_form = UpdateAccountForm()
+    deactivate_form = DeactivateAccountForm()
+    if request.method == 'GET':
+        form.set_form_data()
+        account_form.set_form_data()
+    return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form)
     
 @app.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
@@ -170,6 +179,36 @@ def edit_profile():
         flash('Your profile details have been saved.', 'success')
         return redirect(url_for('edit_profile'))
     return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
+
+@app.route('/update_account_type', methods=['GET', 'POST'])
+@login_required
+def update_account_type():
+    form = ProfileForm()
+    form.set_form_data()
+    account_form = UpdateAccountForm()
+    deactivate_form = DeactivateAccountForm()
+    user = db.session.scalar(sa.select(User).where(User.username == current_user.username))
+    if account_form.validate_on_submit():
+        current_user.is_seller = not user.is_seller
+        db.session.commit()
+        flash('Your account type has been changed.', 'success')
+        return redirect(url_for('profile'))
+    return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form, show=True)
+
+
+@app.route('/deactivate', methods=['GET', 'POST'])
+@login_required
+def deactivate():
+    form = ProfileForm()
+    form.set_form_data()
+    account_form = UpdateAccountForm()
+    deactivate_form = DeactivateAccountForm()
+    if deactivate_form.validate_on_submit():
+        current_user.is_active = False
+        db.session.commit()
+        flash('Your account is deactivated.', 'success')
+        return redirect(url_for('logout'))
+    return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form, show_modal=True)
 
 @app.route('/change_pass', methods=['GET', 'POST'])
 @login_required

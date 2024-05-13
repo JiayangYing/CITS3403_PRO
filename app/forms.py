@@ -80,9 +80,6 @@ class ProfileForm(FlaskForm):
     account_type = StringField('Account Type')
     verified = BooleanField('Verified')
     submit = SubmitField('Update Profile')
-    deactivate_password = PasswordField('Deactivate Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-    submit_deactivate = SubmitField('Deactivate')
 
     def set_form_data(self):
         self.first_name.data = current_user.first_name
@@ -92,6 +89,27 @@ class ProfileForm(FlaskForm):
         self.address.data = current_user.address
         self.account_type.data = 'Seller' if current_user.is_seller else 'Buyer'
         self.verified.data = current_user.is_verified
+
+class UpdateAccountForm(FlaskForm):
+    become_seller = BooleanField('Become a Seller?')
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
+    submit = SubmitField('Update Account')
+
+    def set_form_data(self):
+        self.become_seller.data = current_user.is_seller
+
+    def validate_confirm_password(self, confirm_password):
+        if not current_user.check_password(confirm_password.data):
+            raise ValidationError('Incorrect current password.')
+
+class DeactivateAccountForm(FlaskForm):
+    deactivate_password = PasswordField('Deactivate Password', validators=[DataRequired()])
+    submit = SubmitField('Deactivate')
+
+    def validate_deactivate_password(self, deactivate_password):
+        if not current_user.check_password(deactivate_password.data):
+            raise ValidationError('Incorrect current password.')
+
 
 class EditProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
