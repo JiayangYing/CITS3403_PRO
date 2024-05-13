@@ -13,9 +13,11 @@ class User(UserMixin, db.Model):
     last_name: so.Mapped[str] = so.mapped_column(sa.String(64), unique=False)
     is_seller : so.Mapped[bool] = so.mapped_column(unique=False, default=False)
     is_active : so.Mapped[bool] = so.mapped_column(unique=False, default=True)
+    is_verified : so.Mapped[bool] = so.mapped_column(unique=False, default=False)
     email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     postcode: so.Mapped[int] = so.mapped_column(unique=False, nullable=True)
+    address: so.Mapped[str] = so.mapped_column(unique=False, nullable=True)
     shop_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=False, nullable=True)
     products: so.WriteOnlyMapped['Product'] = so.relationship(
         back_populates='owner')
@@ -31,13 +33,11 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        
         return check_password_hash(self.password_hash, password)
     
     def get_products(self):
         return sa.select(Product).where(Product.user_id == self.id)
 
-    
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(100), nullable=False)
@@ -55,4 +55,3 @@ class Product(db.Model):
 
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
-    
