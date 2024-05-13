@@ -1,10 +1,28 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField
+from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
 import sqlalchemy as sa
 from app import db
 from app.models import User
+
+class ProductConditionField(SelectField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize the choices for the field
+        self.choices = [
+            ('','--Selec Condition--'), ('Brand New', 'Brand New'), ('Used - Good', 'Used - Good'),
+            ('Used - Fair', 'Used - Fair'), ('Other', 'Other')
+        ]
+        
+class ProductCategoryField(SelectField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.choices = [
+            ('','--Selec Category--'), ('Clothing & Accessories', 'Clothing & Accessories'), ('Home & Garden', 'Home & Garden'), 
+            ('Electronics', 'Electronics'), ('Books & Media', 'Books & Media'), ('Sport & Leisure', 'Sport & Leisure'),
+            ('Others', 'Others')
+        ]
 
 def validate_australian_postcode(postcode):
     city_ranges = {
@@ -55,21 +73,21 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please enter a shop name if you wish to become a seller.')
         
 class ProductForm(FlaskForm):
-    product_name = StringField('Product Name', validators=[
-        DataRequired(), Length(min=1, max=100)])
-    price = DecimalField('Price', validators=[
-        DataRequired(), NumberRange(min=0)])
-    quantity = IntegerField('Quantity', validators=[
-        DataRequired(), NumberRange(min=1)])
-    condition = SelectField('Condition', choices=[
-        ('new', 'New'), ('used', 'Used')], validators=[DataRequired()])
-    category = SelectField('Category', choices=[
-        ('Electronics', 'Electronics'), ('Books', 'Books'), ('Clothing', 'Clothing'), ('Home', 'Home')], validators=[DataRequired()])
-    location = StringField('Location', validators=[
-        DataRequired(), Length(min=1, max=100)])
-    description = StringField('Description', validators=[
-        DataRequired(), Length(min=1, max=200)])
+    product_name = StringField('Product Name', validators=[DataRequired(), Length(min=1, max=100)])
+    price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0)])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
+    condition = ProductConditionField('Condition', validators=[DataRequired()])
+    category = ProductCategoryField('Category', validators=[DataRequired()])
+    location = IntegerField('Location', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
     submit = SubmitField('Submit')
+
+    def validate_location(self, postcode):
+        validate_australian_postcode(postcode.data)
+
+    def set_form_data(self):
+        print(current_user.postcode)
+        self.location.data = current_user.postcode
 
 class ProfileForm(FlaskForm):
     first_name = StringField('First Name')
