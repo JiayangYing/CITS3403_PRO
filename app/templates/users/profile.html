@@ -14,7 +14,13 @@
                         <div class="text-center mb-4">
                             <i class="fa-rounded fa-solid fa-user-secret fa-4x"></i>
                         </div>
-                        <form class="row g-3">
+                        {% if not form.errors %}
+                            <div id="AlertModalDiv">
+                            {% include "/layout/alert_modal.html" %}
+                            </div>
+                        {% endif %}
+                        <form class="row g-3" action="/update_account_type"  method="POST">
+                            {{ form.hidden_tag() }}
                             <div class="col-md-6">
                                 {{ form.first_name.label(class="form-label", for="firstName") }}
                                 {{ form.first_name(class="form-control",disabled=True) }}
@@ -47,39 +53,44 @@
                               </div>
                             </div>
                             <div class="col-12">
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="gridCheck" data-bs-toggle="collapse" data-bs-target="#sellerForm" aria-expanded="false" aria-controls="sellerForm">
-                                    <label class="form-check-label" for="gridCheck">
-                                        Become a seller?
-                                    </label>
-                                </div>
-                                <div class="collapse" id="sellerForm">
-                                    <div id="AlertModalDiv">
-                                      {% include "/layout/alert_modal.html" %}
+                                {% set form = account_form %}
+                                {% if form.errors %}
+                                    <div id="account_AlertModalDiv">
+                                        {% set divId = '#account_AlertModalDiv' %}
+                                    {% include "/layout/alert_modal.html" %}
                                     </div>
-                                    <form class="p-4">
-                                        <div class="mb-3">
-                                            <label for="exampleCheckboxFormPassword" class="form-label">Confirm Your Password:</label>
-                                            {{ form.confirm_password(type="password", class="form-control mb-3", id="deactivatePassword", placeholder="Your Password") }}
-                                        </div>
-                                        <div class="mb-3">
-                                            <div class="form-check form-check-reverse">
-                                                <input type="radio" class="form-check-input" id="sellerAgreement">
-                                                <label class="form-check-label" for="sellerAgreement">
-                                                    I agree to the terms and conditions.
-                                                </label>
-                                            </div>
-                                        </div>
-                                        {{ form.submit(class="btn btn-primary", id="confirmSelletBtn") }}
-                                    </form>
+                                {% endif %}
+                                <div class="form-check mb-3">
+                                    {{ form.become_seller(class="form-check-input", id="gridCheck") }}
+                                    {{ form.become_seller.label(class="form-check-label", for="gridCheck") }}
+                                    {% for error in form.become_seller.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
                                 </div>
-                            </div>                            
+                                {% set class = "" %}
+                                {% if show %} {% set class = "show" %} {% endif %}
+                                <div class="collapse {{class}}" id="sellerForm">
+                                    <div class="mb-3">
+                                        <label for="exampleCheckboxFormPassword" class="form-label">Confirm Your Password:</label>
+                                        {{ form.confirm_password(type="password", class="form-control mb-3", id="exampleCheckboxFormPassword", placeholder="Your Password") }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-check-reverse">
+                                            <input type="radio" class="form-check-input" id="sellerAgreement">
+                                            <label class="form-check-label" for="sellerAgreement">
+                                                I agree to the terms and conditions.
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {{ form.submit(class="btn btn-primary", id="confirmSellerBtn") }}
+                                </div>
+                            </div>
                             <!-- Edit Profile Button -->
                             <hr>
                             <div class="text-end d-grid gap-2 d-lg-flex justify-content-md-end">
-                            <a class="btn btn-primary" href="edit_profile">Edit Profile</a>
-                            <a class="btn btn-danger ms-lg-2" href="#" id="deactivateAccountBtn">Deactivate Account</a>
-                        </div>
+                                <a class="btn btn-primary" href="edit_profile">Edit Profile</a>
+                                <a class="btn btn-danger ms-lg-2" href="#" id="deactivateAccountBtn">Deactivate Account</a>
+                            </div>
                           </form>
                     </div>
                 </div>
@@ -87,6 +98,8 @@
         </div>
     </div>
 
+    {% set class = "" %}
+    {% if show_modal %} {% set class = "show" %} {% endif %}
     <div class="modal fade" id="confirmDeactivateModal" tabindex="-1" aria-labelledby="confirmDeactivateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -97,24 +110,31 @@
                     </h5>
                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div data-id="deactivate_AlertModalDiv">
-                    {% set divId = 'deactivate_AlertModalDiv' %}
-                  {% include "/layout/alert_modal.html" %}
-                </div>
+                {% set form = deactivate_form %}
+                {% if form.errors %}
+                    <div id="deactivate_AlertModalDiv" class="mt-4">
+                        {% set divId = '#deactivate_AlertModalDiv' %}
+                    {% include "/layout/alert_modal.html" %}
+                    </div>
+                {% endif %}
                 <form action="/deactivate"  method="POST">
+                    {{ form.hidden_tag() }}
                     <div class="modal-body">
                         <p>Please enter your password to confirm account deactivation:</p>
-                        {{ form.deactivate_password(type="password", class="form-control mb-3", id="deactivatePassword", placeholder="Your Password") }}
+                        {{ form.deactivate_password(class="form-control mb-3", id="deactivatePassword", placeholder="Your Password") }}
                         <p>CAUTION: Your profile will be permanently deleted and cannot be recovered.</p>
                     </div>
                     <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end">
                         <button class="btn btn-primary me-md-2" type="button" data-bs-dismiss="modal">Close</button>
-                        {{ form.submit(class="btn btn-danger", type="button", id="confirmDeactivateBtn") }}
+                        {{ form.submit(class="btn btn-danger", id="confirmDeactivateBtn") }}
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <script>
+        const show_deavtivate_modal = "{{ show_modal }}";
+    </script>
 {% endblock %}
 
 {% block javascript %}
