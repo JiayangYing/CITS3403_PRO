@@ -129,18 +129,4 @@ $(() => {
             $tr.next("tr").removeClass('d-none')
         }
     });
-
-    var url = new URL(window.location.href);
-    pageNum = url.searchParams.get('page')
-    if (!pageNum){
-        $('#ProductPageNavBar :contains("1")').parent().addClass('active')
-    }else{
-        $('#ProductPageNavBar a').each(function(i, a){
-            $a = $(a)
-            if(`${$a.text()}` === pageNum){
-              $a.parent().addClass('active')
-              return false
-            }
-          })
-    }
 });

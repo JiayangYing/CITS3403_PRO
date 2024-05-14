@@ -23,7 +23,7 @@
                         <thead>
                             <tr role="row">
                                 <th></th>
-                                <th>Product Name</th>
+                                <th>Product Title</th>
                                 <th>Category</th>
                                 <th>Price</th>
                                 <th>Qty</th>
@@ -43,7 +43,7 @@
                                 {% endif %}
                                 <tr>
                                     <td class="dt-control"></td>
-                                    <td>{{ pro.product_name }}</td>
+                                    <td>{{ pro.title }}</td>
                                     <td>{{ pro.category }}</td>
                                     <td>{{ pro.price }}</td>
                                     <td>{{ pro.quantity }}</td>
@@ -69,21 +69,6 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="mt-2 mr-2 d-flex justify-content-end">
-                    <nav aria-label="ProductPageNav">
-                        <ul id="ProductPageNavBar" class="pagination">
-                            <li class="page-item {% if not prev_url %} disabled{% endif %}"><a class="page-link" href="{{prev_url}}">Previous</a></li>
-                            {% for page in pages %}
-                                <li class="page-item"><a class="page-link" href="{{ url_for('seller', page=page) }}">{{ page }}</a></li>
-                            {% endfor %}
-                            <li class="page-item {% if not next_url %} disabled{% endif %}"><a class="page-link" href="{{next_url}}">Next</a></li>
-                        </ul>
-                    </nav>
                 </div>
             </div>
         </div>
