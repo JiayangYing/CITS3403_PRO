@@ -58,7 +58,7 @@
                                     <td>{{ pro.condition }}</td>
                                     <td>
                                         <div class="action-container">
-                                            <button class="edit ms-2" title="Edit" onclick="editProduct({{pro.id}})"><span><i class="fa-lg fa-solid fa-pen-to-square"></i></span></button>
+                                            <button class="edit ms-2" title="Edit"><span><a class="no-color" href="{{ url_for('edit_product', id=pro.id) }}"><i class="fa-lg fa-solid fa-pen-to-square"></i></a></span></button>
                                             <button class="delete ms-2" title="Delete" onclick="deleteProdcut({{pro.id}})"><span><i class="fa-lg fa-solid fa-trash-can"></i></span></button>
                                         </div>
                                     </td>

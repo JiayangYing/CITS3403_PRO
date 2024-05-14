@@ -95,8 +95,21 @@ class ProductForm(FlaskForm):
         validate_australian_postcode(postcode.data)
 
     def set_form_data(self):
-        print(current_user.postcode)
         self.location.data = current_user.postcode
+        
+class EditProductForm(FlaskForm):
+    id = int()
+    product_name = StringField('Product Name', validators=[DataRequired(), Length(min=1, max=100)])
+    price = DecimalField('Price', validators=[DataRequired(), NumberRange(min=0)])
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
+    condition = ProductConditionField('Condition', validators=[DataRequired()])
+    category = ProductCategoryField('Category', validators=[DataRequired()])
+    location = IntegerField('Location', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
+    submit = SubmitField('Edit')
+
+    def validate_location(self, postcode):
+        validate_australian_postcode(postcode.data)
 
 class ProfileForm(FlaskForm):
     first_name = StringField('First Name')
@@ -171,11 +184,11 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField('Update Password')
 
     def validate_old_password(self, old_password):
-        if old_password.data is None and not current_user.check_password(old_password.data):
+        if not current_user.check_password(old_password.data):
             raise ValidationError('Incorrect current password.')
 
-    def validate_old_password(self, old_password):
-        if old_password.data == self.new_password.data:
+    def validate_new_password(self, new_password):
+        if new_password.data == self.old_password.data:
             raise ValidationError('Current password same as new password. Please use a different password.')
 
 class Orderform(FlaskForm):

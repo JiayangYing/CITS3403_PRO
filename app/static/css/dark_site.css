@@ -171,11 +171,11 @@
     margin-right: 5px;
 }
 
-.dark_mode a {
+.dark_mode a:not([class*="no-color"]) {
     color: #fff;
 }
 
-    .dark_mode a:hover {
+    .dark_mode a:not([class*="no-color"]):hover {
         color: #ccc;
     }
 

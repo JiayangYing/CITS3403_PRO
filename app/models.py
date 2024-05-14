@@ -43,6 +43,18 @@ class User(UserMixin, db.Model):
             .where(Product.user_id == self.id,)
             .order_by(Product.created_on.desc())
         )
+    
+    @staticmethod
+    def get_by_username(username):
+        return db.session.scalar(
+            sa.select(User).where(User.username==username)
+        )
+    
+    @staticmethod
+    def get_by_email(email):
+        return db.session.scalar(
+            sa.select(User).where(User.email_address==email)
+        )
 
     def add_order(self):
         o = Order(buyer=self)
@@ -67,19 +79,20 @@ class Product(db.Model):
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
 
-    def get_orders_count(self, status):
+    @staticmethod
+    def get_orders_count(status):
         return db.session.scalar(
             sa.select(sa.func.count())
             .where(sa.and_(
-                Order.product_id == self.id,
+                Order.product_id == Product.id,
                 Order.status == status))
         )
     
     def get_pending_order_counts(self):
-        pending_count = self.get_orders_count(status='Pending')
-        approved_count = self.get_orders_count(status='Approved')
-        rejected_count = self.get_orders_count(status='Rejected')
-        cancelled_count = self.get_orders_count(status='Cancelled')
+        pending_count = self.get_orders_count('Pending')
+        approved_count = self.get_orders_count('Approved')
+        rejected_count = self.get_orders_count('Rejected')
+        cancelled_count = self.get_orders_count('Cancelled')
         count_info = {
             'pending': pending_count,
             'approved': approved_count,
@@ -89,8 +102,12 @@ class Product(db.Model):
         return count_info
     
     @staticmethod
+    def get_by_id(id): 
+        return Product.query.get(id)
+    
+    @staticmethod
     def activation(id, current_user_id):
-        product = Product.query.get(id)
+        product = Product.get_by_id(id)
         if not product:
             return {'message': 'Product not found.', 'success': False}
         if product.user_id != current_user_id:
@@ -132,27 +149,26 @@ class Order(db.Model):
     def __repr__(self):
         return '<Order {}>'.format(self.id)
 
-    def get_orders_by_product_id(self, id):
+    @staticmethod
+    def get_orders_by_product_id(id):
         return (
             sa.select(Order)
-            .where(self.product_id == id)
+            .where(Order.product_id == id)
             .order_by(Order.created_on.desc())
         )
 
-    def get_by_id(self, id):
-        return db.session.execute(
-            sa.select(Order)
-            .where(self.id == id)
-        ).fetchone()
+    @staticmethod
+    def get_by_id(id): 
+        return Order.query.get(id)
     
     @staticmethod
     def set_pending_status(id, current_user_id,status):
-        order = Order.query.get(id)
+        order = Order.get_by_id(id)
         if not order:
             return {'message': 'Order not found.', 'success': False}
         if order.status != 'Pending':
             return {'message': 'Order not in pending status.', 'success': False}
-        product = Product.query.get(order.product_id)
+        product = Product.get_by_id(order.product_id)
         if not product:
             return {'message': 'Product not found.', 'success': False}
         if not product.is_active:
@@ -165,12 +181,12 @@ class Order(db.Model):
 
     @staticmethod
     def set_pending_status_from_buyer(id, current_user_id,status):
-        order = Order.query.get(id)
+        order = Order.get_by_id(id)
         if not order or order.status != 'Pending':
             return {'message': 'Order not found.', 'success': False}
         if not order.buyer_id == current_user_id:
             return {'message': 'This is not your order.', 'success': False}
-        product = Product.query.get(order.product_id)
+        product = Product.get_by_id(order.product_id)
         if not product:
             return {'message': 'Product not found.', 'success': False}
         order.status = status
@@ -180,7 +196,7 @@ class Order(db.Model):
     # just for testing
     @staticmethod
     def reset_pending(id):
-        order = Order.query.get(id)
+        order = Order.get_by_id(id)
         order.status = 'Pending'
         db.session.commit() 
 

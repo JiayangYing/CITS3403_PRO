@@ -4,7 +4,8 @@ from app import app,db
 from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
-    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform
+    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
+    EditProductForm
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
@@ -25,8 +26,7 @@ def login():
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == form.username.data))
+        user = User.get_by_username(form.username.data)
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
@@ -102,7 +102,6 @@ def categories():
     page = request.args.get('page', 1, type=int)
     view = request.args.get('view', 'grid', type=str)
     if page==2:
-        print(view)
         categories = [
             {'Men': [products[0]] },
             {'Women': [products[2]] }
@@ -204,6 +203,19 @@ def add_product():
         return redirect(url_for('seller'))
     return render_template('/manage_product/add.html', form=form)
 
+@app.route('/edit_product/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_product(id):
+    product=Product.get_by_id(id)
+    form = EditProductForm(obj=product)
+    form.id = id
+    if form.validate_on_submit():
+        form.populate_obj(product)
+        db.session.commit()
+        flash('Your product details have been saved.', 'success')
+        return redirect(url_for('edit_product', id=id))
+    return render_template('manage_product/edit.html', form=form)
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -263,8 +275,7 @@ def deactivate():
 @app.route('/change_pass', methods=['GET', 'POST'])
 @login_required
 def change_pass():
-    user = db.session.scalar(
-            sa.select(User).where(User.email_address == current_user.email_address))
+    user = User.get_by_email(current_user.email_address)
     form = EditProfileForm()
     form.set_form_data()
     change_pass_form = ChangePasswordForm()
@@ -272,15 +283,15 @@ def change_pass():
         user.set_password(change_pass_form.new_password.data)
         current_user.password_hash = user.password_hash
         db.session.commit()
-        flash('Your password has been changed.', 'success')
-        return redirect(url_for('edit_profile'))
+        flash('Your password has been changed. Please login again.', 'success')
+        return redirect(url_for('logout'))
     return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
 
 @app.route('/get_orders/<product_id>', methods=['POST'])
 def get_product_orders(product_id):
     if current_user.is_authenticated:
         page = request.json.get('page')
-        orders = db.paginate(Order.get_orders_by_product_id(self=Order, id=product_id), page=page, 
+        orders = db.paginate(Order.get_orders_by_product_id(product_id), page=page, 
                             per_page=app.config['ORDER_LISTING_PER_PAGE'], 
                             error_out=False)
         pages = []

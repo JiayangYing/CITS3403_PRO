@@ -12,6 +12,7 @@ $(() => {
     })
 
     $(".display-card").click(function(){
-        window.location.href = `/product/${$(this).data('id')}`;
+        var productId = $(this).data('id');
+        window.open(`/product/${productId}`, '_blank');
     });
 });

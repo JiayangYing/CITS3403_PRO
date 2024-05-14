@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container bg-gradient-dark topbar topbar-dark">
-        <a class="logo topbar-brand d-flex align-items-center justify-content-center" href="home" action="{{ url_for('home') }}">
+        <a class="logo topbar-brand d-flex align-items-center justify-content-center" href="{{ url_for('home') }}">
             <i class="fa-solid fa-leaf fa-2p5x company-logo"></i>
             <div class="mx-3">{{ company }}</div>
             <i id="weather_mode" class="fa-solid fa-sun"></i>
@@ -59,8 +59,7 @@
                             <i class="fa-solid fa-user"></i> {{current_user.username}}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item" href="profile">Profile</a></li>
-                            <li><a class="dropdown-item" href="#">Account</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
                         </ul>

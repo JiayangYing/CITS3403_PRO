@@ -15,7 +15,7 @@
                     <div class="carousel-inner">
                         {% for img in product.imgs %}
                             <div class="carousel-item">
-                                <img class="d-block w-100 rounded border-white" height="600" src=/static/img/{{ img }} alt="{{ product.title }}-{{ loop.index-1 }}">
+                                <img class="d-block w-100 rounded border-white" height="600" src=/static/img/{{ img }} alt="{{ product.product_name }}-{{ loop.index-1 }}">
                             </div>
                         {% endfor %}
                     </div>
@@ -32,11 +32,11 @@
             <div id="productDetail" class="col-12 col-md-6 pt-2 ps-4">
                 <div class="d-flex align-items-start flex-column h-100">
                     <div>
-                        <h2>{{ product.title }}</h2>
+                        <h2>{{ product.product_name }}</h2>
                         <p class="price">AUD <span id="ProductPrice">{{ '%0.2f'|format(product.price|float) }}</span></p>
-                            
                         <p>Qty: {{ product.quantity }}</p>
                         <p><i class="fa-solid fa-location-dot me-2"></i>{{ product.location }}</p>
+                        <p><i class="fa-solid fa-shop me-2"></i>{{ product.owner.shop_name }}</p>
                     </div>
                     <div class="ms-auto">
                         <button id="ContactSellerBtn" class="btn btn-primary">Contact Seller</button>
