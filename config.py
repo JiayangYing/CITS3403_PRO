@@ -5,8 +5,9 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'never-guess'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
-    POSTS_PER_PAGE = 3
-    
+    PRODUCT_LISTING_PER_PAGE = 1
+    ORDER_LISTING_PER_PAGE = 2
+
 class DevelopmentConfig(Config):
     DEBUG = True
 
