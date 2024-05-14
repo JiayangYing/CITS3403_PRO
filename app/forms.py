@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField
 from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
 import sqlalchemy as sa
 from app import db
-from app.models import User
+from app.models import User, Product
 
 class ProductConditionField(SelectField):
     def __init__(self, *args, **kwargs):
@@ -52,6 +52,9 @@ class RegistrationForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired()])
     email_address = StringField('Email', validators=[DataRequired(), Email()])
     username = StringField('Username', validators=[DataRequired()])
+    address = StringField('Address', validators=[Length(max=120)])
+    postcode = IntegerField('Post Code', validators=[DataRequired()])
+    contact_no = TelField('Contact Number', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     re_password = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     become_seller = BooleanField('Become a Seller')
@@ -71,6 +74,9 @@ class RegistrationForm(FlaskForm):
     def validate_shop_name(self, shopname):
         if self.become_seller.data and not shopname.data:
             raise ValidationError('Please enter a shop name if you wish to become a seller.')
+
+    def validate_postcode(self, postcode):
+        validate_australian_postcode(postcode.data)
         
 class ProductForm(FlaskForm):
     product_name = StringField('Product Name', validators=[DataRequired(), Length(min=1, max=100)])
@@ -160,3 +166,30 @@ class ChangePasswordForm(FlaskForm):
     def validate_old_password(self, old_password):
         if old_password.data == self.new_password.data:
             raise ValidationError('Current password same as new password. Please use a different password.')
+
+class Orderform(FlaskForm):
+    quantity = SelectField('Quantity', validators=[DataRequired()])
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    email_address = StringField('Email', validators=[DataRequired(), Email()])
+    postcode = IntegerField('Post Code', validators=[DataRequired()])
+    contact_no = TelField('Contact Number', validators=[DataRequired()])
+    remarks = TextAreaField('remarks')
+    submit = SubmitField('Request')
+
+    def set_form_data(self):
+        self.first_name.data = current_user.first_name
+        self.last_name.data = current_user.last_name
+        self.email_address.data = current_user.email_address
+        self.postcode.data = current_user.postcode
+        self.contact_no.data = current_user.contact_no
+
+    def set_product_qty(self, qty):
+        self.quantity.choices = [('','--Select Qty--')] + [(i, i) for i in range(1, qty + 1)]
+
+    def validate_postcode(self, postcode):
+        validate_australian_postcode(postcode.data)
+
+    def validate_quantity(self, quantity):
+        if int(quantity.data) < 1 or int(quantity.data) > self.quantity.choices[-1][0]:
+            raise ValidationError('Invalid quantity')

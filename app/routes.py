@@ -1,14 +1,14 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,Blueprint
 from flask_login import current_user, login_user,login_required,logout_user
 from app import app,db
-from app.models import User,Product
+from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
-    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm
+    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
-  
+
 @app.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
@@ -53,10 +53,13 @@ def signup():
     if form.validate_on_submit():
         user = User(
             username=form.username.data,
-            email_address=form.email_address.data, 
             first_name = form.first_name.data,
             last_name = form.last_name.data,
             is_seller = form.become_seller.data, 
+            email_address=form.email_address.data, 
+            postcode = form.postcode.data,
+            address = form.address.data,
+            contact_no = form.contact_no.data,
             shop_name = form.shop_name.data
         )
         user.set_password(form.password.data)
@@ -107,10 +110,43 @@ def categories():
     pages=[1,2]
     return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
-@app.route('/product/<product_id>')
+@app.route('/product/<product_id>', methods=['GET'])
+@login_required
 def product_detail(product_id):
     product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
-    return render_template('/product/product_detail.html', product=product)
+    if not product:
+        return url_for('error')
+    form = Orderform()
+    form.set_product_qty(product.quantity)
+    form.set_form_data()
+    return render_template('/product/product_detail.html', product=product, form=form)
+
+@app.route('/contact_seller/<product_id>', methods=['POST'])
+@login_required
+def contact_seller(product_id):
+    product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
+    if not product:
+        return url_for('error')
+    form = Orderform()
+    form.set_product_qty(product.quantity)
+    if form.validate_on_submit():
+        order = Order(
+            quantity=form.quantity.data,
+            first_name=form.first_name.data, 
+            last_name = form.last_name.data,
+            email_address = form.email_address.data,
+            postcode = form.postcode.data, 
+            contact_no = form.contact_no.data,
+            remarks = form.remarks.data,
+            product_id = product_id,
+            buyer = current_user
+        )
+        db.session.add(order)
+        # current_user.add_order()
+        db.session.commit()
+        flash('Your order request has been sent!', 'success')
+        return redirect(url_for('product'))
+    return render_template('/product/product_detail.html', product=product, form=form, show_modal=True)
 
 @app.route('/seller')
 @login_required
@@ -121,6 +157,8 @@ def seller():
     products = db.paginate(current_user.get_products(), page=page, 
                            per_page=app.config['PRODUCT_LISTING_PER_PAGE'], 
                            error_out=False)
+    for pro in products:
+        pro.orders = pro.get_pending_order_counts()
     next_url, prev_url, pages = None, None, []
     if products.has_prev:
         prev_url = url_for('seller', page=products.prev_num)
@@ -238,6 +276,55 @@ def change_pass():
         return redirect(url_for('edit_profile'))
     return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
 
+@app.route('/get_orders/<product_id>', methods=['POST'])
+def get_product_orders(product_id):
+    if current_user.is_authenticated:
+        page = request.json.get('page')
+        orders = db.paginate(Order.get_orders_by_product_id(self=Order, id=product_id), page=page, 
+                            per_page=app.config['ORDER_LISTING_PER_PAGE'], 
+                            error_out=False)
+        pages = []
+        if orders.has_prev:
+            pages.append(page-1)
+        pages.append(page)
+        if orders.has_next:
+            pages.append(page+1)
+        return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/reset_order/<order_id>', methods=['GET'])
+def reset_order(order_id):
+    Order.reset_pending(order_id)
+    return jsonify({'message': 'done.', 'success': True})
+
+@app.route('/approve_order/<order_id>', methods=['POST'])
+def approve_order(order_id):
+    if current_user.is_authenticated:
+        return jsonify(Order.set_pending_status(order_id, current_user.id, 'Approved'))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/reject_order/<order_id>', methods=['POST'])
+def reject_order(order_id):
+    if current_user.is_authenticated:
+        return jsonify(Order.set_pending_status(order_id, current_user.id, 'Rejected'))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/cancel_order/<order_id>', methods=['POST'])
+def cancel_order(order_id):
+    if current_user.is_authenticated:
+        return jsonify(Order.set_pending_status_from_buyer(order_id, current_user.id, 'Cancelled'))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/product_activation/<product_id>', methods=['POST'])
+def product_activation(product_id):
+    if current_user.is_authenticated:
+        return jsonify(Product.activation(product_id, current_user.id))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/forget_password')
+def f_password():
+    return render_template('/users/f_password.html', forget_password=f_password)
+
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
@@ -247,14 +334,3 @@ def login():
 @auth.route('/logout')
 def logout():
     return "You have been logged out."
-
-@app.route('/forget_password')
-def f_password():
-    return render_template('/users/f_password.html', forget_password=f_password)
-
-@app.route('/get_orders/<product_id>', methods=['POST'])
-def get_product_orders(product_id):
-    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'qty': 2, 'status':'pending'}]*2
-    return jsonify({'orders': orders})
-
-
