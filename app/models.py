@@ -78,14 +78,24 @@ class Product(db.Model):
         pending_count = self.get_orders_count(status='Pending')
         approved_count = self.get_orders_count(status='Approved')
         rejected_count = self.get_orders_count(status='Rejected')
+        cancelled_count = self.get_orders_count(status='Cancelled')
         count_info = {
             'pending': pending_count,
             'approved': approved_count,
             'rejected': rejected_count,
-            'total': pending_count+approved_count+rejected_count
+            'cancelled': cancelled_count
         }
         return count_info
-        
+    
+    def activation(self, id, current_user_id):
+        product = Product.query.get(id)
+        if not product:
+            return {'message': 'Product not found.', 'success': False}
+        if product.user_id != current_user_id:
+            return {'message': 'This is not your product.', 'success': False}
+        product.is_active = not product.is_active
+        db.session.commit()
+        return {'message': f'Success {"activate" if product.is_active else "deactivate"} the product.', 'success':True}  
     
 class Order(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -126,3 +136,47 @@ class Order(db.Model):
             .where(self.product_id == id)
             .order_by(Order.created_on.desc())
         )
+
+    def get_by_id(self, id):
+        return db.session.execute(
+            sa.select(Order)
+            .where(self.id == id)
+        ).fetchone()
+    
+    def set_pending_status(self, id, current_user_id,status):
+        order = Order.query.get(id)
+        if not order:
+            return {'message': 'Order not found.', 'success': False}
+        if order.status != 'Pending':
+            return {'message': 'Order not in pending status.', 'success': False}
+        product = Product.query.get(order.product_id)
+        if not product:
+            return {'message': 'Product not found.', 'success': False}
+        if not product.is_active:
+            return {'message': 'Product is not active.', 'success': False}
+        if not product.user_id == current_user_id:
+            return {'message': 'This is not your product.', 'success': False}
+        order.status = status
+        db.session.commit()
+        return {'message': f'{status} the order.', 'success':True}        
+
+    
+    def set_pending_status_from_buyer(self, id, current_user_id,status):
+        order = Order.query.get(id)
+        if not order or order.status != 'Pending':
+            return {'message': 'Order not found.', 'success': False}
+        if not order.buyer_id == current_user_id:
+            return {'message': 'This is not your order.', 'success': False}
+        product = Product.query.get(order.product_id)
+        if not product:
+            return {'message': 'Product not found.', 'success': False}
+        order.status = status
+        db.session.commit()
+        return {'message': f'{status} the order.', 'success':True}
+
+    # just for testing
+    def reset_pending(self, id):
+        order = Order.query.get(id)
+        order.status = 'Pending'
+        db.session.commit() 
+

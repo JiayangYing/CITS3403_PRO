@@ -287,17 +287,36 @@ def get_product_orders(product_id):
     pages.append(page)
     if orders.has_next:
         pages.append(page+1)
-    return jsonify({ 'orders': [o.to_json() for o in orders], 'pages':pages})
+    return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
 
-@app.route('/order_approve/<order_id>', methods=['POST'])
-def approve_product(product_id):
-    page = request.args.get('page', 1, type=int)
-    query = sa.select(Order).order_by(Order.created_on.desc())
-    orders = db.paginate(query, page=page, 
-                           per_page=app.config['ORDER_LISTING_PER_PAGE'], 
-                           error_out=False)
-    return jsonify({'orders': [o.to_json() for o in orders]})
+@app.route('/reset_order/<order_id>', methods=['GET'])
+def reset_order(order_id):
+    Order().reset_pending(order_id)
+    return jsonify({'message': 'done.', 'success': True})
 
+@app.route('/approve_order/<order_id>', methods=['POST'])
+def approve_order(order_id):
+    if current_user.is_authenticated:
+        return jsonify(Order().set_pending_status(order_id, current_user.id, 'Approved'))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/reject_order/<order_id>', methods=['POST'])
+def reject_order(order_id):
+    if current_user.is_authenticated:
+        return jsonify(Order().set_pending_status(order_id, current_user.id, 'Rejected'))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/cancel_order/<order_id>', methods=['POST'])
+def cancel_order(order_id):
+    if current_user.is_authenticated:
+        return jsonify(Order().set_pending_status_from_buyer(order_id, current_user.id, 'Cancelled'))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
+
+@app.route('/product_activation/<product_id>', methods=['POST'])
+def product_activation(product_id):
+    if current_user.is_authenticated:
+        return jsonify(Product().activation(product_id, current_user.id))
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
 @app.route('/forget_password')
 def f_password():

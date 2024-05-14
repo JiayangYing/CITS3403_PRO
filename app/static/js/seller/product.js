@@ -1,36 +1,40 @@
 var clickedProductId = 0;
+var currentPage = 1;
 
 const onErrorAjaxDefault = (xhr) => {
     GenerateDangerAlertDiv("Failed!", xhr.responseText);
 };
 
-const onErrorOrderTable = (xhr) => {
-    GenerateDangerAlertDiv("Failed!", xhr.responseText, '#productOrder_AlertModalDiv');
+var onErrorOrderTable = (xhr) => {
+    divId = $('#productOrderModal.show').length ? '#productOrder_AlertModalDiv' : ''
+    GenerateDangerAlertDiv("Failed!", xhr.responseText, divId);
 };
 
-const onSuccessOrderTable = (response) => {
-    if (response.error !== 'Success') {
-        GenerateSuccessAlertDiv("Success!", response.message);
+var onSuccessOrderTable = (response) => {
+    divId = $('#productOrderModal.show').length ? '#productOrder_AlertModalDiv' : ''
+    if (response.success) {
+        GenerateSuccessAlertDiv("Success!", response.message, divId);
         loadOrders(clickedProductId);
     } else {
-        GenerateDangerAlertDiv("Failed!", xhr.responseText, '#productOrder_AlertModalDiv');
+        GenerateDangerAlertDiv("Failed!", response.message, divId);
     }
 }
 
 function approveOrder(orderId, lastName) {
     if (!confirm(`Are you sure you want to APPROVE order from ${lastName}?`))
         return;
-    CallPost(`/order_approve/${orderId}`, {}, onSuccessOrderTable, onErrorOrderTable);
+    CallPost(`/approve_order/${orderId}`, {}, onSuccessOrderTable, onErrorOrderTable);
 }
 
 function rejectOrder(orderId, lastName) {
     if (!confirm(`Are you sure you want to REJECT order from ${lastName}?`))
         return;
-    CallPost(`/order_reject/${orderId}`, {}, onSuccessOrderTable, onErrorOrderTable);
+    CallPost(`/reject_order/${orderId}`, {}, onSuccessOrderTable, onErrorOrderTable);
 }
 
-function loadOrders(productId, productName = null, page = 1) {
+function loadOrders(productId = clickedProductId, productName = null, page = currentPage) {
     clickedProductId = productId
+    currentPage = page
     if(productName)
         $("#popup-product-name").text(productName);
     const onSuccess = (response) => {
@@ -38,6 +42,10 @@ function loadOrders(productId, productName = null, page = 1) {
         $table.find("tbody").empty();
         
         $.each(response.orders, function(index, order) {
+            var btn = `
+                <button class="btn btn-success btn-sm ml-0" title="Approve" onclick="approveOrder(${order.id}, '${order.last_name}')"><span><i class="fa-solid fa-check"></i> Approve</span></button>
+                <button class="btn btn-danger btn-sm ml-0" title="Reject" onclick="rejectOrder(${order.id}, '${order.last_name}')"><span><i class="fa-solid fa-xmark"></i> Reject</span></button>
+            `
             var row = `
                 <tr class = ${order.status}>
                     <td>${index + 1}</td>
@@ -49,8 +57,7 @@ function loadOrders(productId, productName = null, page = 1) {
                     <td>${order.qty}</td>
                     <td>${order.status}</td>
                     <td>
-                        <button class="btn btn-success btn-sm ml-0" title="Approve" onclick="approveOrder(${order.id}, '${order.last_name}')"><span><i class="fa-solid fa-check"></i> Approve</span></button>
-                        <button class="btn btn-danger btn-sm ml-0" title="Reject" onclick="rejectOrder(${order.id}, '${order.last_name}')"><span><i class="fa-solid fa-xmark"></i> Reject</span></button>
+                        ${order.status == 'Pending' ? btn : ''}
                     </td>
                 </tr>`;
             $table.find("tbody").append(row);
@@ -93,7 +100,21 @@ function loadOrders(productId, productName = null, page = 1) {
         )
         $("#productOrderModal").modal('show');
     };
-    CallPost(`/get_orders/${productId}`, { page : page }, onSuccess, onErrorAjaxDefault);
+    CallPost(`/get_orders/${productId}`, { page : currentPage }, onSuccess, onErrorAjaxDefault);
+}
+
+function switchIsActive(productId) {
+    
+    const onSuccessActivation = (response) => {
+        if (response.success) {
+            GenerateSuccessAlertDiv("Success!", response.message);
+        } else {
+            GenerateDangerAlertDiv("Failed!", response.message);
+            current_checked = $(`#isActive_${productId}`).prop('checked')
+            $(`#isActive_${productId}`).prop('checked', !current_checked )
+        }
+    }
+    CallPost(`/product_activation/${productId}`, {}, onSuccessActivation, onErrorAjaxDefault);
 }
 
 $(() => {
