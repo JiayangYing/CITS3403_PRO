@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField
+from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField
 from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
 import sqlalchemy as sa
 from app import db
@@ -40,6 +40,9 @@ def validate_australian_postcode(postcode):
         if min_code <= postcode <= max_code:
             return
     raise ValidationError('Invalid post code.')
+
+def get_avatar_icon(avatar_idx):
+    return ['fa-user-secret', 'fa-user-tie', 'fa-user-graduate', 'fa-user-nurse'][avatar_idx]
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -103,6 +106,8 @@ class ProfileForm(FlaskForm):
     address = StringField('Address')
     account_type = StringField('Account Type')
     verified = BooleanField('Verified')
+    avatar = IntegerField('Avatar')
+    avatar_icon = StringField('Avatar')
     submit = SubmitField('Update Profile')
 
     def set_form_data(self):
@@ -113,6 +118,8 @@ class ProfileForm(FlaskForm):
         self.address.data = current_user.address
         self.account_type.data = 'Seller' if current_user.is_seller else 'Buyer'
         self.verified.data = current_user.is_verified
+        self.avatar.data = current_user.avatar
+        self.avatar_icon.data = get_avatar_icon(current_user.avatar)
 
 class UpdateAccountForm(FlaskForm):
     become_seller = BooleanField('Become a Seller?')
@@ -141,6 +148,8 @@ class EditProfileForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
     address = StringField('Address', validators=[Length(max=120)])
     postcode = IntegerField('Post Code', validators=[DataRequired()])
+    avatar = HiddenField('Avatar', validators=[DataRequired()])
+    avatar_icon = StringField('Avatar')
     submit = SubmitField('Update')
 
     def validate_postcode(self, postcode):
@@ -152,6 +161,8 @@ class EditProfileForm(FlaskForm):
         self.email.data = current_user.email_address
         self.postcode.data = current_user.postcode
         self.address.data = current_user.address
+        self.avatar.data = current_user.avatar
+        self.avatar_icon.data = get_avatar_icon(current_user.avatar)
 
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField('Current Password', validators=[DataRequired(), Length(min=6)])
