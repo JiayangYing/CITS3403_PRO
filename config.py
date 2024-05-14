@@ -6,6 +6,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
     PRODUCT_LISTING_PER_PAGE = 1
+    ORDER_LISTING_PER_PAGE = 2
 
 class DevelopmentConfig(Config):
     DEBUG = True

@@ -3,6 +3,11 @@
 {% block title %}Product {% endblock %}
 
 {% block content %}
+    <div class="container">
+        <div id="AlertModalDiv">
+            {% include "/layout/alert_modal.html" %}
+        </div>
+    </div>
     {% include "/product/product_display.html" %}
 {% endblock %}
 
