@@ -51,8 +51,14 @@ def signup():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email_address=form.email_address.data, first_name = form.first_name.data,
-                    last_name = form.last_name.data, is_seller = form.become_seller.data, shop_name = form.shop_name.data)
+        user = User(
+            username=form.username.data,
+            email_address=form.email_address.data, 
+            first_name = form.first_name.data,
+            last_name = form.last_name.data,
+            is_seller = form.become_seller.data, 
+            shop_name = form.shop_name.data
+        )
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -80,7 +86,7 @@ products = [
 
 @app.route('/product')
 def product():
-    query = sa.select(Product).order_by(Product.timestamp.desc()).limit(10)
+    query = sa.select(Product).order_by(Product.created_on.desc()).limit(10)
     products = db.session.scalars(query).all()
     return render_template('/product/product.html', products=products)
 
@@ -112,16 +118,19 @@ def seller():
     if(not current_user.is_seller):
         return redirect(url_for('error'))
     page = request.args.get('page', 1, type=int)
-    products = db.paginate(current_user.get_products(), page=page,
-                        per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-    
-    next_url = url_for('seller', page=products.next_num) \
-        if products.has_next else None
-    prev_url = url_for('seller', page=products.prev_num) \
-        if products.has_prev else None
-    return render_template('/seller/product.html', title=current_user.username,
-                        posts=products.items, next_url=next_url,
-                        prev_url=prev_url)
+    products = db.paginate(current_user.get_products(), page=page, 
+                           per_page=app.config['PRODUCT_LISTING_PER_PAGE'], 
+                           error_out=False)
+    next_url, prev_url, pages = None, None, []
+    if products.has_prev:
+        prev_url = url_for('seller', page=products.prev_num)
+        pages.append(page-1)
+    pages.append(page)
+    if products.has_next:
+        next_url = url_for('seller', page=products.next_num)
+        pages.append(page+1)
+    return render_template('/seller/product.html', products=products.items, pages = pages,
+                           next_url=next_url, prev_url=prev_url)
 
 @app.route('/profile')
 @login_required
@@ -138,6 +147,8 @@ def profile():
 @login_required
 def add_product():
     form = ProductForm()
+    if request.method == 'GET':
+        form.set_form_data()
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
@@ -145,13 +156,13 @@ def add_product():
             price=form.price.data,
             quantity=form.quantity.data,
             condition=form.condition.data,
-            location=form.location.data,  # Handling new field
+            location=form.location.data,
             description = form.description.data,
             owner = current_user
         )
         db.session.add(product)
         db.session.commit()
-        flash('Product added successfully!')
+        flash('Product added successfully!', 'success')
         return redirect(url_for('seller'))
     return render_template('/manage_product/add.html', form=form)
 
@@ -240,5 +251,8 @@ def logout():
 def f_password():
     return render_template('/users/f_password.html', forget_password=f_password)
 
-
+@app.route('/get_orders/<product_id>', methods=['POST'])
+def get_product_orders(product_id):
+    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'qty': 2, 'status':'pending'}]*2
+    return jsonify({'orders': orders})
 
