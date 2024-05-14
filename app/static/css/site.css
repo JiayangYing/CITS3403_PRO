@@ -589,18 +589,22 @@ table .on-hover:hover .underline {
   animation: shake 0.5s ease-in-out infinite;
 }
 
+tr[data-status='Rejected'] td,
 td[data-status='red'] {
-    color: #d52a1a;
+    color: #d55c51;
 }
 
+tr[data-status='Approved'] td,
 td[data-status='green'] {
     color: #1cc88a;
 }
 
+tr[data-status='Pending'] td,
 td[data-status='yellow'] {
     color: #f4b30d;
 }
 
+tr[data-status='Cancelled'] td,
 td[data-status=white] {
     color: #fff;
 }

@@ -87,7 +87,8 @@ class Product(db.Model):
         }
         return count_info
     
-    def activation(self, id, current_user_id):
+    @staticmethod
+    def activation(id, current_user_id):
         product = Product.query.get(id)
         if not product:
             return {'message': 'Product not found.', 'success': False}
@@ -143,7 +144,8 @@ class Order(db.Model):
             .where(self.id == id)
         ).fetchone()
     
-    def set_pending_status(self, id, current_user_id,status):
+    @staticmethod
+    def set_pending_status(id, current_user_id,status):
         order = Order.query.get(id)
         if not order:
             return {'message': 'Order not found.', 'success': False}
@@ -160,8 +162,8 @@ class Order(db.Model):
         db.session.commit()
         return {'message': f'{status} the order.', 'success':True}        
 
-    
-    def set_pending_status_from_buyer(self, id, current_user_id,status):
+    @staticmethod
+    def set_pending_status_from_buyer(id, current_user_id,status):
         order = Order.query.get(id)
         if not order or order.status != 'Pending':
             return {'message': 'Order not found.', 'success': False}
@@ -175,7 +177,8 @@ class Order(db.Model):
         return {'message': f'{status} the order.', 'success':True}
 
     # just for testing
-    def reset_pending(self, id):
+    @staticmethod
+    def reset_pending(id):
         order = Order.query.get(id)
         order.status = 'Pending'
         db.session.commit() 

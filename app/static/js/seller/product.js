@@ -47,7 +47,7 @@ function loadOrders(productId = clickedProductId, productName = null, page = cur
                 <button class="btn btn-danger btn-sm ml-0" title="Reject" onclick="rejectOrder(${order.id}, '${order.last_name}')"><span><i class="fa-solid fa-xmark"></i> Reject</span></button>
             `
             var row = `
-                <tr class = ${order.status}>
+                <tr data-status=${order.status}>
                     <td>${index + 1}</td>
                     <td>${order.first_name}</td>
                     <td>${order.last_name}</td>
@@ -129,7 +129,7 @@ $(() => {
             $tr.next("tr").removeClass('d-none')
         }
     });
-    
+
     var url = new URL(window.location.href);
     pageNum = url.searchParams.get('page')
     if (!pageNum){
