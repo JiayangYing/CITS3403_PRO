@@ -43,20 +43,19 @@
                     </div>
                     <div class="col mr-2">
                         <div class="text-uppercase mb-1">Created On</div>
-                        <span> {{ pro.createdOn.strftime('%Y-%m-%d %H:%M:%S') }} </span>
+                        <span> {{ pro.created_on.strftime('%Y-%m-%d %H:%M:%S') }} </span>                    </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row mt-4 mb-2">
-    <div class="col-12">
-        <div class="card table-border-left-red shadow h-100 py-2">
-            <div class="card-body row">
-                <div class="col no-gutters align-items-center">
-                    <div class="col mr-2 mb-2">
-                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Preview Product</div>
+    <div class="row mt-4 mb-2">
+        <div class="col-12">
+            <div class="card table-border-left-red shadow h-100 py-2">
+                <div class="card-body row">
+                    <div class="col no-gutters align-items-center">
+                        <div class="col mr-2 mb-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Preview Product</div>
                             <div class="preview-img">
                                 {% for img in pro.imgs %}
                                     <img class="rounded" src=/static/img/{{ img }}>

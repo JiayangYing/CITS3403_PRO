@@ -86,10 +86,13 @@
             <div class="standard-form-table-column">
                 <div class="standard-form-row">
                     <span class="standard-form-label">
-                        Description
+                        {{ form.description.label }}
                     </span>
                     <span class="standard-form-value">
-                        <textarea class="form-control mh-100" id="remark" rows="3" placeholder="Enter Description" style="height: 100px;"></textarea>
+                        {{ form.description(class="form-control mh-100", type="number",id="remark",rows="3",placeholder="Enter Description",style="height: 100px;") }}
+                        {% for error in form.description.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
                     </span>
                 </div>
                 <div class="standard-form-row">

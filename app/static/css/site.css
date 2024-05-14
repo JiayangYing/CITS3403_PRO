@@ -588,3 +588,19 @@ table .on-hover:hover .underline {
   width: 12.5rem;
   animation: shake 0.5s ease-in-out infinite;
 }
+
+td[data-status='red'] {
+    color: #d52a1a;
+}
+
+td[data-status='green'] {
+    color: #1cc88a;
+}
+
+td[data-status='yellow'] {
+    color: #f4b30d;
+}
+
+td[data-status=white] {
+    color: #fff;
+}
