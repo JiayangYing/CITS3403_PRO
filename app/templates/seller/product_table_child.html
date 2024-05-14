@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="col-3">
-        <div class="card table-border-left-blue shadow h-100 py-2 on-hover" onclick="loadOrders({{pro.id}}, '{{ pro.title }}')" data-toggle="modal" data-target="#productOrderModal" style="cursor: pointer;">
+        <div class="card table-border-left-blue shadow h-100 py-2 on-hover" onclick="loadOrders({{pro.id}}, '{{ pro.product_name }}')" data-toggle="modal" data-target="#productOrderModal" style="cursor: pointer;">
             <div class="card-body row">
                 <div class="col-12">
                     <div class="underline text-uppercase me-4">
@@ -20,13 +20,13 @@
                     </div>
                     <div class="d-flex align-items-start flex-column">
                         <div class="d-flex mt-2 success col-6">
-                            <span>Success   : 1</span>
+                            <span>Success   : {{ pro.orders.approved }}</span>
                         </div>
                         <div class="d-flex mt-2 pending col-6">
-                            <span>Pending   : 1</span>
+                            <span>Pending   : {{ pro.orders.pending }}</span>
                         </div>
                         <div class="d-flex mt-2 rejected col-6">
-                            <span>Reject    : 1</span>
+                            <span>Reject    : {{ pro.orders.rejected }}</span>
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                 <div class="col-12">
                     <div class="col mr-2 mb-2">
                         <div class="text-uppercase mb-1">Created By</div>
-                        <span> {{ pro.owners }} </span>
+                        <span> {{ pro.owner.username }} </span>
                     </div>
                     <div class="col mr-2">
                         <div class="text-uppercase mb-1">Created On</div>

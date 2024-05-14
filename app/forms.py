@@ -182,7 +182,7 @@ class Orderform(FlaskForm):
         self.last_name.data = current_user.last_name
         self.email_address.data = current_user.email_address
         self.postcode.data = current_user.postcode
-        # self.contact_no.data = current_user.contact_no
+        self.contact_no.data = current_user.contact_no
 
     def set_product_qty(self, qty):
         self.quantity.choices = [('','--Select Qty--')] + [(i, i) for i in range(1, qty + 1)]

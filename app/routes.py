@@ -8,7 +8,6 @@ from app.forms import \
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
-from datetime import datetime
 
 @app.context_processor
 def inject_global_variable():
@@ -158,6 +157,8 @@ def seller():
     products = db.paginate(current_user.get_products(), page=page, 
                            per_page=app.config['PRODUCT_LISTING_PER_PAGE'], 
                            error_out=False)
+    for pro in products:
+        pro.orders = pro.get_pending_order_counts()
     next_url, prev_url, pages = None, None, []
     if products.has_prev:
         prev_url = url_for('seller', page=products.prev_num)
@@ -276,16 +277,27 @@ def change_pass():
 
 @app.route('/get_orders/<product_id>', methods=['POST'])
 def get_product_orders(product_id):
+    page = request.json.get('page')
+    orders = db.paginate(Order.get_orders_by_product_id(self=Order, id=product_id), page=page, 
+                           per_page=app.config['ORDER_LISTING_PER_PAGE'], 
+                           error_out=False)
+    pages = []
+    if orders.has_prev:
+        pages.append(page-1)
+    pages.append(page)
+    if orders.has_next:
+        pages.append(page+1)
+    return jsonify({ 'orders': [o.to_json() for o in orders], 'pages':pages})
+
+@app.route('/order_approve/<order_id>', methods=['POST'])
+def approve_product(product_id):
     page = request.args.get('page', 1, type=int)
     query = sa.select(Order).order_by(Order.created_on.desc())
     orders = db.paginate(query, page=page, 
-                           per_page=app.config['PRODUCT_LISTING_PER_PAGE'], 
+                           per_page=app.config['ORDER_LISTING_PER_PAGE'], 
                            error_out=False)
-    print(product_id)
-    print([o for o in orders.items])
-    print([o.to_json() for o in orders.items])
-    print(query)
     return jsonify({'orders': [o.to_json() for o in orders]})
+
 
 @app.route('/forget_password')
 def f_password():

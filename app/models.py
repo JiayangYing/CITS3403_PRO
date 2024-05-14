@@ -59,11 +59,33 @@ class Product(db.Model):
     description: so.Mapped[str] = so.mapped_column(sa.String(1000))
     created_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
     modified_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
+    is_active : so.Mapped[bool] = so.mapped_column(default=True)
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     owner: so.Mapped[User] = so.relationship(back_populates='products')
 
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
+
+    def get_orders_count(self, status):
+        return db.session.scalar(
+            sa.select(sa.func.count())
+            .where(sa.and_(
+                Order.product_id == self.id,
+                Order.status == status))
+        )
+    
+    def get_pending_order_counts(self):
+        pending_count = self.get_orders_count(status='Pending')
+        approved_count = self.get_orders_count(status='Approved')
+        rejected_count = self.get_orders_count(status='Rejected')
+        count_info = {
+            'pending': pending_count,
+            'approved': approved_count,
+            'rejected': rejected_count,
+            'total': pending_count+approved_count+rejected_count
+        }
+        return count_info
+        
     
 class Order(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -97,3 +119,10 @@ class Order(db.Model):
 
     def __repr__(self):
         return '<Order {}>'.format(self.id)
+
+    def get_orders_by_product_id(self, id):
+        return (
+            sa.select(Order)
+            .where(self.product_id == id)
+            .order_by(Order.created_on.desc())
+        )
