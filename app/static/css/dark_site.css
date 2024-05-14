@@ -187,9 +187,9 @@
     border-color: #fff;
 }
 
-    .dark_mode #customCheck.form-check-input {
-        background-color: #333;
-    }
+.dark_mode .form-check-input {
+    background-color: #333;
+}
 
 .dark_mode .small {
     color: #fff;
