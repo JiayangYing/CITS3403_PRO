@@ -277,17 +277,19 @@ def change_pass():
 
 @app.route('/get_orders/<product_id>', methods=['POST'])
 def get_product_orders(product_id):
-    page = request.json.get('page')
-    orders = db.paginate(Order.get_orders_by_product_id(self=Order, id=product_id), page=page, 
-                           per_page=app.config['ORDER_LISTING_PER_PAGE'], 
-                           error_out=False)
-    pages = []
-    if orders.has_prev:
-        pages.append(page-1)
-    pages.append(page)
-    if orders.has_next:
-        pages.append(page+1)
-    return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
+    if current_user.is_authenticated:
+        page = request.json.get('page')
+        orders = db.paginate(Order.get_orders_by_product_id(self=Order, id=product_id), page=page, 
+                            per_page=app.config['ORDER_LISTING_PER_PAGE'], 
+                            error_out=False)
+        pages = []
+        if orders.has_prev:
+            pages.append(page-1)
+        pages.append(page)
+        if orders.has_next:
+            pages.append(page+1)
+        return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
+    return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
 @app.route('/reset_order/<order_id>', methods=['GET'])
 def reset_order(order_id):
