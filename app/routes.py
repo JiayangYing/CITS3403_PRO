@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,Blueprint
 from flask_login import current_user, login_user,login_required,logout_user
 from app import app,db
-from app.models import User,Product
+from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform
@@ -54,10 +54,13 @@ def signup():
     if form.validate_on_submit():
         user = User(
             username=form.username.data,
-            email_address=form.email_address.data, 
             first_name = form.first_name.data,
             last_name = form.last_name.data,
             is_seller = form.become_seller.data, 
+            email_address=form.email_address.data, 
+            postcode = form.postcode.data,
+            address = form.address.data,
+            contact_no = form.contact_no.data,
             shop_name = form.shop_name.data
         )
         user.set_password(form.password.data)
@@ -108,10 +111,43 @@ def categories():
     pages=[1,2]
     return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
-@app.route('/product/<product_id>')
+@app.route('/product/<product_id>', methods=['GET'])
+@login_required
 def product_detail(product_id):
     product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
-    return render_template('/product/product_detail.html', product=product)
+    if not product:
+        return url_for('error')
+    form = Orderform()
+    form.set_product_qty(product.quantity)
+    form.set_form_data()
+    return render_template('/product/product_detail.html', product=product, form=form)
+
+@app.route('/contact_seller/<product_id>', methods=['POST'])
+@login_required
+def contact_seller(product_id):
+    product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
+    if not product:
+        return url_for('error')
+    form = Orderform()
+    form.set_product_qty(product.quantity)
+    if form.validate_on_submit():
+        order = Order(
+            quantity=form.quantity.data,
+            first_name=form.first_name.data, 
+            last_name = form.last_name.data,
+            email_address = form.email_address.data,
+            postcode = form.postcode.data, 
+            contact_no = form.contact_no.data,
+            remarks = form.remarks.data,
+            product_id = product_id,
+            buyer = current_user
+        )
+        db.session.add(order)
+        # current_user.add_order()
+        db.session.commit()
+        flash('Your order request has been sent!', 'success')
+        return redirect(url_for('product'))
+    return render_template('/product/product_detail.html', product=product, form=form, show_modal=True)
 
 @app.route('/seller')
 @login_required
@@ -240,8 +276,20 @@ def change_pass():
 
 @app.route('/get_orders/<product_id>', methods=['POST'])
 def get_product_orders(product_id):
-    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'created_on': datetime.now(), 'qty': 2, 'status':'pending'}]*2
-    return jsonify({'orders': orders})
+    page = request.args.get('page', 1, type=int)
+    query = sa.select(Order).order_by(Order.created_on.desc())
+    orders = db.paginate(query, page=page, 
+                           per_page=app.config['PRODUCT_LISTING_PER_PAGE'], 
+                           error_out=False)
+    print(product_id)
+    print([o for o in orders.items])
+    print([o.to_json() for o in orders.items])
+    print(query)
+    return jsonify({'orders': [o.to_json() for o in orders]})
+
+@app.route('/forget_password')
+def f_password():
+    return render_template('/users/f_password.html', forget_password=f_password)
 
 auth = Blueprint('auth', __name__)
 
@@ -252,62 +300,3 @@ def login():
 @auth.route('/logout')
 def logout():
     return "You have been logged out."
-
-@app.route('/forget_password')
-def f_password():
-    return render_template('/users/f_password.html', forget_password=f_password)
-
-@app.route('/get_orders/<product_id>', methods=['POST'])
-def get_product_orders(product_id):
-    orders = [{'first_name':'user', 'last_name':'test', 'email':'aaa@mail.com', 'contact_no':'6144442342', 'qty': 2, 'status':'pending'}]*2
-    return jsonify({'orders': orders})
-
-@app.route('/order', methods=['GET', 'POST'])
-@login_required
-def order():
-    if request.method == 'POST':
-        if request.is_json:  # Check if the request contains JSON data
-            data = request.get_json()  # Get JSON data
-
-            # Update current user with JSON data
-            current_user.first_name = data.get('first_name', current_user.first_name)
-            current_user.last_name = data.get('last_name', current_user.last_name)
-            current_user.email_address = data.get('email_address', current_user.email_address)
-            current_user.postcode = data.get('postcode', current_user.postcode)
-            current_user.contact_no = data.get('contact_no', current_user.contact_no)
-            current_user.remarks = data.get('remarks', current_user.remarks)
-
-            db.session.commit()
-            return jsonify({'message': 'Your order has been updated!'}), 200
-
-        else:  # Handle regular form submission
-            form = Orderform()
-            if form.validate_on_submit():
-                current_user.first_name = form.first_name.data
-                current_user.last_name = form.last_name.data
-                current_user.email_address = form.email_address.data
-                current_user.postcode = form.postcode.data
-                current_user.contact_no = form.contact_no.data
-                current_user.remarks = form.remarks.data
-
-                db.session.commit()
-                flash('Your order has been updated!', 'success')
-                return redirect(url_for('some_route_after_success'))
-            else:
-                flash('There was an error with your form. Please check your information.', 'danger')
-
-    else:  # Pre-fill the form for GET request
-        form = Orderform()
-        form.set_form_data()
-        return render_template('order.html', title='Order Form', form=form)
-
-    return render_template('order.html', title='Order Form', form = Orderform())  # Default return for GET if no form is pre-filled
-
-
-
-
-
-
-
-
-

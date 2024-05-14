@@ -16,11 +16,12 @@ class User(UserMixin, db.Model):
     is_verified : so.Mapped[bool] = so.mapped_column(unique=False, default=False)
     email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-    postcode: so.Mapped[int] = so.mapped_column(unique=False, nullable=True)
+    postcode: so.Mapped[int] = so.mapped_column(unique=False)
     address: so.Mapped[str] = so.mapped_column(unique=False, nullable=True)
+    contact_no: so.Mapped[str] = so.mapped_column(unique=False, nullable=True)
     shop_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=False, nullable=True)
-    products: so.WriteOnlyMapped['Product'] = so.relationship(
-        back_populates='owner')
+    products: so.WriteOnlyMapped['Product'] = so.relationship(back_populates='owner')
+    orders: so.WriteOnlyMapped['Order'] = so.relationship(foreign_keys='Order.buyer_id', back_populates='buyer')
     
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -34,7 +35,7 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
+
     def get_products(self):
         return (
             sa.select(Product)
@@ -42,15 +43,20 @@ class User(UserMixin, db.Model):
             .order_by(Product.created_on.desc())
         )
 
+    def add_order(self):
+        o = Order(buyer=self)
+        db.session.add(o)
+        return o
+
 class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    product_name = db.Column(db.String(100), nullable=False)
-    category = db.Column(db.String(20), nullable=False)
-    price = db.Column(db.Numeric, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    condition = db.Column(db.String(20), nullable=False)
-    location = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String(150), nullable=False)
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    product_name: so.Mapped[str] = so.mapped_column(sa.String(100), index=True)
+    category: so.Mapped[str] = so.mapped_column(sa.String(20), index=True)
+    price: so.Mapped[float] = so.mapped_column(index=True)
+    quantity: so.Mapped[int] = so.mapped_column(index=True)
+    condition: so.Mapped[str] = so.mapped_column(sa.String(20), index=True)
+    location: so.Mapped[int] = so.mapped_column(index=True)
+    description: so.Mapped[str] = so.mapped_column(sa.String(1000))
     created_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
     modified_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
@@ -60,16 +66,34 @@ class Product(db.Model):
         return '<Product {}>'.format(self.product_name)
     
 class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    quantity = db.Column(db.Integer, nullable=False)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-    email_address = db.Column(db.String(120), nullable=False)
-    postcode = db.Column(db.Integer, nullable=False)
-    contact_no = db.Column(db.String(20), nullable=False)
-    remarks = db.Column(db.String(255))
-    address = db.Column(db.String(255), nullable=False)
-    def __repr__(self):
-        return '<Order {}>".format(self.product_name)'
- 
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    quantity: so.Mapped[int] = so.mapped_column()
+    first_name: so.Mapped[str] = so.mapped_column(sa.String(64))
+    last_name: so.Mapped[str] = so.mapped_column(sa.String(64))
+    email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True)
+    postcode: so.Mapped[int] = so.mapped_column()
+    contact_no: so.Mapped[str] = so.mapped_column(nullable=True)
+    remarks: so.Mapped[str] = so.mapped_column(sa.String(5000))
+    created_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
+    product_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Product.id), index=True)
+    status: so.Mapped[str] = so.mapped_column(sa.String(10), index=True, default="Pending")
+    buyer_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
+    buyer: so.Mapped[User] = so.relationship(foreign_keys='Order.buyer_id', back_populates='orders')
+    
+    def to_json(self):
+        data = {
+            'id': self.id,
+            'qty': self.quantity,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email_address,
+            'postcode': self.postcode,
+            'contact_no': self.contact_no,
+            'remarks': self.remarks,
+            'created_on': self.created_on.strftime("%Y-%m-%d %H:%M:%S"),
+            'status': self.status
+        }
+        return data
 
+    def __repr__(self):
+        return '<Order {}>'.format(self.id)
