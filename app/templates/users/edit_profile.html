@@ -19,7 +19,7 @@
                         <div class="text-center mb-4">
                             <!-- User Image -->
                             <div class="avatar-container">
-                                <i class="fa-rounded fa-solid fa-user-secret fa-4x"></i>
+                                <i class="fa-rounded fa-solid {{ form.avatar_icon.data }} fa-4x"></i>
                                 <button type="button" class="btn btn-link change-avatar-btn" data-bs-toggle="modal" data-bs-target="#avatarModal">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
@@ -33,6 +33,7 @@
                         {% endif %}
                         <form class="row g-3" action="/edit_profile"  method="POST">
                             {{ form.hidden_tag() }}
+                            {{ form.avatar() }}
                             <!-- First Name -->
                             <div class="col-md-6">
                                 {{ form.first_name.label(class="form-label", for="firstName") }}
@@ -140,15 +141,15 @@
                 <!-- Avatar options -->
                 <div class="row">
                     <div class="col text-center">
-                        <i class="fa-solid fa-user-tie fa-rounded fa-3x"></i>
+                        <i class="fa-solid fa-user-tie fa-rounded fa-3x" data-id=1></i>
                         <p>Avatar 1</p>
                     </div>
                     <div class="col text-center">
-                        <i class="fa-solid fa-user-graduate fa-rounded fa-3x"></i>
+                        <i class="fa-solid fa-user-graduate fa-rounded fa-3x" data-id=2></i>
                         <p>Avatar 2</p>
                     </div>
                     <div class="col text-center">
-                        <i class="fa-solid fa-user-nurse fa-rounded fa-3x"></i>
+                        <i class="fa-solid fa-user-nurse fa-rounded fa-3x" data-id=3></i>
                         <p>Avatar 3</p>
                     </div>
                 </div>

@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
     postcode: so.Mapped[int] = so.mapped_column(unique=False)
     address: so.Mapped[str] = so.mapped_column(unique=False, nullable=True)
     contact_no: so.Mapped[str] = so.mapped_column(unique=False, nullable=True)
+    avatar: so.Mapped[int] = so.mapped_column(unique = False, default = 0)
     shop_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=False, nullable=True)
     products: so.WriteOnlyMapped['Product'] = so.relationship(back_populates='owner')
     orders: so.WriteOnlyMapped['Order'] = so.relationship(foreign_keys='Order.buyer_id', back_populates='buyer')

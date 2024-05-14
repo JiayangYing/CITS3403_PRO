@@ -224,6 +224,7 @@ def edit_profile():
         current_user.email_address = form.email.data
         current_user.postcode = form.postcode.data
         current_user.address = form.address.data
+        current_user.avatar = form.avatar.data
         db.session.commit()
         flash('Your profile details have been saved.', 'success')
         return redirect(url_for('edit_profile'))
