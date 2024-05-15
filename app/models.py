@@ -89,15 +89,13 @@ class User(UserMixin, db.Model):
     
     @staticmethod
     def get_by_username(username):
-        return db.session.scalar(
-            sa.select(User).where(User.username==username)
-        )
+        query = sa.select(User).where(User.username==username)
+        return db.session.scalar(query)
     
     @staticmethod
     def get_by_email(email):
-        return db.session.scalar(
-            sa.select(User).where(User.email_address==email)
-        )
+        query = sa.select(User).where(User.email_address==email)
+        return db.session.scalar(query)
 
     def add_order(self):
         o = Order(buyer=self)
@@ -125,19 +123,18 @@ class Product(SearchableMixin, db.Model):
         return '<Product {}>'.format(self.product_name)
 
     @staticmethod
-    def get_orders_count(status):
-        return db.session.scalar(
-            sa.select(sa.func.count())
-            .where(sa.and_(
-                Order.product_id == Product.id,
-                Order.status == status))
-        )
+    def get_orders_count(product_id, status):
+        return db.session.query(sa.func.count(Order.id)). \
+            filter(Order.product_id == product_id). \
+            filter(Order.status == status). \
+            scalar()
     
     def get_pending_order_counts(self):
-        pending_count = self.get_orders_count('Pending')
-        approved_count = self.get_orders_count('Approved')
-        rejected_count = self.get_orders_count('Rejected')
-        cancelled_count = self.get_orders_count('Cancelled')
+        product_id = self.id
+        pending_count = self.get_orders_count(product_id, 'Pending')
+        approved_count = self.get_orders_count(product_id, 'Approved')
+        rejected_count = self.get_orders_count(product_id, 'Rejected')
+        cancelled_count = self.get_orders_count(product_id, 'Cancelled')
         count_info = {
             'pending': pending_count,
             'approved': approved_count,
@@ -149,6 +146,13 @@ class Product(SearchableMixin, db.Model):
     @staticmethod
     def get_by_id(id): 
         return Product.query.get(id)
+
+    @staticmethod
+    def get_all(limit = None):
+        query = sa.select(Product).order_by(Product.created_on.desc())
+        if limit is not None:
+            query = query.limit(limit)
+        return  db.session.scalars(query)
     
     @staticmethod
     def activation(id, current_user_id):

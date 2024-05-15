@@ -3,8 +3,6 @@ from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField
 from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
-import sqlalchemy as sa
-from app import db
 from app.models import User, Product
 from flask_wtf.file import FileField
 
@@ -68,12 +66,12 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
-        user = db.session.scalar(sa.select(User).where(User.username == username.data))
+        user = User.get_by_username(username.data)
         if user is not None:
             raise ValidationError('Please use a different username.')
 
     def validate_email_address(self, email):
-        user = db.session.scalar(sa.select(User).where(User.email_address == email.data))
+        user = User.get_by_email(email.data)
         if user is not None:
             raise ValidationError('Please use a different email address.')
         
