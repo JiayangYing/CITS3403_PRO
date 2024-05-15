@@ -63,11 +63,11 @@
                 <div class="mt-2 mr-2 d-flex justify-content-end">
                     <nav aria-label="ProductPageNav">
                         <ul id="ProductPageNavBar" class="pagination">
-                          <li class="page-item"><a class="page-link" href="{{ url_for('categories', view=view, page=page-1) }}">Previous</a></li>
+                          <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page-1) }}">Previous</a></li>
                           {% for page in pages %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('categories', view=view, page=page) }}">{{ page }}</a></li>
+                            <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page) }}">{{ page }}</a></li>
                           {% endfor %}
-                          <li class="page-item"><a class="page-link" href="{{ url_for('categories', view=view, page=page+1) }}">Next</a></li>
+                          <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page+1) }}">Next</a></li>
                         </ul>
                       </nav>
                 </div>

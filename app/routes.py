@@ -1,6 +1,6 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,Blueprint
+from flask import render_template, flash, redirect,request,jsonify,url_for,current_app
 from flask_login import current_user, login_user,login_required,logout_user
-from app import app,db
+from app import db
 from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
@@ -9,46 +9,46 @@ from app.forms import \
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
+from app.blueprint import main
 
-@app.context_processor
+@main.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
 
-@app.route('/error')
-@app.errorhandler(404)
+@main.route('/error')
 def error(error = None):
     return render_template('/layout/page_not_found.html'), 404
 
-@app.route('/')
-@app.route('/login', methods=['GET', 'POST'])
+@main.route('/')
+@main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.get_by_username(form.username.data)
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         if not user.is_active:
             flash('User deactivated. Please contact admin.', 'error')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('home')
+            next_page = url_for('main.home')
         flash('Successfully login!', 'success')
         return redirect(next_page)
     return render_template('users/login.html', title='Sign In', form=form)
 
-@app.route('/home')
+@main.route('/home')
 def home():
     return render_template('/home/home.html')
 
-@app.route('/signup', methods=['GET', 'POST'])
+@main.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(
@@ -66,16 +66,16 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash('Register successfully {}'.format(form.username.data), 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     return render_template('/users/signup.html', form=form)
 
-@app.route('/sdg_img_dirs', methods=['POST'])
+@main.route('/sdg_img_dirs', methods=['POST'])
 def get_sdg_img_dirs():
     is_dark_mode = request.json.get('isDarkMode')
     path = 'web-inverted'
     if is_dark_mode:
         path = 'web'
-    img_dir = os.path.join(app.root_path, 'static', 'img', 'sdg', path)
+    img_dir = os.path.join(main.root_path, 'static', 'img', 'sdg', path)
     sdg_images = [path+'/'+img for img in os.listdir(img_dir) if img.endswith('png')]
     return jsonify({'sdg_images': sdg_images})
 
@@ -87,13 +87,13 @@ products = [
     {'title': 'Cloth 3', 'price': 19.99, 'quantity': 3, 'location': 'Nedlands', 'img':'product_image/image3.jpg'}
 ]
 
-@app.route('/product')
+@main.route('/product')
 def product():
     query = sa.select(Product).order_by(Product.created_on.desc()).limit(10)
     products = db.session.scalars(query).all()
     return render_template('/product/product.html', products=products)
 
-@app.route('/categories')
+@main.route('/categories')
 def categories():
     categories = [
         {'Men': products[0:2] },
@@ -109,23 +109,23 @@ def categories():
     pages=[1,2]
     return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
-@app.route('/product/<product_id>', methods=['GET'])
+@main.route('/product/<product_id>', methods=['GET'])
 @login_required
 def product_detail(product_id):
     product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
     if not product:
-        return url_for('error')
+        return url_for('main.error')
     form = Orderform()
     form.set_product_qty(product.quantity)
     form.set_form_data()
     return render_template('/product/product_detail.html', product=product, form=form)
 
-@app.route('/contact_seller/<product_id>', methods=['POST'])
+@main.route('/contact_seller/<product_id>', methods=['POST'])
 @login_required
 def contact_seller(product_id):
     product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
     if not product:
-        return url_for('error')
+        return url_for('main.error')
     form = Orderform()
     form.set_product_qty(product.quantity)
     if form.validate_on_submit():
@@ -144,32 +144,32 @@ def contact_seller(product_id):
         # current_user.add_order()
         db.session.commit()
         flash('Your order request has been sent!', 'success')
-        return redirect(url_for('product'))
+        return redirect(url_for('main.product'))
     return render_template('/product/product_detail.html', product=product, form=form, show_modal=True)
 
-@app.route('/seller')
+@main.route('/seller')
 @login_required
 def seller():
     if(not current_user.is_seller):
-        return redirect(url_for('error'))
+        return redirect(url_for('main.error'))
     page = request.args.get('page', 1, type=int)
     products = db.paginate(current_user.get_products(), page=page, 
-                           per_page=app.config['PRODUCT_LISTING_PER_PAGE'], 
+                           per_page=current_app.config['PRODUCT_LISTING_PER_PAGE'], 
                            error_out=False)
     for pro in products:
         pro.orders = pro.get_pending_order_counts()
     next_url, prev_url, pages = None, None, []
     if products.has_prev:
-        prev_url = url_for('seller', page=products.prev_num)
+        prev_url = url_for('main.seller', page=products.prev_num)
         pages.append(page-1)
     pages.append(page)
     if products.has_next:
-        next_url = url_for('seller', page=products.next_num)
+        next_url = url_for('main.seller', page=products.next_num)
         pages.append(page+1)
     return render_template('/seller/product.html', products=products.items, pages = pages,
                            next_url=next_url, prev_url=prev_url)
 
-@app.route('/profile')
+@main.route('/profile')
 @login_required
 def profile():
     form = ProfileForm()
@@ -180,7 +180,7 @@ def profile():
         account_form.set_form_data()
     return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form)
     
-@app.route('/manage_product/add', methods=['GET', 'POST'])
+@main.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
     form = ProductForm()
@@ -200,10 +200,10 @@ def add_product():
         db.session.add(product)
         db.session.commit()
         flash('Product added successfully!', 'success')
-        return redirect(url_for('seller'))
+        return redirect(url_for('main.seller'))
     return render_template('/manage_product/add.html', form=form)
 
-@app.route('/edit_product/<id>', methods=['GET', 'POST'])
+@main.route('/edit_product/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_product(id):
     product=Product.get_by_id(id)
@@ -213,17 +213,17 @@ def edit_product(id):
         form.populate_obj(product)
         db.session.commit()
         flash('Your product details have been saved.', 'success')
-        return redirect(url_for('edit_product', id=id))
+        return redirect(url_for('main.edit_product', id=id))
     return render_template('manage_product/edit.html', form=form)
 
-@app.route('/logout')
+@main.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('Logout successfully', 'success')
-    return redirect(url_for('login'))
+    return redirect(url_for('main.login'))
 
-@app.route('/edit_profile', methods=['GET', 'POST'])
+@main.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm()
@@ -239,10 +239,10 @@ def edit_profile():
         current_user.avatar = form.avatar.data
         db.session.commit()
         flash('Your profile details have been saved.', 'success')
-        return redirect(url_for('edit_profile'))
+        return redirect(url_for('main.edit_profile'))
     return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
 
-@app.route('/update_account_type', methods=['GET', 'POST'])
+@main.route('/update_account_type', methods=['GET', 'POST'])
 @login_required
 def update_account_type():
     form = ProfileForm()
@@ -254,11 +254,11 @@ def update_account_type():
         current_user.is_seller = not user.is_seller
         db.session.commit()
         flash('Your account type has been changed.', 'success')
-        return redirect(url_for('profile'))
+        return redirect(url_for('main.profile'))
     return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form, show=True)
 
 
-@app.route('/deactivate', methods=['GET', 'POST'])
+@main.route('/deactivate', methods=['GET', 'POST'])
 @login_required
 def deactivate():
     form = ProfileForm()
@@ -269,10 +269,10 @@ def deactivate():
         current_user.is_active = False
         db.session.commit()
         flash('Your account is deactivated.', 'success')
-        return redirect(url_for('logout'))
+        return redirect(url_for('main.logout'))
     return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form, show_modal=True)
 
-@app.route('/change_pass', methods=['GET', 'POST'])
+@main.route('/change_pass', methods=['GET', 'POST'])
 @login_required
 def change_pass():
     user = User.get_by_email(current_user.email_address)
@@ -284,15 +284,15 @@ def change_pass():
         current_user.password_hash = user.password_hash
         db.session.commit()
         flash('Your password has been changed. Please login again.', 'success')
-        return redirect(url_for('logout'))
+        return redirect(url_for('main.logout'))
     return render_template('users/edit_profile.html', form=form, pass_form = change_pass_form)
 
-@app.route('/get_orders/<product_id>', methods=['POST'])
+@main.route('/get_orders/<product_id>', methods=['POST'])
 def get_product_orders(product_id):
     if current_user.is_authenticated:
         page = request.json.get('page')
         orders = db.paginate(Order.get_orders_by_product_id(product_id), page=page, 
-                            per_page=app.config['ORDER_LISTING_PER_PAGE'], 
+                            per_page=current_app.config['ORDER_LISTING_PER_PAGE'], 
                             error_out=False)
         pages = []
         if orders.has_prev:
@@ -303,45 +303,39 @@ def get_product_orders(product_id):
         return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
-@app.route('/reset_order/<order_id>', methods=['GET'])
+@main.route('/reset_order/<order_id>', methods=['GET'])
 def reset_order(order_id):
     Order.reset_pending(order_id)
     return jsonify({'message': 'done.', 'success': True})
 
-@app.route('/approve_order/<order_id>', methods=['POST'])
+@main.route('/approve_order/<order_id>', methods=['POST'])
 def approve_order(order_id):
     if current_user.is_authenticated:
         return jsonify(Order.set_pending_status(order_id, current_user.id, 'Approved'))
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
-@app.route('/reject_order/<order_id>', methods=['POST'])
+@main.route('/reject_order/<order_id>', methods=['POST'])
 def reject_order(order_id):
     if current_user.is_authenticated:
         return jsonify(Order.set_pending_status(order_id, current_user.id, 'Rejected'))
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
-@app.route('/cancel_order/<order_id>', methods=['POST'])
+@main.route('/cancel_order/<order_id>', methods=['POST'])
 def cancel_order(order_id):
     if current_user.is_authenticated:
         return jsonify(Order.set_pending_status_from_buyer(order_id, current_user.id, 'Cancelled'))
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
-@app.route('/product_activation/<product_id>', methods=['POST'])
+@main.route('/product_activation/<product_id>', methods=['POST'])
 def product_activation(product_id):
     if current_user.is_authenticated:
         return jsonify(Product.activation(product_id, current_user.id))
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
-@app.route('/forget_password')
+@main.route('/forget_password')
 def f_password():
     return render_template('/users/f_password.html', forget_password=f_password)
 
-auth = Blueprint('auth', __name__)
 
-@auth.route('/login')
-def login():
-    return "This is the login page."
 
-@auth.route('/logout')
-def logout():
-    return "You have been logged out."
+
