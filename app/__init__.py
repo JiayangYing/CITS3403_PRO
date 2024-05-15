@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from config import Config, TestingConfig
+from config import Config
 
 
 
@@ -38,18 +38,4 @@ def create_app(config_class=Config):
 
     return app
 
-def create_app(config):
-    flaskApp = Flask(__name__)
-    flaskApp.config.from_object(config)
-
-    db.init_app(flaskApp)
-
-    return flaskApp
-
-from app import create_app,db
-from config import Deploymentconfig
-
-flaskApp = create_app(Deploymentconfig)
-migrate = Migrate(db,flaskApp)
-test_app = create_app(TestingConfig)
 
