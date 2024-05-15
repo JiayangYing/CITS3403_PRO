@@ -119,6 +119,7 @@ class Product(SearchableMixin, db.Model):
     is_active : so.Mapped[bool] = so.mapped_column(default=True)
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     owner: so.Mapped[User] = so.relationship(back_populates='products')
+    images: so.WriteOnlyMapped['Image'] = so.relationship(back_populates='product')
 
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
@@ -244,3 +245,9 @@ class Order(db.Model):
         order.status = 'Pending'
         db.session.commit() 
 
+
+class Image(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    image_name: so.Mapped[str] = so.mapped_column(sa.String(255))
+    product_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Product.id))
+    product: so.Mapped[Product] = so.relationship(back_populates='images')
