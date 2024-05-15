@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g
 from flask_login import current_user, login_user,login_required,logout_user
 from app import db
-from app.models import User,Product, Order
+from app.models import User,Product, Order, Image
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
@@ -192,7 +192,7 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
-def validate_images(images)
+def validate_images(images):
     for image in images:
         image_name = secure_filename(image.filename)
         if image_name != '':
@@ -200,6 +200,7 @@ def validate_images(images)
             if image_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
                     image_ext != validate_image(image_name.stream):
                 return "%s is Invalid image"%image_name, 400
+        return '', 204
 
 @main.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
@@ -220,6 +221,16 @@ def add_product():
             owner = current_user
         )
         db.session.add(product)
+        db.session.flush()
+        
+        images = request.files.getlist('file')
+        print(images)
+        validate_images(images)
+        for image in images:
+            image_name = secure_filename(image.filename)
+            image.save(os.path.join(current_app.config['UPLOAD_PATH'], image_name))
+            print("added image to %s"%current_app.config['UPLOAD_PATH'])
+            db.session.add(Image(image_name = image_name, product_id = Product.id))
         db.session.commit()
         flash('Product added successfully!', 'success')
         return redirect(url_for('main.seller'))
