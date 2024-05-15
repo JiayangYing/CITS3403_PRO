@@ -15,7 +15,7 @@
                     <div class="carousel-inner">
                         {% for img in product.imgs %}
                             <div class="carousel-item">
-                                <img class="d-block w-100 rounded border-white" height="600" src=/static/img/{{ img }} alt="{{ product.title }}-{{ loop.index-1 }}">
+                                <img class="d-block w-100 rounded border-white" height="600" src=/static/img/{{ img }} alt="{{ product.product_name }}-{{ loop.index-1 }}">
                             </div>
                         {% endfor %}
                     </div>
@@ -32,11 +32,11 @@
             <div id="productDetail" class="col-12 col-md-6 pt-2 ps-4">
                 <div class="d-flex align-items-start flex-column h-100">
                     <div>
-                        <h2>{{ product.title }}</h2>
-                        <p class="price">AUD <span id="ProductPrice">{{ product.price }}</span></p>
-                            
+                        <h2>{{ product.product_name }}</h2>
+                        <p class="price">AUD <span id="ProductPrice">{{ '%0.2f'|format(product.price|float) }}</span></p>
                         <p>Qty: {{ product.quantity }}</p>
                         <p><i class="fa-solid fa-location-dot me-2"></i>{{ product.location }}</p>
+                        <p><i class="fa-solid fa-shop me-2"></i>{{ product.owner.shop_name }}</p>
                     </div>
                     <div class="ms-auto">
                         <button id="ContactSellerBtn" class="btn btn-primary">Contact Seller</button>
@@ -60,9 +60,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/contact_seller" method="POST">
+                    <form action="/contact_seller/{{product.id}}" method="POST">
                         <div class="modal-body">
-                            <div id="AlertRejectModalDiv" class="hidden"></div>
+                            {{ form.hidden_tag() }}
+                            <div id="AlertModalDiv" class="hidden">
+                                {% include "/layout/alert_modal.html" %}
+                            </div>
                             <div class="alert alert-info alert-dismissible">
                                 <h4><i class="icon fa fa-info-circle"></i> Information:</h4>
                                 <div class="remarks-details">
@@ -77,37 +80,50 @@
                             </div>
                             <div class="row mt-1">
                                 <div class="col-lg-5 col-md-4">
-                                    <label for="firstName" class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="Enter First Name">
+                                    {{ form.first_name.label(class="form-label", for="first_name") }}
+                                    {{ form.first_name(class="form-control form-control-user", placeholder="Enter First Name...") }}
+                                    {% for error in form.first_name.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
                                 </div>
                                 <div class="col-lg-5 col-md-4">
-                                    <label for="lastName" class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name">
+                                    {{ form.last_name.label(class="form-label", for="last_name") }}
+                                    {{ form.last_name(class="form-control form-control-user", placeholder="Enter Last Name...") }}
+                                    {% for error in form.last_name.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
                                 </div>
                                 <div class="col-lg-2 col-md-4">
-                                    <label for="postcode" class="form-label">Postcode</label>
-                                    <input type="text" class="form-control" id="postcode" placeholder="Enter Postcode">
+                                    {{ form.postcode.label(class="form-label", for="postcode") }}
+                                    {{ form.postcode(class="form-control form-control-user", placeholder="Enter Postcode...") }}
+                                    {% for error in form.postcode.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-lg-5 col-md-4">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Enter Email Address">
+                                    {{ form.email_address.label(class="form-label", for="email_address") }}
+                                    {{ form.email_address(class="form-control form-control-user", placeholder="Enter Email Address...") }}
+                                    {% for error in form.email_address.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
                                 </div>
                                 <div class="col-lg-5 col-md-4">
-                                    <label for="contactNo" class="form-label">Contact No</label>
-                                    <input type="text" class="form-control" id="contactNo" placeholder="Enter Contact No">
+                                    {{ form.contact_no.label(class="form-label", for="contact_no") }}
+                                    {{ form.contact_no(class="form-control form-control-user", placeholder="Enter Contact No...") }}
+                                    {% for error in form.contact_no.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-lg-2 col-md-4">
-                                    <label for="quantity" class="form-label">Quantity</label>
-                                    <select class="form-select" id="quantity">
-                                        <option value="" selected>Select Quantity</option>
-                                        {% for _ in range(product.quantity) %}
-                                            <option value="{{ loop.index }}">{{ loop.index }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    {{ form.quantity.label(class="form-label", for="quantity") }}
+                                    {{ form.quantity(class="form-select") }}
+                                    {% for error in form.quantity.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
                                 </div>
                                 <div class="d-none col-lg-3 d-lg-block"></div>
                                 <div class="col-lg-5 col-md-4">
@@ -116,18 +132,24 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <label for="remark" class="form-label">Remark</label>
-                                <textarea class="form-control mh-100" id="remark" rows="3" placeholder="Enter Remark (Optional)" style="height: 100px;"></textarea>
+                                {{ form.remarks.label(class="form-label", for="remark") }}
+                                {{ form.remarks(class="form-control mh-100",rows="3",placeholder="Enter Description... (Optional)",style="height: 100px;") }}
+                                {% for error in form.remarks.errors %}
+                                    <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Send</button>
+                            {{ form.submit(class="btn btn-primary", onclick="on_submit_set_enable()") }}
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        const show_contact_seller_modal = "{{ show_modal }}";
+    </script>
 {% endblock %}
 
 {% block javascript %}

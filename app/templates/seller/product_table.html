@@ -4,6 +4,7 @@
     </div>
     <div class="card-body">
         <div id="AlertModalDiv" class="hidden">
+            {% include "/layout/alert_modal.html" %}
         </div>
         <div class="row">
             <div class="col-md-12 d-flex justify-content-end mb-2">
@@ -22,13 +23,13 @@
                         <thead>
                             <tr role="row">
                                 <th></th>
-                                <th>Product Title</th>
+                                <th>Product Name</th>
                                 <th>Category</th>
                                 <th>Price</th>
                                 <th>Qty</th>
                                 <th>Is Active</th>
-                                <th>Condition</th>
                                 <th>Location</th>
+                                <th>Condition</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -36,13 +37,15 @@
                             {% for pro in products %}
                                 {% set inputChecked = "" %}
                                 {% set status = "Off" %}
-                                {% if pro.isActive %}
+                                {% set color = "" %}
+                                {% if pro.is_active %}
                                     {% set inputChecked = "checked" %}
                                     {% set status = "On" %}
+                                    {% if (pro.orders.pending > 0) %}{% set color='yellow' %}{% endif %}
                                 {% endif %}
                                 <tr>
                                     <td class="dt-control"></td>
-                                    <td>{{ pro.title }}</td>
+                                    <td data-status="{{ color }}">{{ pro.product_name }}</td>
                                     <td>{{ pro.category }}</td>
                                     <td>{{ pro.price }}</td>
                                     <td>{{ pro.quantity }}</td>
@@ -55,7 +58,7 @@
                                     <td>{{ pro.condition }}</td>
                                     <td>
                                         <div class="action-container">
-                                            <button class="edit ms-2" title="Edit" onclick="editProduct({{pro.id}})"><span><i class="fa-lg fa-solid fa-pen-to-square"></i></span></button>
+                                            <button class="edit ms-2" title="Edit"><span><a class="no-color" href="{{ url_for('edit_product', id=pro.id) }}"><i class="fa-lg fa-solid fa-pen-to-square"></i></a></span></button>
                                             <button class="delete ms-2" title="Delete" onclick="deleteProdcut({{pro.id}})"><span><i class="fa-lg fa-solid fa-trash-can"></i></span></button>
                                         </div>
                                     </td>
@@ -68,6 +71,21 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mt-2 mr-2 d-flex justify-content-end">
+                            <nav aria-label="ProductPageNav">
+                                <ul id="ProductPageNavBar" class="pagination">
+                                    <li class="page-item {% if not prev_url %} disabled{% endif %}"><a class="page-link" href="{{prev_url}}">Previous</a></li>
+                                    {% for page in pages %}
+                                        <li class="page-item"><a class="page-link" href="{{ url_for('seller', page=page) }}">{{ page }}</a></li>
+                                    {% endfor %}
+                                    <li class="page-item {% if not next_url %} disabled{% endif %}"><a class="page-link" href="{{next_url}}">Next</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

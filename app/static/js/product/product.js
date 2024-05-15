@@ -6,7 +6,13 @@ $(() => {
             $(this).css('z-index', '-1')            
         }, 200);
     })
+    
     $('#swipeOverlay').on('touchstart', function(){
         $(this).css('z-index', '-1')            
     })
+
+    $(".display-card").click(function(){
+        var productId = $(this).data('id');
+        window.open(`/product/${productId}`, '_blank');
+    });
 });

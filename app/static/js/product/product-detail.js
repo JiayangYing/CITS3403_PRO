@@ -1,4 +1,20 @@
+function on_submit_set_enable(){
+    if(!$('#modifyDetails').prop('checked')){
+        $('#modifyDetails').trigger('click');
+    }
+}
+
 $(() => {
+    if(show_contact_seller_modal){
+        $('#ContactSellerModal').modal('show');
+    }
+
+    if($('#quantity').val()){
+        setTimeout(() => {
+            $('#quantity').trigger('change')
+        }, 100);
+    }
+
     $('.carousel-indicators button').first().addClass('active')
     $('.carousel-inner img').first().parent().addClass('active')
     
@@ -7,19 +23,26 @@ $(() => {
         $modal.modal("show");
     });
 
-    $('#ContactSellerModal .row input').prop("disabled", true);
-    $('#ContactSellerModal .row input').addClass('input-as-label');
+    var $disabledInput = $('#ContactSellerModal .row input')
+    $disabledInput.prop("disabled", true);
+    $disabledInput.addClass('input-as-label');
     
-    $('#ContactSellerModal').find('#modifyDetails').on('click', function(){
-        if($(this).is(':checked')){
-            $('#ContactSellerModal .row input').prop("disabled", false);
-            $('#ContactSellerModal .row input').removeClass('input-as-label');
-        }else{
-            $('#ContactSellerModal .row input').prop("disabled", true);
-            $('#ContactSellerModal .row input').addClass('input-as-label');
+    $disabledInput.on('touchstart', function(){
+        if(!$(this).val() && $(this).prop('disabled')){
+            $('#modifyDetails').trigger('click');
         }
     })
 
+    $('#ContactSellerModal').find('#modifyDetails').on('click', function(){
+        if($(this).is(':checked')){
+            $disabledInput.prop("disabled", false);
+            $disabledInput.removeClass('input-as-label');
+        }else{
+            $disabledInput.prop("disabled", true);
+            $disabledInput.addClass('input-as-label');
+        }
+    })
+    
     $('#quantity').on('change', function(){
         var selectedQty = $(this).val()
         const $estPrice = $('#EstimatedProductPrice')

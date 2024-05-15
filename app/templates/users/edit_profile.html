@@ -8,47 +8,75 @@
             <div class="col-md-6">
                 <div class="card border-0 shadow">
                     <div class="card-body p-5">
+                        {% if not form.errors %}
+                            <div id="AlertModalDiv">
+                            {% include "/layout/alert_modal.html" %}
+                            </div>
+                        {% endif %}
                         <div class="text-center mb-4">
                             <h1>Edit Your Profile</h1>
                         </div>
                         <div class="text-center mb-4">
                             <!-- User Image -->
                             <div class="avatar-container">
-                                <i class="fa-rounded fa-solid fa-user-secret fa-4x"></i>
+                                <i class="fa-rounded fa-solid {{ form.avatar_icon.data }} fa-4x"></i>
                                 <button type="button" class="btn btn-link change-avatar-btn" data-bs-toggle="modal" data-bs-target="#avatarModal">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
                             </div>
                         </div>
-                        <form class="row g-3">
+                        {% if form.errors %}
+                            <div id="edit_AlertModalDiv">
+                                {% set divId = '#edit_AlertModalDiv' %}
+                            {% include "/layout/alert_modal.html" %}
+                            </div>
+                        {% endif %}
+                        <form class="row g-3" action="/edit_profile"  method="POST">
+                            {{ form.hidden_tag() }}
+                            {{ form.avatar() }}
                             <!-- First Name -->
                             <div class="col-md-6">
-                                <label for="editFirstName" class="form-label">First Name:</label>
-                                <input type="text" class="form-control" id="editFirstName" value="Taylor">
+                                {{ form.first_name.label(class="form-label", for="firstName") }}
+                                {{ form.first_name(class="form-control") }}
+                                {% for error in form.first_name.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- Last Name -->
                             <div class="col-md-6">
-                                <label for="editLastName" class="form-label">Last Name:</label>
-                                <input type="text" class="form-control" id="editLastName" value="Swift">
+                                {{ form.last_name.label(class="form-label", for="lastName") }}
+                                {{ form.last_name(class="form-control") }}
+                                {% for error in form.last_name.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- Email Address -->
                             <div class="col-12">
-                                <label for="editEmail" class="form-label">Email Address:</label>
-                                <input type="email" class="form-control" id="editEmail" value="taylor@example.com">
+                                {{ form.email.label(class="form-label", for="email") }}
+                                {{ form.email(class="form-control") }}
+                                {% for error in form.email.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- Address -->
-                            <div class="col-10">
-                                <label for="editAddress" class="form-label">Address:</label>
-                                <input type="text" class="form-control" id="editAddress" value="65 Stirling Highway">
+                            <div class="col-9">
+                                {{ form.address.label(class="form-label", for="address") }}
+                                {{ form.address(class="form-control") }}
+                                {% for error in form.address.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- Postcode -->
-                            <div class="col-md-2 mb-3">
-                                <label for="editSuburb" class="form-label">Postcode:</label>
-                                <input type="number" class="form-control" id="editSuburb" value="6000">
+                            <div class="col-md-3">
+                                {{ form.postcode.label(class="form-label", for="postcode") }}
+                                {{ form.postcode(class="form-control") }}
+                                {% for error in form.postcode.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- Edit Profile Button -->
                             <div class="text-end col-md-12">
-                                <button class="btn btn-primary" type="button">Update</button>
+                                {{ form.submit(class="btn btn-primary") }}
                                 <a class="btn btn-danger ms-2" href="profile">Cancel</a>
                             </div>
                         </form>
@@ -56,25 +84,42 @@
                         <div class="text-center mt-4 mb-4">
                             <h3>Change Your Password</h3>
                         </div>
-                        <form class="row g-3">
+                        {% set form = pass_form %}
+                        {% if form.errors %}
+                            <div id="pass_AlertModalDiv">
+                                {% set divId = '#pass_AlertModalDiv' %}
+                            {% include "/layout/alert_modal.html" %}
+                            </div>
+                        {% endif %}
+                        <form class="row g-3" action="/change_pass"  method="POST">
+                            {{ form.hidden_tag() }}
                             <!-- Current Password -->
                             <div class="col-12">
-                                <label for="editPassword" class="form-label">Current Password:</label>
-                                <input type="password" class="form-control" id="currentPassword" placeholder="******">
+                                {{ form.old_password.label(class="form-label", for="currentPassword") }}
+                                {{ form.old_password(class="form-control", placeholder="******") }}
+                                {% for error in form.old_password.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- New Password -->
                             <div class="col-md-6">
-                                <label for="editPassword" class="form-label">New Password:</label>
-                                <input type="password" class="form-control" id="newPassword" placeholder="******">
+                                {{ form.new_password.label(class="form-label", for="editPassword") }}
+                                {{ form.new_password(class="form-control", placeholder="******") }}
+                                {% for error in form.new_password.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- Re-type New Password -->
                             <div class="col-md-6 mb-3">
-                                <label for="editPassword" class="form-label">Retype New Password:</label>
-                                <input type="password" class="form-control" id="reTypeNewPassword" placeholder="******">
+                                {{ form.re_password.label(class="form-label", for="newPassword") }}
+                                {{ form.re_password(class="form-control", placeholder="******") }}
+                                {% for error in form.re_password.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <!-- Update Password Button -->
                             <div class="text-end col-12">
-                                <button class="btn btn-primary" type="button">Update Password</button>
+                                {{ form.submit(class="btn btn-primary") }}
                                 <a class="btn btn-danger ms-2" href="profile">Cancel</a>
                             </div>
                         </form>
@@ -96,15 +141,15 @@
                 <!-- Avatar options -->
                 <div class="row">
                     <div class="col text-center">
-                        <i class="fa-solid fa-user-tie fa-rounded fa-3x"></i>
+                        <i class="fa-solid fa-user-tie fa-rounded fa-3x" data-id=1></i>
                         <p>Avatar 1</p>
                     </div>
                     <div class="col text-center">
-                        <i class="fa-solid fa-user-graduate fa-rounded fa-3x"></i>
+                        <i class="fa-solid fa-user-graduate fa-rounded fa-3x" data-id=2></i>
                         <p>Avatar 2</p>
                     </div>
                     <div class="col text-center">
-                        <i class="fa-solid fa-user-nurse fa-rounded fa-3x"></i>
+                        <i class="fa-solid fa-user-nurse fa-rounded fa-3x" data-id=3></i>
                         <p>Avatar 3</p>
                     </div>
                 </div>

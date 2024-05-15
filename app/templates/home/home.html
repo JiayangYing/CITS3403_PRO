@@ -3,7 +3,11 @@
 {% block title %}Home {% endblock %}
 
 {% block content %}
-    <div id="AlertModalDiv" class="hidden"> </div>
+    <div class="container">
+        <div id="AlertModalDiv" class="hidden"> 
+            {% include "/layout/alert_modal.html" %}
+        </div>
+    </div>
     {% include "/home/categories.html" %}
     <hr>
     {% include "/home/values.html" %}

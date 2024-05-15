@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dark_site.css') }}" type="text/css" />
+    <link rel="icon" href="{{ url_for('static', filename='img/company-logo-dark.ico') }}">
 </head>
 <body class="bg-gradient">
     {% block content %}
@@ -59,13 +60,35 @@
                                             <span class="text-danger">{{ error }}</span>
                                         {% endfor %}
                                     </div>
-
                                     <div class="form-group">
                                         {{ form.email_address.label(class="form-control-label") }}
                                         {{ form.email_address(class="form-control form-control-user") }}
                                         {% for error in form.email_address.errors %}
                                             <span class="text-danger">{{ error }}</span>
                                         {% endfor %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.contact_no.label(class="form-control-label") }}
+                                        {{ form.contact_no(class="form-control form-control-user") }}
+                                        {% for error in form.contact_no.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-9">
+                                            {{ form.address.label(class="form-control-label", for="address") }}
+                                            {{ form.address(class="form-control form-control-user") }}
+                                            {% for error in form.address.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="col-md-3">
+                                            {{ form.postcode.label(class="form-control-label", for="postcode") }}
+                                            {{ form.postcode(class="form-control form-control-user") }}
+                                            {% for error in form.postcode.errors %}
+                                            <span class="text-danger">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         {{ form.password.label(class="form-control-label") }}
@@ -81,9 +104,9 @@
                                             <span class="text-danger">{{ error }}</span>
                                         {% endfor %}
                                     </div>
-                                    <div class="form-check">
+                                    <div class="form-check mb-3">
                                         {{ form.become_seller(class="form-check-input", id="customCheck") }}
-                                        {{ form.become_seller.label(class="form-check-label") }}
+                                        {{ form.become_seller.label(class="form-check-label", for="customCheck") }}
                                         {% for error in form.become_seller.errors %}
                                             <span class="text-danger">{{ error }}</span>
                                         {% endfor %}

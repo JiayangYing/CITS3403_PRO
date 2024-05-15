@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Product {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Edit Product Page</h1>
+        </div>
+    
+        {% include "/manage_product/edit_product.html" %}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/manage_product/edit.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
