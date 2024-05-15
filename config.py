@@ -5,13 +5,14 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'never-guess'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
-    
+    PRODUCT_LISTING_PER_PAGE = 1
+    #ORDER_LISTING_PER_PAGE = 2
+
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir,'app.db')
+    DEBUG = True
 
 class TestingConfig(Config):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory"
-    TESING = True
+    TESTING = True
     
 class ProductionConfig(Config):
     pass

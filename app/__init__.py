@@ -49,8 +49,13 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     return app
-#initialize only at the end#
-#why do we want to migrate the database? we should work on the currrent database in memory?every single time we run the test it will create a new database#
- 
 
+from app import create_app, db
+from config import DeploymentConfig, TestingConfig
+from flask_migrate import Migrate
 
+flaskApp = create_app(DeploymentConfig)
+migrate = Migrate(db, flaskApp)
+
+if __name__ == "__main__":
+    flaskApp.run()
