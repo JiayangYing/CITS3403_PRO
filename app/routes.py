@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
 from app.blueprint import main
+import imghdr
 
 @main.context_processor
 def inject_global_variable():
@@ -179,15 +180,23 @@ def profile():
         form.set_form_data()
         account_form.set_form_data()
     return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form)
-    
+
+
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0)
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')
+
 @main.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
     form = ProductForm()
     if request.method == 'GET':
-        form.set_form_data()
-    
-    
+        form.set_form_data()   
+        
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
