@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g
+from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g, send_from_directory
 from flask_login import current_user, login_user,login_required,logout_user
 from app import db
 from app.models import User,Product, Order, Image
@@ -124,7 +124,7 @@ def product_detail(product_id):
 @main.route('/contact_seller/<product_id>', methods=['POST'])
 @login_required
 def contact_seller(product_id):
-    product = Product.get_by_id(100)
+    product = Product.get_by_id(product_id)
     if not product:
         return redirect(url_for('main.error'))
     form = Orderform()
@@ -200,13 +200,18 @@ def validate_images(images):
                 return "%s is Invalid image"%image_name, 400
         return '', 204
 
+@main.route('/uploads/<filename>')
+def upload(filename):
+    return send_from_directory(current_app.config['UPLOAD_PATH'], filename)
+
 @main.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
     form = ProductForm()
     if request.method == 'GET':
         form.set_form_data()   
-        
+    images = request.files.getlist('file')
+    print(images)
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
@@ -218,19 +223,18 @@ def add_product():
             description = form.description.data,
             owner = current_user
         )
-        db.session.add(product)
-        db.session.flush()
+        # db.session.add(product)
+        # db.session.flush()
 
-        images = request.files.getlist('file')
         validate_images(images)
         for image in images:
             image_name = secure_filename(image.filename)
             image.save(os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], image_name))
             db.session.add(Image(image_name = image_name, product_id = Product.id))
-        db.session.commit()
+        # db.session.commit()
         flash('Product added successfully!', 'success')
-        return redirect(url_for('main.seller'))
-    return render_template('/manage_product/add.html', form=form)
+        # return redirect(url_for('main.seller'))
+    return render_template('/manage_product/add.html', form=form, images=images)
 
 @main.route('/edit_product/<id>', methods=['GET', 'POST'])
 @login_required

@@ -108,9 +108,15 @@
                     <span class="standard-form-value">
                         <div class="input-group file-upload-group">
                             <div name="ManualUpload">
-                                <input type="file" class="custom-file-input" id="imageInput" accept="image/*" name="file" multiple>
+                                {{ form.image(class="custom-file-input", id="imageInput") }}
                                 <label class="custom-file-label" for="imageInput">Upload</label>
                             </div>
+                            {% for error in form.image.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                            {% for error in form.main_idx.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
                             <div class="alert alert-info alert-dismissible">
                                 <h5><i class="icon fa fa-info-circle"></i> Information:</h5>
                                 <div class="text-xs">
@@ -118,6 +124,7 @@
                                     <p class="mb-1">2. Tick the box beside the image to set it as the main image.</p>
                                 </div>
                             </div>
+                            {{ form.main_idx() }}
                             <div id="imagePreview" class="image-preview"></div>
                         </div>
                     </span>
