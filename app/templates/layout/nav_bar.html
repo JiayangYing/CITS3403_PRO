@@ -10,8 +10,8 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                {% if not current_user.is_anonymous %}
+            {% if not current_user.is_anonymous %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.product') }}">
                             <i class="fa-solid fa-earth-oceania"></i> Explore
@@ -32,14 +32,17 @@
                           </ul>
                         </ul>
                     </li>
+                </ul>
+                {% if g.search_form %}
                     <div class="col-xl-5 col-lg-3 col-md-3">
-                        <form class="d-flex justify-content-center" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
+                        <form class="d-flex justify-content-center" method="get" action="{{ url_for('main.search') }}">
+                            {{ g.search_form.q(size=20, class='form-control me-2',
+                            placeholder='Search...(split with spacing)') }}
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
                     </div>
                 {% endif %}
-            </ul>
+            {% endif %}
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if (not current_user.is_anonymous) and current_user.is_seller %}
                     <li class="nav-item">

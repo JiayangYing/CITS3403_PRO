@@ -1,0 +1,3 @@
+$(() => {
+    SetPaginationActive('#SearchPageNavBar')
+});

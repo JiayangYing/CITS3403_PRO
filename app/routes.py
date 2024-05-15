@@ -1,11 +1,11 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,current_app
+from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g
 from flask_login import current_user, login_user,login_required,logout_user
 from app import db
 from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
-    EditProductForm
+    EditProductForm, SearchForm
 from urllib.parse import urlsplit
 import os
 import sqlalchemy as sa
@@ -336,6 +336,27 @@ def product_activation(product_id):
 def f_password():
     return render_template('/users/f_password.html', forget_password=f_password)
 
+@main.route('/search')
+@login_required
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for(''))
+    page = request.args.get('page', 1, type=int)
+    products, total = Product.search(g.search_form.q.data, page, current_app.config['PRODUCTS_PER_PAGE'])
+    current_url = url_for('main.search', q=g.search_form.q.data, page=page)
+    next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
+        if total > page * current_app.config['PRODUCTS_PER_PAGE'] else None
+    prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
+        if page > 1 else None
+    if products:
+        flash(f'Your search has {total} result(s).', 'info')
+    return render_template('/product/search.html', products=products, page=page,
+                           current_url=current_url, next_url=next_url, prev_url=prev_url)
+
+@main.before_request
+def before_request():
+    if current_user.is_authenticated:
+        g.search_form = SearchForm()
 
 
 

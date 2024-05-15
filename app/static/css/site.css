@@ -608,3 +608,10 @@ tr[data-status='Cancelled'] td,
 td[data-status=white] {
     color: #fff;
 }
+
+a.border-thick {
+  border-width: 3px !important;
+}
+a.border-thick + a.border-thick {
+  border-top: 0 !important;
+}

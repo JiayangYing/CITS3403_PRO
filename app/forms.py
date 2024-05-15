@@ -1,3 +1,4 @@
+from flask import request
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField
@@ -218,3 +219,14 @@ class Orderform(FlaskForm):
     def validate_quantity(self, quantity):
         if int(quantity.data) < 1 or int(quantity.data) > self.quantity.choices[-1][0]:
             raise ValidationError('Invalid quantity')
+
+
+class SearchForm(FlaskForm):
+    q = StringField(('Search'), validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'meta' not in kwargs:
+            kwargs['meta'] = {'csrf': False}
+        super(SearchForm, self).__init__(*args, **kwargs)

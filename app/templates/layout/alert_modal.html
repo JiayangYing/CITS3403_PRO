@@ -10,14 +10,16 @@
             {% for msg in errors %}
                 <div class="mb-1">{{ msg }}</div>
             {% endfor %}
-            {% for field, errors in form.errors.items() %}
-            {% if errors %}
-                {% for msg in errors %}
-                    <div class="mb-1">{{ msg }}</div>
+            {% if form %}
+                {% for field, errors in form.errors.items() %}
+                    {% if errors %}
+                        {% for msg in errors %}
+                            <div class="mb-1">{{ msg }}</div>
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             {% endif %}
-        {% endfor %}
-</div>
+        </div>
     {% endif %}
 {% endwith %}
 
@@ -27,6 +29,18 @@
             <button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('{{divId}}')">&times;</button>
             <h4><i class="icon fa fa-check me-2"></i>Success</h4>
             {% for msg in successes %}
+                <div class="mb-1">{{ msg }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+{% with infos = get_flashed_messages(category_filter=["info"]) %}
+    {% if infos %}
+        <div class="alert alert-info alert-dismissible">
+            <button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('{{divId}}')">&times;</button>
+            <h4><i class="icon fa fa-info-circle me-2"></i>Info</h4>
+            {% for msg in infos %}
                 <div class="mb-1">{{ msg }}</div>
             {% endfor %}
         </div>

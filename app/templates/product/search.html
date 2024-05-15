@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Category {% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div id="AlertModalDiv">
+            {% include "/layout/alert_modal.html" %}
+        </div>
+        {% if products %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="row" id="productList">
+                        <div class="list-group display-list ms-1">
+                            {% for product in products %}
+                                {% if product %}
+                                    {% include "/product/display_list.html" %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="mt-2 mr-2 d-flex justify-content-end">
+                        <nav aria-label="ProductPageNav">
+                            <ul id="SearchPageNavBar" class="pagination">
+                                <li class="page-item {% if not prev_url %} disabled{% endif %}"><a class="page-link" href="{{prev_url}}">Previous</a></li>
+                                {% if prev_url %}<li class="page-item"><a class="page-link" href="{{prev_url}}">{{ page-1 }}</a></li>{% endif %}
+                                <li class="page-item"><a class="page-link" href="{{ current_url }}">{{ page }}</a></li>
+                                {% if next_url %}<li class="page-item"><a class="page-link" href="{{ next_url }}">{{ page+1 }}</a></li>{% endif %}
+                                <li class="page-item {% if not next_url %} disabled{% endif %}"><a class="page-link" href="{{next_url}}">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/product/search.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/product/product.css') }}" type="text/css" />
+{% endblock %}

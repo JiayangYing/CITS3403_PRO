@@ -1,11 +1,11 @@
-<a href="#" class="list-group-item list-group-item-action">
+<a href="#" class="list-group-item list-group-item-action border-thick">
     <div class="row">
         <div class="d-flex">
             <div class="col-3">
-                <img src=/static/img/{{ product.img }} alt="{{ product.title }}" class="rounded">
+                <img src='/static/img/product_image/image.jpg' alt="{{ product.product_name }}" class="rounded">
             </div>
-            <div class="ms-2 col-9">
-                <h2 class="text-truncate product-title">{{ product.title }} </h2>
+            <div class="ms-3 col-9">
+                <h2 class="text-truncate product-title">{{ product.product_name }} </h2>
                 <div class="d-flex justify-content-between me-2">
                     <div class="justify-content-start">
                         <p class="card-text">AUD {{ product.price }}</p>
