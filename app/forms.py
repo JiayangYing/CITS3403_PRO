@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email
 import sqlalchemy as sa
 from app import db
 from app.models import User, Product
+from flask_wtf.file import FileField
 
 class ProductConditionField(SelectField):
     def __init__(self, *args, **kwargs):
@@ -91,6 +92,7 @@ class ProductForm(FlaskForm):
     category = ProductCategoryField('Category', validators=[DataRequired()])
     location = IntegerField('Location', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
+    image = FileField('Image')
     submit = SubmitField('Submit')
 
     def validate_location(self, postcode):
