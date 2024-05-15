@@ -62,7 +62,7 @@ function GenerateInfoAlertDiv(title, message, divId) {
 
     window.$(divId).removeClass().addClass("alert alert-info alert-dismissible");
     window.$(divId).html(`<button type="button" class="close" aria-hidden="true" onclick="CloseAlertDiv('${divId}')">&times;</button>\n
-                                <h4><i class="icon fa fa-info-circle"></i>${title}</h4>\n
+                                <h4><i class="icon fa fa-info-circle me-2"></i>${title}</h4>\n
                                 <span id="AlertMessage">${message}</span>`);
     ScrollToTopPage();
 }
@@ -106,6 +106,22 @@ function ScrollToTopPage() {
 function stringToBool(str) {
     str = str.toLowerCase().trim();
     return str === 'true' || str === 'yes' || str === '1';
+}
+
+function SetPaginationActive(id){
+    var url = new URL(window.location.href);
+    pageNum = url.searchParams.get('page')
+    if (!pageNum){
+        $(`${id} :contains("1")`).parent().addClass('active')
+    }else{
+        $(`${id} a`).each(function(i, a){
+            $a = $(a)
+            if(`${$a.text()}` === pageNum){
+              $a.parent().addClass('active')
+              return false
+            }
+        })
+    }
 }
 
 const darkModeClass = 'dark_mode'

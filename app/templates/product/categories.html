@@ -62,7 +62,7 @@
             <div class="col-12">
                 <div class="mt-2 mr-2 d-flex justify-content-end">
                     <nav aria-label="ProductPageNav">
-                        <ul id="ProductPageNavBar" class="pagination">
+                        <ul id="CategoriesPageNavBar" class="pagination">
                           <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page-1) }}">Previous</a></li>
                           {% for page in pages %}
                             <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page) }}">{{ page }}</a></li>
