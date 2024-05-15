@@ -154,7 +154,6 @@ class DeactivateAccountForm(FlaskForm):
         if not current_user.check_password(deactivate_password.data):
             raise ValidationError('Incorrect current password.')
 
-
 class EditProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
@@ -218,6 +217,14 @@ class Orderform(FlaskForm):
         if int(quantity.data) < 1 or int(quantity.data) > self.quantity.choices[-1][0]:
             raise ValidationError('Invalid quantity')
 
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Reset Password')
+
+class ResetPasswordForm(FlaskForm):
+    new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
+    re_password = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField(('Reset Password'))
 
 class SearchForm(FlaskForm):
     q = StringField(('Search'), validators=[DataRequired()])

@@ -5,10 +5,11 @@ from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
-    EditProductForm, SearchForm
+    EditProductForm, SearchForm, ForgotPasswordForm, ResetPasswordForm
 from urllib.parse import urlsplit
 import os
 from app.blueprint import main
+from app.email import send_password_reset_email
 
 @main.context_processor
 def inject_global_variable():
@@ -18,12 +19,44 @@ def inject_global_variable():
 def error(error = None):
     return render_template('/layout/page_not_found.html'), 404
 
+@main.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    forgot_pass_form = ForgotPasswordForm()
+    if forgot_pass_form.validate_on_submit():
+        user = User.get_by_email(forgot_pass_form.email.data)
+        if not user:
+            flash('Email address not registered.','error')
+        else:
+            send_password_reset_email(user)
+            flash('Check your email for the instructions to reset your password','info')
+            return redirect(url_for('main.login'))
+    return render_template('users/login.html', form=LoginForm(), forgot_pass_form=forgot_pass_form, show_modal=True)
+
+@main.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        flash('Invalid method.','error')
+        return redirect(url_for('main.home'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.new_password.data)
+        db.session.commit()
+        flash('Your password has been reset.', 'success')
+        return redirect(url_for('main.login'))
+    return render_template('users/reset_password_form.html', form=form, token=token)
+
 @main.route('/')
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
     form = LoginForm()
+    forgot_pass_form = ForgotPasswordForm()
     if form.validate_on_submit():
         user = User.get_by_username(form.username.data)
         if user is None or not user.check_password(form.password.data):
@@ -38,7 +71,7 @@ def login():
             next_page = url_for('main.home')
         flash('Successfully login!', 'success')
         return redirect(next_page)
-    return render_template('users/login.html', title='Sign In', form=form)
+    return render_template('users/login.html', form=form, forgot_pass_form = forgot_pass_form)
 
 @main.route('/home')
 def home():
@@ -93,18 +126,9 @@ def product():
 
 @main.route('/categories')
 def categories():
-    categories = [
-        {'Men': products[0:2] },
-        {'Women': products[1:] }
-    ]
+    products = Product.get_all(limit=10)
     page = request.args.get('page', 1, type=int)
     view = request.args.get('view', 'grid', type=str)
-    if page==2:
-        categories = [
-            {'Men': [products[0]] },
-            {'Women': [products[2]] }
-        ]
-    pages=[1,2]
     return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
 @main.route('/product/<product_id>', methods=['GET'])
