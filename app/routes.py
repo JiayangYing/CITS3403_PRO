@@ -12,6 +12,8 @@ import sqlalchemy as sa
 from app.blueprint import main
 import imghdr
 
+from werkzeug.utils import secure_filename
+
 @main.context_processor
 def inject_global_variable():
     return dict(company="EcoHUB")
@@ -189,6 +191,15 @@ def validate_image(stream):
     if not format:
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
+
+def validate_images(images)
+    for image in images:
+        image_name = secure_filename(image.filename)
+        if image_name != '':
+            image_ext = os.path.splitext(image_name)[1]
+            if image_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
+                    image_ext != validate_image(image_name.stream):
+                return "%s is Invalid image"%image_name, 400
 
 @main.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
