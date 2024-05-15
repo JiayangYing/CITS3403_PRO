@@ -10,7 +10,7 @@ class Config:
     ORDER_LISTING_PER_PAGE = 2
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     MAX_CONTENT_LENGTH = 1024 * 1024
-    UPLOAD_EXTENSIONS = ['.jpg', '.png', '.JPEG']
+    UPLOAD_EXTENSIONS = ['.jpg', '.png', '.jpeg']
     UPLOAD_PATH = 'static/img/product_image'
 
 class DevelopmentConfig(Config):

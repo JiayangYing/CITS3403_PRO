@@ -98,6 +98,13 @@ class ProductForm(FlaskForm):
 
     def set_form_data(self):
         self.location.data = current_user.postcode
+        # to delete later
+        self.product_name.data = '123'
+        self.price.data = 1
+        self.quantity.data = 1
+        self.condition.data = self.condition.choices[1][0]
+        self.category.data = self.category.choices[1][0]
+        self.description.data = '123'
         
 class EditProductForm(FlaskForm):
     id = int()

@@ -2,7 +2,7 @@
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Add Product</h6>
     </div>
-    <form id="addProductForm" class="card-body" action="/manage_product/add" method="POST">
+    <form id="addProductForm" class="card-body" action="/manage_product/add" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div id="AlertModalDiv" class="hidden">
             {% include "/layout/alert_modal.html" %}
@@ -100,7 +100,7 @@
                         <span>
                             Images<br />
                             <small class="title-details">
-                                [636x165px]<br />
+                                MAX-[1024x1024 px]<br />
                                 Format-[PNG, JPG, JPEG]
                             </small>
                         </span>
@@ -108,7 +108,7 @@
                     <span class="standard-form-value">
                         <div class="input-group file-upload-group">
                             <div name="ManualUpload">
-                                <input type="file" class="custom-file-input" id="imageInput" accept="image/*" multiple>
+                                <input type="file" class="custom-file-input" id="imageInput" accept="image/*" name="file" multiple>
                                 <label class="custom-file-label" for="imageInput">Upload</label>
                             </div>
                             <div class="alert alert-info alert-dismissible">

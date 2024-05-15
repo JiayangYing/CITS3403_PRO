@@ -196,7 +196,7 @@ def validate_images(images):
         if image_name != '':
             image_ext = os.path.splitext(image_name)[1]
             if image_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
-                    image_ext != validate_image(image_name.stream):
+                    image_ext != validate_image(image.stream):
                 return "%s is Invalid image"%image_name, 400
         return '', 204
 
@@ -220,14 +220,12 @@ def add_product():
         )
         db.session.add(product)
         db.session.flush()
-        
+
         images = request.files.getlist('file')
-        print(images)
         validate_images(images)
         for image in images:
             image_name = secure_filename(image.filename)
-            image.save(os.path.join(current_app.config['UPLOAD_PATH'], image_name))
-            print("added image to %s"%current_app.config['UPLOAD_PATH'])
+            image.save(os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], image_name))
             db.session.add(Image(image_name = image_name, product_id = Product.id))
         db.session.commit()
         flash('Product added successfully!', 'success')
