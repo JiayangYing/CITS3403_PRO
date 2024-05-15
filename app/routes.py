@@ -8,7 +8,6 @@ from app.forms import \
     EditProductForm, SearchForm
 from urllib.parse import urlsplit
 import os
-import sqlalchemy as sa
 from app.blueprint import main
 
 @main.context_processor
@@ -89,8 +88,7 @@ products = [
 
 @main.route('/product')
 def product():
-    query = sa.select(Product).order_by(Product.created_on.desc()).limit(10)
-    products = db.session.scalars(query).all()
+    products = Product.get_all(limit=10)
     return render_template('/product/product.html', products=products)
 
 @main.route('/categories')
@@ -112,9 +110,9 @@ def categories():
 @main.route('/product/<product_id>', methods=['GET'])
 @login_required
 def product_detail(product_id):
-    product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
+    product = Product.get_by_id(product_id)
     if not product:
-        return url_for('main.error')
+        return redirect(url_for('main.error'))
     form = Orderform()
     form.set_product_qty(product.quantity)
     form.set_form_data()
@@ -123,9 +121,9 @@ def product_detail(product_id):
 @main.route('/contact_seller/<product_id>', methods=['POST'])
 @login_required
 def contact_seller(product_id):
-    product = db.first_or_404(sa.select(Product).where(Product.id == product_id))
+    product = Product.get_by_id(100)
     if not product:
-        return url_for('main.error')
+        return redirect(url_for('main.error'))
     form = Orderform()
     form.set_product_qty(product.quantity)
     if form.validate_on_submit():
@@ -249,7 +247,7 @@ def update_account_type():
     form.set_form_data()
     account_form = UpdateAccountForm()
     deactivate_form = DeactivateAccountForm()
-    user = db.session.scalar(sa.select(User).where(User.username == current_user.username))
+    user = User.get_by_username(current_user.username)
     if account_form.validate_on_submit():
         current_user.is_seller = not user.is_seller
         db.session.commit()
@@ -340,7 +338,7 @@ def f_password():
 @login_required
 def search():
     if not g.search_form.validate():
-        return redirect(url_for(''))
+        return redirect(url_for('main.home'))
     page = request.args.get('page', 1, type=int)
     products, total = Product.search(g.search_form.q.data, page, current_app.config['PRODUCTS_PER_PAGE'])
     current_url = url_for('main.search', q=g.search_form.q.data, page=page)
