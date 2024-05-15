@@ -17,6 +17,10 @@ def page_not_found(e):
 def create_app(config=Config):
     app = Flask(__name__)
     app.config.from_object(config)
+
+    app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+    app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.JPEG']
+    app.config['UPLOAD_PATH'] = 'static/img/product_image'
     
     db.init_app(app)
     migrate.init_app(app, db)

@@ -186,6 +186,8 @@ def add_product():
     form = ProductForm()
     if request.method == 'GET':
         form.set_form_data()
+    
+    
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
