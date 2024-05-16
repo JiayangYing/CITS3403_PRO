@@ -211,7 +211,7 @@ def add_product():
     if request.method == 'GET':
         form.set_form_data()   
     images = request.files.getlist('image')
-    print(images)
+    # print(images)
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
@@ -225,13 +225,12 @@ def add_product():
         )
         db.session.add(product)
         db.session.flush()
-        
         message ,  error = validate_images(images)
         if(error != 204 ):
              flash(message, 'error')
              return render_template('/manage_product/add.html', form=form, images=images)
 
-        print(form.main_idx.data)
+        # print(form.main_idx.data)
         loop_times = 1
         for image in images:
             
