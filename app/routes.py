@@ -4,8 +4,8 @@ from app import db
 from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
-    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
-    EditProductForm, SearchForm
+    ChangePasswordForm, SearchProductDropDown, UpdateAccountForm, DeactivateAccountForm, Orderform, \
+    EditProductForm, SearchForm, searchProductForm
 from urllib.parse import urlsplit
 import os
 from app.blueprint import main
@@ -355,6 +355,33 @@ def search():
 def before_request():
     if current_user.is_authenticated:
         g.search_form = SearchForm()
+@main.route('/products', methods=['POST'])
+def filter_products():
+    if request.method == 'POST':
+        if 'category' in request.form:
+            form = SearchProductDropDown(request.form)
+        else:
+            form = searchProductForm(request.form)
 
+        if form.validate():
+            query = product.query(Product)
 
+            category = form.category.data
+            price = form.price.data
+            condition = form.condition.data
 
+            if category:
+                query = query.filter(Product.category == category)
+            if price:
+                query = query.filter(Product.price == price)
+            if condition and condition != 'Any':
+                query = query.filter(Product.condition == condition)
+
+            products = [product.__dict__ for product in query.all()]
+
+            return jsonify(products)
+
+    return 'Invalid form data', 400
+
+if __name__ == '__main__':
+    app.run(debug=True)

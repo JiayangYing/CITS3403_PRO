@@ -2,7 +2,9 @@ from flask import request
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField
-from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
+from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange,Optional
+import sqlalchemy as sa
+from app import db
 from app.models import User, Product
 
 class ProductConditionField(SelectField):
@@ -65,12 +67,12 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
-        user = User.get_by_username(username.data)
+        user = db.session.scalar(sa.select(User).where(User.username == username.data))
         if user is not None:
             raise ValidationError('Please use a different username.')
 
     def validate_email_address(self, email):
-        user = User.get_by_email(email.data)
+        user = db.session.scalar(sa.select(User).where(User.email_address == email.data))
         if user is not None:
             raise ValidationError('Please use a different email address.')
         
@@ -228,3 +230,17 @@ class SearchForm(FlaskForm):
         if 'meta' not in kwargs:
             kwargs['meta'] = {'csrf': False}
         super(SearchForm, self).__init__(*args, **kwargs)
+
+class SearchProductDropDown(FlaskForm):
+    category = StringField('Category', validators=[Optional()], render_kw={"placeholder": "Enter category"})
+    price = DecimalField('Price', validators=[Optional()], render_kw={"placeholder": "Enter price"})
+    condition = SelectField('Condition', choices=[('', 'Any'), ('new', 'New'), ('used', 'Used')])
+    submit = SubmitField('Search')
+
+class searchProductForm(FlaskForm):
+    category = StringField('Category', render_kw={"placeholder": "Enter category"})
+    price = DecimalField('Price', render_kw={"placeholder": "Enter price"})
+    condition = StringField('Condition', render_kw={"placeholder": "New or Used"})
+    submit = SubmitField('Search')
+    
+
