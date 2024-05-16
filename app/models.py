@@ -255,3 +255,4 @@ class Image(db.Model):
     image_name: so.Mapped[str] = so.mapped_column(sa.String(255))
     product_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Product.id))
     product: so.Mapped[Product] = so.relationship(back_populates='images')
+    is_main: so.Mapped[bool] = so.mapped_column(unique=False, default=False)
