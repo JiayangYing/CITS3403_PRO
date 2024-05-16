@@ -250,6 +250,7 @@ def update_account_type():
     user = User.get_by_username(current_user.username)
     if account_form.validate_on_submit():
         current_user.is_seller = not user.is_seller
+        current_user.shop_name = account_form.shop_name.data
         db.session.commit()
         flash('Your account type has been changed.', 'success')
         return redirect(url_for('main.profile'))
