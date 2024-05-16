@@ -79,7 +79,7 @@
                                 <ul id="ProductPageNavBar" class="pagination">
                                     <li class="page-item {% if not prev_url %} disabled{% endif %}"><a class="page-link" href="{{prev_url}}">Previous</a></li>
                                     {% for page in pages %}
-                                        <li class="page-item"><a class="page-link" href="{{ url_for('main.seller', page=page) }}">{{ page }}</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ url_for('main.product_listing', page=page) }}">{{ page }}</a></li>
                                     {% endfor %}
                                     <li class="page-item {% if not next_url %} disabled{% endif %}"><a class="page-link" href="{{next_url}}">Next</a></li>
                                 </ul>
