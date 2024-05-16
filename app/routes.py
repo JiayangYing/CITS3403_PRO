@@ -121,33 +121,36 @@ def product_detail(product_id):
 @main.route('/contact_seller/<product_id>', methods=['POST'])
 @login_required
 def contact_seller(product_id):
-    product = Product.get_by_id(100)
+    product = Product.get_by_id(product_id)
     if not product:
         return redirect(url_for('main.error'))
     form = Orderform()
     form.set_product_qty(product.quantity)
-    if form.validate_on_submit():
-        order = Order(
-            quantity=form.quantity.data,
-            first_name=form.first_name.data, 
-            last_name = form.last_name.data,
-            email_address = form.email_address.data,
-            postcode = form.postcode.data, 
-            contact_no = form.contact_no.data,
-            remarks = form.remarks.data,
-            product_id = product_id,
-            buyer = current_user
-        )
-        db.session.add(order)
-        # current_user.add_order()
-        db.session.commit()
-        flash('Your order request has been sent!', 'success')
-        return redirect(url_for('main.product'))
+    if request.method == "POST":
+        if product.user_id == current_user.id:
+            flash('Your cannot order your own item!', 'error')
+        elif form.validate_on_submit():
+            order = Order(
+                quantity=form.quantity.data,
+                first_name=form.first_name.data, 
+                last_name = form.last_name.data,
+                email_address = form.email_address.data,
+                postcode = form.postcode.data, 
+                contact_no = form.contact_no.data,
+                remarks = form.remarks.data,
+                product_id = product_id,
+                buyer = current_user
+            )
+            db.session.add(order)
+            # current_user.add_order()
+            db.session.commit()
+            flash('Your order request has been sent!', 'success')
+            return redirect(url_for('main.product'))
     return render_template('/product/product_detail.html', product=product, form=form, show_modal=True)
 
-@main.route('/seller')
+@main.route('/product_listing')
 @login_required
-def seller():
+def product_listing():
     if(not current_user.is_seller):
         return redirect(url_for('main.error'))
     page = request.args.get('page', 1, type=int)
@@ -158,13 +161,30 @@ def seller():
         pro.orders = pro.get_pending_order_counts()
     next_url, prev_url, pages = None, None, []
     if products.has_prev:
-        prev_url = url_for('main.seller', page=products.prev_num)
+        prev_url = url_for('main.product_listing', page=products.prev_num)
         pages.append(page-1)
     pages.append(page)
     if products.has_next:
-        next_url = url_for('main.seller', page=products.next_num)
+        next_url = url_for('main.product_listing', page=products.next_num)
         pages.append(page+1)
     return render_template('/seller/product.html', products=products.items, pages = pages,
+                           next_url=next_url, prev_url=prev_url)
+@main.route('/order_listing')
+@login_required
+def order_listing():
+    page = request.args.get('page', 1, type=int)
+    buyer_orders = db.paginate(current_user.get_own_orders(), page=page, 
+                                             per_page=current_app.config['ORDER_LISTING_PER_PAGE'], 
+                                             error_out=False)
+    next_url, prev_url, pages = None, None, []
+    if buyer_orders.has_prev:
+        prev_url = url_for('main.order_listing', page=buyer_orders.prev_num)
+        pages.append(page-1)
+    pages.append(page)
+    if buyer_orders.has_next:
+        next_url = url_for('main.order_listing', page=buyer_orders.next_num)
+        pages.append(page+1)
+    return render_template('/buyer/order.html', orders=buyer_orders.items, pages = pages,
                            next_url=next_url, prev_url=prev_url)
 
 @main.route('/profile')
@@ -198,7 +218,7 @@ def add_product():
         db.session.add(product)
         db.session.commit()
         flash('Product added successfully!', 'success')
-        return redirect(url_for('main.seller'))
+        return redirect(url_for('main.product_listing'))
     return render_template('/manage_product/add.html', form=form)
 
 @main.route('/edit_product/<id>', methods=['GET', 'POST'])

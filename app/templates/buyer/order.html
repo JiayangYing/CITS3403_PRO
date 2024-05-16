@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Order {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Manage Your Order Page</h1>
+        </div>
+    
+        {% include "/buyer/order_table.html" %}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/buyer/order.js') }}"></script>
+{% endblock %}
+
+{% block css %}
+{% endblock %}

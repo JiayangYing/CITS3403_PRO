@@ -86,6 +86,14 @@ class User(UserMixin, db.Model):
             .where(Product.user_id == self.id,)
             .order_by(Product.created_on.desc())
         )
+
+    def get_own_orders(self):
+        return (
+            sa.select(Order, Product)
+            .join(Product, Order.product_id == Product.id)
+            .where(Order.buyer_id == self.id)
+            .order_by(Order.created_on.desc())
+        )
     
     @staticmethod
     def get_by_username(username):
@@ -117,6 +125,7 @@ class Product(SearchableMixin, db.Model):
     is_active : so.Mapped[bool] = so.mapped_column(default=True)
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     owner: so.Mapped[User] = so.relationship(back_populates='products')
+    product_orders: so.WriteOnlyMapped['Order'] = so.relationship(back_populates='product')
 
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
@@ -178,6 +187,7 @@ class Order(db.Model):
     status: so.Mapped[str] = so.mapped_column(sa.String(10), index=True, default="Pending")
     buyer_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     buyer: so.Mapped[User] = so.relationship(foreign_keys='Order.buyer_id', back_populates='orders')
+    product: so.Mapped[Product] = so.relationship(foreign_keys='Order.product_id', back_populates='product_orders')
     
     def to_json(self):
         data = {
