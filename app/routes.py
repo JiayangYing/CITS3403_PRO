@@ -210,7 +210,7 @@ def add_product():
     form = ProductForm()
     if request.method == 'GET':
         form.set_form_data()   
-    images = request.files.getlist('file')
+    images = request.files.getlist('image')
     print(images)
     if form.validate_on_submit():
         product = Product(
@@ -223,17 +223,30 @@ def add_product():
             description = form.description.data,
             owner = current_user
         )
-        # db.session.add(product)
-        # db.session.flush()
-
-        validate_images(images)
+        db.session.add(product)
+        db.session.flush()
+        
+        message ,  error = validate_images(images)
+        if(error != 204 ):
+             flash(message, 'error')
+             return render_template('/manage_product/add.html', form=form, images=images)
+        
         for image in images:
             image_name = secure_filename(image.filename)
-            image.save(os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], image_name))
-            db.session.add(Image(image_name = image_name, product_id = Product.id))
-        # db.session.commit()
+            image_ext = os.path.splitext(image_name)[1]
+
+
+            image_instance = Image(image_name = image_name, product_id = product.id)
+            db.session.add(image_instance)
+            db.session.flush()
+
+            newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product.id))
+            if not os.path.exists(newpath):
+                os.makedirs(newpath)
+            image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))  
+        db.session.commit()
         flash('Product added successfully!', 'success')
-        # return redirect(url_for('main.seller'))
+        return redirect(url_for('main.seller'))
     return render_template('/manage_product/add.html', form=form, images=images)
 
 @main.route('/edit_product/<id>', methods=['GET', 'POST'])
