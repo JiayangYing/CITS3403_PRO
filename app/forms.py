@@ -1,7 +1,7 @@
 from flask import request
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField
+from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField, RadioField
 from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
 from app.models import User, Product
 
@@ -38,7 +38,7 @@ def validate_australian_postcode(postcode):
     for city, (min_code, max_code) in city_ranges.items():
         if min_code <= postcode <= max_code:
             return
-    raise ValidationError('Invalid post code.')
+    raise ValidationError('Invalid Postcode.')
 
 def get_avatar_icon(avatar_idx):
     return ['fa-user-secret', 'fa-user-tie', 'fa-user-graduate', 'fa-user-nurse'][avatar_idx]
@@ -56,7 +56,7 @@ class RegistrationForm(FlaskForm):
     email_address = StringField('Email', validators=[DataRequired(), Email()])
     username = StringField('Username', validators=[DataRequired()])
     address = StringField('Address', validators=[Length(max=120)])
-    postcode = IntegerField('Post Code', validators=[DataRequired()])
+    postcode = IntegerField('Postcode', validators=[DataRequired()])
     contact_no = TelField('Contact Number', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     re_password = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
@@ -115,7 +115,7 @@ class ProfileForm(FlaskForm):
     first_name = StringField('First Name')
     last_name = StringField('Last Name')
     email = StringField('Email')
-    postcode = IntegerField('Post Code')
+    postcode = IntegerField('Postcode')
     address = StringField('Address')
     account_type = StringField('Account Type')
     verified = BooleanField('Verified')
@@ -129,7 +129,7 @@ class ProfileForm(FlaskForm):
         self.email.data = current_user.email_address
         self.postcode.data = current_user.postcode
         self.address.data = current_user.address
-        self.account_type.data = 'Seller' if current_user.is_seller else 'Buyer'
+        self.account_type.data = 'Seller & Buyer' if current_user.is_seller else 'Buyer'
         self.verified.data = current_user.is_verified
         self.avatar.data = current_user.avatar
         self.avatar_icon.data = get_avatar_icon(current_user.avatar)
@@ -137,14 +137,22 @@ class ProfileForm(FlaskForm):
 class UpdateAccountForm(FlaskForm):
     become_seller = BooleanField('Become a Seller?')
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
+    agree_to_terms = RadioField('I agree to the Terms and Conditions', choices=[('agree', 'Agree')], validators=[DataRequired()])
+    shop_name = StringField('Shop Name')
     submit = SubmitField('Update Account')
 
     def set_form_data(self):
+        self.shop_name.data = current_user.shop_name
         self.become_seller.data = current_user.is_seller
 
     def validate_confirm_password(self, confirm_password):
         if not current_user.check_password(confirm_password.data):
             raise ValidationError('Incorrect current password.')
+        
+    def validate_shop_name(self, shopname):
+        if self.become_seller.data and not shopname.data:
+            raise ValidationError('Please enter a shop name if you wish to become a seller.')
 
 class DeactivateAccountForm(FlaskForm):
     deactivate_password = PasswordField('Deactivate Password', validators=[DataRequired()])
@@ -160,7 +168,7 @@ class EditProfileForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=50)])
     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
     address = StringField('Address', validators=[Length(max=120)])
-    postcode = IntegerField('Post Code', validators=[DataRequired()])
+    postcode = IntegerField('Postcode', validators=[DataRequired()])
     avatar = HiddenField('Avatar', validators=[DataRequired()])
     avatar_icon = StringField('Avatar')
     submit = SubmitField('Update')
@@ -196,7 +204,7 @@ class Orderform(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
     email_address = StringField('Email', validators=[DataRequired(), Email()])
-    postcode = IntegerField('Post Code', validators=[DataRequired()])
+    postcode = IntegerField('Postcode', validators=[DataRequired()])
     contact_no = TelField('Contact Number', validators=[DataRequired()])
     remarks = TextAreaField('remarks')
     submit = SubmitField('Request')
