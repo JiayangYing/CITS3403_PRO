@@ -4,11 +4,12 @@ from app import db
 from app.models import User,Product, Order
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
-    ChangePasswordForm, SearchProductDropDown, UpdateAccountForm, DeactivateAccountForm, Orderform, \
-    EditProductForm, SearchForm, searchProductForm
+    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
+    EditProductForm, SearchForm, SearchProductForm
 from urllib.parse import urlsplit
-import os
+import os, json
 from app.blueprint import main
+from app.helper import FilterHelper, PaginatorHelper
 
 @main.context_processor
 def inject_global_variable():
@@ -78,34 +79,10 @@ def get_sdg_img_dirs():
     sdg_images = [path+'/'+img for img in os.listdir(img_dir) if img.endswith('png')]
     return jsonify({'sdg_images': sdg_images})
 
-products = [
-    {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'product_image/image.jpg',
-     'description':'This is the description of the Cloth1.'*10},
-    {'title': 'Cloth 2', 'price': 39.99, 'quantity': 1, 'location': 'East Perth', 'img':'product_image/image2.jpg',
-     'description':'Cloth2.'*5},
-    {'title': 'Cloth 3', 'price': 19.99, 'quantity': 3, 'location': 'Nedlands', 'img':'product_image/image3.jpg'}
-]
-
 @main.route('/product')
 def product():
     products = Product.get_all(limit=10)
     return render_template('/product/product.html', products=products)
-
-@main.route('/categories')
-def categories():
-    categories = [
-        {'Men': products[0:2] },
-        {'Women': products[1:] }
-    ]
-    page = request.args.get('page', 1, type=int)
-    view = request.args.get('view', 'grid', type=str)
-    if page==2:
-        categories = [
-            {'Men': [products[0]] },
-            {'Women': [products[2]] }
-        ]
-    pages=[1,2]
-    return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
 @main.route('/product/<product_id>', methods=['GET'])
 @login_required
@@ -121,7 +98,7 @@ def product_detail(product_id):
 @main.route('/contact_seller/<product_id>', methods=['POST'])
 @login_required
 def contact_seller(product_id):
-    product = Product.get_by_id(100)
+    product = Product.get_by_id(product_id)
     if not product:
         return redirect(url_for('main.error'))
     form = Orderform()
@@ -156,14 +133,10 @@ def seller():
                            error_out=False)
     for pro in products:
         pro.orders = pro.get_pending_order_counts()
-    next_url, prev_url, pages = None, None, []
-    if products.has_prev:
-        prev_url = url_for('main.seller', page=products.prev_num)
-        pages.append(page-1)
-    pages.append(page)
-    if products.has_next:
-        next_url = url_for('main.seller', page=products.next_num)
-        pages.append(page+1)
+    paginator = PaginatorHelper('main.seller', page, 
+                                products.has_prev, products.has_next, 
+                                products.prev_num, products.next_num)
+    next_url, prev_url, pages = paginator.get_pagination()
     return render_template('/seller/product.html', products=products.items, pages = pages,
                            next_url=next_url, prev_url=prev_url)
 
@@ -292,12 +265,10 @@ def get_product_orders(product_id):
         orders = db.paginate(Order.get_orders_by_product_id(product_id), page=page, 
                             per_page=current_app.config['ORDER_LISTING_PER_PAGE'], 
                             error_out=False)
-        pages = []
-        if orders.has_prev:
-            pages.append(page-1)
-        pages.append(page)
-        if orders.has_next:
-            pages.append(page+1)
+        paginator = PaginatorHelper('main.get_product_orders', page, 
+                                    orders.has_prev, orders.has_next, 
+                                    orders.prev_num, orders.next_num)
+        next_url, prev_url, pages = paginator.get_pagination()
         return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
@@ -355,33 +326,28 @@ def search():
 def before_request():
     if current_user.is_authenticated:
         g.search_form = SearchForm()
-@main.route('/products', methods=['POST'])
+
+@main.route('/filter_products', methods=['GET', 'POST'])
 def filter_products():
+    filters = request.args.get('filters')
+    filters_dict = json.loads(filters.replace("'", '"')) if filters else None
+    form = SearchProductForm()
+    form.set_form_data(filters_dict)
     if request.method == 'POST':
-        if 'category' in request.form:
-            form = SearchProductDropDown(request.form)
-        else:
-            form = searchProductForm(request.form)
-
-        if form.validate():
-            query = product.query(Product)
-
-            category = form.category.data
-            price = form.price.data
-            condition = form.condition.data
-
-            if category:
-                query = query.filter(Product.category == category)
-            if price:
-                query = query.filter(Product.price == price)
-            if condition and condition != 'Any':
-                query = query.filter(Product.condition == condition)
-
-            products = [product.__dict__ for product in query.all()]
-
-            return jsonify(products)
-
-    return 'Invalid form data', 400
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        filtered = SearchProductForm(request.form)
+        filters = FilterHelper.filters_as_dict(request.form)
+    else:
+        filtered = form
+    page = request.args.get('page', 1, type=int)
+    view = request.args.get('view', 'grid', type=str)
+    query = FilterHelper.generate_query(filtered)
+    products = db.paginate(query, page=page, 
+                           per_page=current_app.config['FILTER_PRODUCT_PER_PAGE'], 
+                           error_out=False)
+    paginator = PaginatorHelper('main.filter_products', page, 
+                                products.has_prev, products.has_next, 
+                                products.prev_num, products.next_num, 
+                                view=view, filters=filters)
+    next_url, prev_url, pages = paginator.get_pagination()
+    return render_template('/product/categories.html', products=products, page=page, pages=pages, view=view, filters=filters,
+                           form=form, next_url=next_url, prev_url=prev_url)

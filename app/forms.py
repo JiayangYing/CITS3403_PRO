@@ -1,29 +1,16 @@
 from flask import request
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField
-from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange,Optional
-import sqlalchemy as sa
-from app import db
-from app.models import User, Product
-
-class ProductConditionField(SelectField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Customize the choices for the field
-        self.choices = [
-            ('','--Selec Condition--'), ('Brand New', 'Brand New'), ('Used - Good', 'Used - Good'),
-            ('Used - Fair', 'Used - Fair'), ('Other', 'Other')
-        ]
-        
-class ProductCategoryField(SelectField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.choices = [
-            ('','--Selec Category--'), ('Clothing & Accessories', 'Clothing & Accessories'), ('Home & Garden', 'Home & Garden'), 
-            ('Electronics', 'Electronics'), ('Books & Media', 'Books & Media'), ('Sport & Leisure', 'Sport & Leisure'),
-            ('Others', 'Others')
-        ]
+from wtforms import (
+    DecimalField, IntegerField, SelectField, StringField, PasswordField, 
+    BooleanField, SubmitField, TextAreaField, TelField, HiddenField)
+from wtforms.validators import (
+    DataRequired,EqualTo,Length,ValidationError,Email, NumberRange)
+from app.models import User
+from app.fields import (
+    ProductConditionField, ProductConditionMultipleCheckboxField, 
+    ProductCategoryField, ProductCategoryMultipleCheckboxField, 
+    ProductPriceRangeField)
 
 def validate_australian_postcode(postcode):
     city_ranges = {
@@ -67,12 +54,12 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
-        user = db.session.scalar(sa.select(User).where(User.username == username.data))
+        user = User.get_by_username(username.data)
         if user is not None:
             raise ValidationError('Please use a different username.')
 
     def validate_email_address(self, email):
-        user = db.session.scalar(sa.select(User).where(User.email_address == email.data))
+        user = User.get_by_email(email.data)
         if user is not None:
             raise ValidationError('Please use a different email address.')
         
@@ -220,7 +207,6 @@ class Orderform(FlaskForm):
         if int(quantity.data) < 1 or int(quantity.data) > self.quantity.choices[-1][0]:
             raise ValidationError('Invalid quantity')
 
-
 class SearchForm(FlaskForm):
     q = StringField(('Search'), validators=[DataRequired()])
 
@@ -231,16 +217,14 @@ class SearchForm(FlaskForm):
             kwargs['meta'] = {'csrf': False}
         super(SearchForm, self).__init__(*args, **kwargs)
 
-class SearchProductDropDown(FlaskForm):
-    category = StringField('Category', validators=[Optional()], render_kw={"placeholder": "Enter category"})
-    price = DecimalField('Price', validators=[Optional()], render_kw={"placeholder": "Enter price"})
-    condition = SelectField('Condition', choices=[('', 'Any'), ('new', 'New'), ('used', 'Used')])
-    submit = SubmitField('Search')
-
-class searchProductForm(FlaskForm):
-    category = StringField('Category', render_kw={"placeholder": "Enter category"})
-    price = DecimalField('Price', render_kw={"placeholder": "Enter price"})
-    condition = StringField('Condition', render_kw={"placeholder": "New or Used"})
-    submit = SubmitField('Search')
+class SearchProductForm(FlaskForm):
+    categories = ProductCategoryMultipleCheckboxField('Categories')
+    price = ProductPriceRangeField('Price')
+    conditions = ProductConditionMultipleCheckboxField('Conditions')
+    submit = SubmitField('Apply Filters')
     
-
+    def set_form_data(self, filters_dict):
+        if filters_dict:
+            self.categories.data = filters_dict.get('categories', [])
+            self.conditions.data = filters_dict.get('conditions', [])
+            self.price.data = filters_dict.get('price', '')

@@ -30,28 +30,20 @@
                 {% if view == 'grid' %}
                     <!-- Product display (grid view) -->
                     <div class="row d-flex justify-content-around" id="productGrid">
-                        {% for category in categories %}
-                            {% for cat, products in category.items() %}
-                                {% for product in products %}
-                                    {% if product %}
-                                    {% include "/product/display_card.html" %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endfor %}
+                        {% for product in products %}
+                            {% if product %}
+                            {% include "/product/display_card.html" %}
+                            {% endif %}
                         {% endfor %}
                     </div>
                 {% elif view == 'list' %}
                     <!-- Product display (list view) - initially hidden -->
                     <div class="row" id="productList">
                         <div class="list-group display-list ms-1">
-                            {% for category in categories %}
-                                {% for cat, products in category.items() %}
-                                    {% for product in products %}
-                                        {% if product %}
-                                            {% include "/product/display_list.html" %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
+                            {% for product in products %}
+                                {% if product %}
+                                    {% include "/product/display_list.html" %}
+                                {% endif %}
                             {% endfor %}
                         </div>
                     </div>
@@ -61,15 +53,15 @@
         <div class="row">
             <div class="col-12">
                 <div class="mt-2 mr-2 d-flex justify-content-end">
-                    <nav aria-label="ProductPageNav">
+                    <nav aria-label="CategoriesPageNav">
                         <ul id="CategoriesPageNavBar" class="pagination">
-                          <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page-1) }}">Previous</a></li>
-                          {% for page in pages %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page) }}">{{ page }}</a></li>
-                          {% endfor %}
-                          <li class="page-item"><a class="page-link" href="{{ url_for('main.categories', view=view, page=page+1) }}">Next</a></li>
+                            <li class="page-item {% if not prev_url %} disabled{% endif %}"><a class="page-link" href="{{prev_url}}">Previous</a></li>
+                            {% for page in pages %}
+                                <li class="page-item"><a class="page-link" href="{{ url_for('main.filter_products', page=page, view=view, filters=filters) }}">{{ page }}</a></li>
+                            {% endfor %}
+                            <li class="page-item {% if not next_url %} disabled{% endif %}"><a class="page-link" href="{{next_url}}">Next</a></li>
                         </ul>
-                      </nav>
+                    </nav>
                 </div>
             </div>
         </div>
