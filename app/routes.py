@@ -230,20 +230,26 @@ def add_product():
         if(error != 204 ):
              flash(message, 'error')
              return render_template('/manage_product/add.html', form=form, images=images)
-        
+
+        print(form.main_idx.data)
+        loop_times = 1
         for image in images:
+            
             image_name = secure_filename(image.filename)
             image_ext = os.path.splitext(image_name)[1]
 
-
-            image_instance = Image(image_name = image_name, product_id = product.id)
+            if(loop_times  == form.main_idx.data):
+                image_instance = Image(image_name = image_name, product_id = product.id, is_main = True)
+            else:
+                image_instance = Image(image_name = image_name, product_id = product.id)
             db.session.add(image_instance)
             db.session.flush()
 
             newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product.id))
             if not os.path.exists(newpath):
                 os.makedirs(newpath)
-            image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))  
+            image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))
+            loop_times += 1  
         db.session.commit()
         flash('Product added successfully!', 'success')
         return redirect(url_for('main.seller'))
