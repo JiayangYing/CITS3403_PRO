@@ -10,7 +10,7 @@
         </button>
         <div class="dropdown-menu w-100" aria-labelledby="dropdownMenu">
           {% for choice in form.categories %}
-            <div class="form-check">
+            <div class="form-check ms-2">
               {{ choice(class="form-check-input") }}
               {{ choice.label(class="form-check-label") }}
             </div>
@@ -26,7 +26,7 @@
         </button>
         <div class="dropdown-menu w-100" aria-labelledby="dropdownMenu">
           {% for choice in form.conditions %}
-            <div class="form-check">
+            <div class="form-check ms-2">
               {{ choice(class="form-check-input") }}
               {{ choice.label(class="form-check-label") }}
             </div>
