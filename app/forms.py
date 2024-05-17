@@ -28,8 +28,7 @@ class ProductImagesField(MultipleFileField):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         exts = current_app.config['UPLOAD_EXTENSIONS']
-        self.validators=[ 
-            FileRequired(message='Please add at least 1 image.'), 
+        self.validators=[
             FileAllowed(
                 [ext.replace('.','') for ext in exts], 
                 message = f'Invalid File Type. Must be {", ".join(exts)}' 
@@ -102,7 +101,7 @@ class ProductForm(FlaskForm):
     location = IntegerField('Location', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
     main_idx = HiddenField('Main Idx', validators=[DataRequired(message="Please select only 1 as the main image.")])
-    image = ProductImagesField('Image')
+    image = ProductImagesField('Image', validators=[FileRequired(message='Please add at least 1 image.')])
     submit = SubmitField('Submit')
 
     def validate_location(self, postcode):
@@ -110,13 +109,6 @@ class ProductForm(FlaskForm):
 
     def set_form_data(self):
         self.location.data = current_user.postcode
-        # to delete later
-        self.product_name.data = '123'
-        self.price.data = 1
-        self.quantity.data = 1
-        self.condition.data = self.condition.choices[1][0]
-        self.category.data = self.category.choices[1][0]
-        self.description.data = '123'
         
 class EditProductForm(FlaskForm):
     id = int()
@@ -127,10 +119,14 @@ class EditProductForm(FlaskForm):
     category = ProductCategoryField('Category', validators=[DataRequired()])
     location = IntegerField('Location', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
+    main_idx = HiddenField('Main Idx', validators=[DataRequired(message="Please select only 1 as the main image.")])
+    image = ProductImagesField('Image')
     submit = SubmitField('Edit')
 
     def validate_location(self, postcode):
         validate_australian_postcode(postcode.data)
+
+
 
 class ProfileForm(FlaskForm):
     first_name = StringField('First Name')

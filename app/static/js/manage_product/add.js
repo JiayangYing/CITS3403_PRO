@@ -32,7 +32,6 @@ function handleFileSelect(event) {
                 $(".form-check input:checkbox").prop('checked', false)
                 $(this).prop('checked', true)
                 const dataId = parseInt($(this).data('id'));
-                console.log(dataId)
                 $('#main_idx').val(dataId)
             });
     

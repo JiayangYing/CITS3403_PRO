@@ -256,3 +256,17 @@ class Image(db.Model):
     product_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Product.id))
     product: so.Mapped[Product] = so.relationship(back_populates='images')
     is_main: so.Mapped[bool] = so.mapped_column(unique=False, default=False)
+
+    @staticmethod
+    def get_images_by_product_id(id): 
+        return db.session.scalars(
+            sa.select(Image).where(Image.product_id == id)
+        )
+
+    @staticmethod
+    def get_image_id_main(product_id):
+        return db.session.scalars(
+            sa.select(Image.id).where(
+                sa.and_(Image.product_id == product_id, Image.is_main)
+            )
+        )

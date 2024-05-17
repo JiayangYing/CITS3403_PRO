@@ -230,17 +230,13 @@ def add_product():
              flash(message, 'error')
              return render_template('/manage_product/add.html', form=form, images=images)
 
-        # print(form.main_idx.data)
         loop_times = 1
         for image in images:
-            
             image_name = secure_filename(image.filename)
             image_ext = os.path.splitext(image_name)[1]
-
-            if(loop_times  == form.main_idx.data):
-                image_instance = Image(image_name = image_name, product_id = product.id, is_main = True)
-            else:
-                image_instance = Image(image_name = image_name, product_id = product.id)
+            image_instance = Image(image_name = image_name, product_id = product.id)
+            if(str(loop_times) == form.main_idx.data):
+                image_instance.is_main = True
             db.session.add(image_instance)
             db.session.flush()
 
@@ -260,12 +256,21 @@ def edit_product(id):
     product=Product.get_by_id(id)
     form = EditProductForm(obj=product)
     form.id = id
+    images = Image.get_images_by_product_id(id)
+    img_dir = os.path.join(main.root_path, 'static', 'img', 'product_image', id)
+    product_images = [(f'/static/img/product_image/{id}/{img}') for img in os.listdir(img_dir) if img.lower().endswith(tuple(current_app.config['UPLOAD_EXTENSIONS']))]    
+    idx = 0
+    for image in images:
+        print(image.is_main)
+        if image.is_main:
+            form.main_idx.data = idx
+        idx+=1
     if form.validate_on_submit():
         form.populate_obj(product)
         db.session.commit()
         flash('Your product details have been saved.', 'success')
         return redirect(url_for('main.edit_product', id=id))
-    return render_template('manage_product/edit.html', form=form)
+    return render_template('manage_product/edit.html', form=form, images={'paths':product_images})
 
 @main.route('/logout')
 @login_required
