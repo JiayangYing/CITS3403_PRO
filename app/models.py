@@ -100,7 +100,7 @@ class User(UserMixin, db.Model):
     def get_products(self):
         return (
             sa.select(Product)
-            .where(Product.user_id == self.id,)
+            .where(Product.user_id == self.id)
             .order_by(Product.created_on.desc())
         )
 
@@ -175,7 +175,7 @@ class Product(SearchableMixin, db.Model):
 
     @staticmethod
     def get_all(limit = None):
-        query = sa.select(Product).order_by(Product.created_on.desc())
+        query = sa.select(Product).where(Product.is_active).order_by(Product.created_on.desc())
         if limit is not None:
             query = query.limit(limit)
         return  db.session.scalars(query)

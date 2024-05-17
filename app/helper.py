@@ -6,7 +6,7 @@ from flask import url_for
 class FilterHelper:
     @staticmethod
     def generate_query(search_form):
-        query = select(Product)  # Initialize an empty query
+        query = select(Product).where(Product.is_active)  # Initialize an empty query
         if search_form.categories.data:
             query = query.where(Product.category.in_(search_form.categories.data))
         if search_form.conditions.data:
