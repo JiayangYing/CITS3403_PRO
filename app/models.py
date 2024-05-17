@@ -6,6 +6,9 @@ from flask_login import UserMixin
 from datetime import datetime
 from typing import Optional
 from app.search import add_to_index, remove_from_index, query_index
+from time import time
+from flask import current_app
+import jwt
 
 class SearchableMixin:
     @classmethod
@@ -80,11 +83,33 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except Exception:
+            return
+        return db.session.get(User, id)
+
     def get_products(self):
         return (
             sa.select(Product)
             .where(Product.user_id == self.id,)
             .order_by(Product.created_on.desc())
+        )
+
+    def get_own_orders(self):
+        return (
+            sa.select(Order, Product)
+            .join(Product, Order.product_id == Product.id)
+            .where(Order.buyer_id == self.id)
+            .order_by(Order.created_on.desc())
         )
     
     @staticmethod
@@ -117,6 +142,7 @@ class Product(SearchableMixin, db.Model):
     is_active : so.Mapped[bool] = so.mapped_column(default=True)
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     owner: so.Mapped[User] = so.relationship(back_populates='products')
+    product_orders: so.WriteOnlyMapped['Order'] = so.relationship(back_populates='product')
 
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
@@ -178,6 +204,7 @@ class Order(db.Model):
     status: so.Mapped[str] = so.mapped_column(sa.String(10), index=True, default="Pending")
     buyer_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     buyer: so.Mapped[User] = so.relationship(foreign_keys='Order.buyer_id', back_populates='orders')
+    product: so.Mapped[Product] = so.relationship(foreign_keys='Order.product_id', back_populates='product_orders')
     
     def to_json(self):
         data = {

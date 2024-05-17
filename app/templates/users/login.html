@@ -81,19 +81,31 @@
     <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
       <div class="modal-dialog">
           <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h5>
-                  <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <p>Please enter your email address to reset your password:</p>
-                  <input type="email" class="form-control mb-3" id="forgotPasswordEmail" placeholder="Your Email">
-                  <p>If your email is valid and registed in our system, an email will be sent to reset your password.</p>
-              </div>
-              <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end">
-                  <button class="btn btn-primary me-md-2" type="button" data-bs-dismiss="modal">Close</button>
-                  <button class="btn btn-danger" type="button" id="confirmForgotPasswordBtn">Reset Password</button>
-              </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h5>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/forgot_password" method="POST">
+                {% set form = forgot_pass_form %}
+                {% if form.errors %}
+                    <div id="forgot_pass_AlertModalDiv">
+                        {% set divId = '#forgot_pass_AlertModalDiv' %}
+                    {% include "/layout/alert_modal.html" %}
+                    </div>
+                {% endif %}
+                {{ form.hidden_tag() }}
+                <p>Please enter your email address to reset your password:</p>
+                {{ form.email(size=64, class="form-control",placeholder="Your Email", id="forgotPasswordEmail") }}
+                {% for error in form.email.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+                <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                    <button class="btn btn-primary me-md-2" type="button" data-bs-dismiss="modal">Close</button>
+                    {{ form.submit(class="btn btn-danger") }}
+                </div>
+              </form>
+            </div>
           </div>
       </div>
   </div>
@@ -102,6 +114,7 @@
     {% endblock %}
   </body>
   <script>
+    const show_reset_pass_modal = "{{ show_modal }}";
     // Function to save user credentials to local storage
     function saveCredentials() {
         var username = document.getElementById('username').value;

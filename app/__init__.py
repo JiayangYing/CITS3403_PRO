@@ -5,11 +5,13 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from config import Config
 from elasticsearch import Elasticsearch
+from flask_mail import Mail
 
 db = SQLAlchemy()
 login = LoginManager()
 login.login_view = 'main.login'
 migrate = Migrate()
+mail = Mail()
 
 def page_not_found(e):
     return render_template('/layout/page_not_found.html', company="EcoHUB"), 404
@@ -21,6 +23,7 @@ def create_app(config=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    mail.init_app(app)
 
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
         if app.config['ELASTICSEARCH_URL'] else None
