@@ -132,6 +132,14 @@ class EditProductForm(FlaskForm):
 
     def validate_location(self, postcode):
         validate_australian_postcode(postcode.data)
+    
+    def set_main_idx(self, images):
+        idx = 1
+        for image in images:
+            if image.is_main:
+                self.main_idx.data = str(idx)
+                return
+            idx+=1
 
 
 

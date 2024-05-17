@@ -3,23 +3,19 @@ $(() => {
   $.each(jsonPath["paths"], function (idx, path) {
     addPreviewFile(path, idx);
   });
-  $;
-  document
-    .getElementById("imageInput")
-    .addEventListener("change", handleFileSelect);
+
+  document.getElementById("imageInput").addEventListener("change", handleFileSelect);
 });
 
 function addPreviewFile(imgSrc, i) {
   var preview = document.getElementById("imagePreview");
-  var checked = i == $("#main_idx").val() - 1 ? "checked" : "";
+  var checked = i == ($("#main_idx").val()-1) ? "checked" : "";
   const containerHTML = `
         <div class="form-check image-container">
-            <label for="checkbox-img${i}">
+            <label for="checkbox-img-${i}">
                 <img src="${imgSrc}" class="custom-file-preview ms-4">
             </label>
-            <input type="checkbox" id="checkbox-img-${i}" data-id="${
-    i + 1
-  }" name="checkbox-img" class="main-image-checkbox" ${checked}>
+            <input type="checkbox" id="checkbox-img-${i}" data-id="${i + 1}" name="checkbox-img" class="main-image-checkbox" ${checked}>
         </div>
     `;
   preview.innerHTML += containerHTML;
@@ -51,7 +47,7 @@ function handleFileSelect(event) {
     reader.onload = function (event) {
       const containerHTML = `
                 <div class="form-check image-container">
-                    <label for="checkbox-img${i}">
+                    <label for="checkbox-img-${i}">
                         <img src="${
                           event.target.result
                         }" class="custom-file-preview ms-4">
@@ -72,4 +68,6 @@ function handleFileSelect(event) {
     };
     reader.readAsDataURL(file);
   }
+
+  $('#main_idx').val('')
 }
