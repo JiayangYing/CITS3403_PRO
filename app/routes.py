@@ -142,7 +142,6 @@ def contact_seller(product_id):
             buyer = current_user
         )
         db.session.add(order)
-        # current_user.add_order()
         db.session.commit()
         flash('Your order request has been sent!', 'success')
         return redirect(url_for('main.product'))
@@ -211,7 +210,6 @@ def add_product():
     if request.method == 'GET':
         form.set_form_data()   
     images = request.files.getlist('image')
-    # print(images)
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
@@ -261,7 +259,6 @@ def edit_product(id):
     product_images = [(f'/static/img/product_image/{id}/{img}') for img in os.listdir(img_dir) if img.lower().endswith(tuple(current_app.config['UPLOAD_EXTENSIONS']))]    
     idx = 0
     for image in images:
-        print(image.is_main)
         if image.is_main:
             form.main_idx.data = idx
         idx+=1
