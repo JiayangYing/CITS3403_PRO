@@ -1,0 +1,78 @@
+<div class="card table-card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Order Listing</h6>
+    </div>
+    <div class="card-body">
+        <div id="AlertModalDiv" class="hidden">
+            {% include "/layout/alert_modal.html" %}
+        </div>
+        <div class="row">
+        </div>
+        <div class="table-responsive">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="order-table"
+                           class="table table-bordered"
+                           width="100%"
+                           role="grid"
+                           aria-describedby="dataTable_info"
+                           style="width: 100%;">
+                        <thead>
+                            <tr role="row">
+                                <th>No.</th>
+                                <th>Product Name</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Qty</th>
+                                <th>Email</th>
+                                <th>Postcode</th>
+                                <th>Contact No.</th>
+                                <th>Status</th>
+                                <th>Created On</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for o in orders %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ o.product.product_name }}</td>
+                                    <td>{{ o.first_name }}</td>
+                                    <td>{{ o.last_name }}</td>
+                                    <td>{{ o.quantity }}</td>
+                                    <td>{{ o.email_address }}</td>
+                                    <td>{{ o.postcode }}</td>
+                                    <td>{{ o.contact_no }}</td>
+                                    <td>{{ o.status }}</td>
+                                    <td>{{ o.created_on.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>
+                                        {% if o.status == "Pending" %}
+                                            <div class="action-container">
+                                                <button class="btn btn-warning btn-sm ml-0" title="Cancel" onclick="cancelOrder({{o.id}}, '{{ o.product_name }}')"><span><i class="fa-solid fa-xmark"></i> Cancel</span></button>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mt-2 mr-2 d-flex justify-content-end">
+                            <nav aria-label="OrderPageNav">
+                                <ul id="OrderPageNavBar" class="pagination">
+                                    <li class="page-item {% if not prev_url %} disabled{% endif %}"><a class="page-link" href="{{prev_url}}">Previous</a></li>
+                                    {% for page in pages %}
+                                        <li class="page-item"><a class="page-link" href="{{ url_for('main.order_listing', page=page) }}">{{ page }}</a></li>
+                                    {% endfor %}
+                                    <li class="page-item {% if not next_url %} disabled{% endif %}"><a class="page-link" href="{{next_url}}">Next</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

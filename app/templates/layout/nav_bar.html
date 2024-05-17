@@ -18,23 +18,23 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-solid fa-icons"></i> Categories
                         </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Clothing & Accessories</a></li>
-                            <li><a class="dropdown-item" href="#">Home & Garden</a></li>
-                            <li><a class="dropdown-item" href="#">Electronics</a></li>
-                            <li><a class="dropdown-item" href="#">Books & Media</a></li>
-                            <li><a class="dropdown-item" href="#">Sports & Leisure</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Clothing & Accessories']}) }}">Clothing & Accessories</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Home & Garden']}) }}">Home & Garden</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Electronics']}) }}">Electronics</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Books & Media']}) }}">Books & Media</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Sport & Leisure']}) }}">Sport & Leisure</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Others</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Others']}) }}">Others</a></li>
                           </ul>
                         </ul>
                     </li>
                 </ul>
                 {% if g.search_form %}
-                    <div class="col-xl-5 col-lg-3 col-md-3">
+                    <div class="col-xl-4 col-lg-3 col-md-3">
                         <form class="d-flex justify-content-center" method="get" action="{{ url_for('main.search') }}">
                             {{ g.search_form.q(size=20, class='form-control me-2',
                             placeholder='Search...(split with spacing)') }}
@@ -44,14 +44,20 @@
                 {% endif %}
             {% endif %}
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                {% if (not current_user.is_anonymous) and current_user.is_seller %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.seller') }}">
-                            <i class="fa-solid fa-diagram-predecessor"></i> Products
+                {% if (not current_user.is_anonymous)%}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="manageDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-list-check"></i> Manage
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="manageDropdown">
+                            {% if current_user.is_seller %}
+                                <li><a class="dropdown-item" href="{{ url_for('main.product_listing') }}">My Products</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{{ url_for('main.order_listing') }}">My Orders</a></li>
+                        </ul>
                     </li>
-                    {% endif %}
-                    <li class="nav-item">
+                {% endif %}
+                <li class="nav-item">
                     <a class="nav-link" href="#" id="toggleDarkTheme">
                         <i class="fas fa-moon"></i> <span data-dark="Dark" data-light="Light">Dark</span> Theme
                     </a>

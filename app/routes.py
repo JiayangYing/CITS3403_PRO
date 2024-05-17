@@ -1,14 +1,22 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g, send_from_directory
 from flask_login import current_user, login_user,login_required,logout_user
 from app import db
+from app.models import User,Product, Order
+from app.forms import (
+    LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm,
+    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform,
+    EditProductForm, SearchForm, ForgotPasswordForm, ResetPasswordForm
+)
 from app.models import User,Product, Order, Image
 from app.forms import \
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
     EditProductForm, SearchForm
 from urllib.parse import urlsplit
-import os
+import os, json
 from app.blueprint import main
+from app.email import send_password_reset_email
+from app.helper import FilterHelper, PaginatorHelper
 import imghdr
 
 from werkzeug.utils import secure_filename
@@ -21,12 +29,44 @@ def inject_global_variable():
 def error(error = None):
     return render_template('/layout/page_not_found.html'), 404
 
+@main.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    forgot_pass_form = ForgotPasswordForm()
+    if forgot_pass_form.validate_on_submit():
+        user = User.get_by_email(forgot_pass_form.email.data)
+        if not user:
+            flash('Email address not registered.','error')
+        else:
+            send_password_reset_email(user)
+            flash('Check your email for the instructions to reset your password','info')
+            return redirect(url_for('main.login'))
+    return render_template('users/login.html', form=LoginForm(), forgot_pass_form=forgot_pass_form, show_modal=True)
+
+@main.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        flash('Invalid method.','error')
+        return redirect(url_for('main.home'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.new_password.data)
+        db.session.commit()
+        flash('Your password has been reset.', 'success')
+        return redirect(url_for('main.login'))
+    return render_template('users/reset_password_form.html', form=form, token=token)
+
 @main.route('/')
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
     form = LoginForm()
+    forgot_pass_form = ForgotPasswordForm()
     if form.validate_on_submit():
         user = User.get_by_username(form.username.data)
         if user is None or not user.check_password(form.password.data):
@@ -41,7 +81,7 @@ def login():
             next_page = url_for('main.home')
         flash('Successfully login!', 'success')
         return redirect(next_page)
-    return render_template('users/login.html', title='Sign In', form=form)
+    return render_template('users/login.html', form=form, forgot_pass_form = forgot_pass_form)
 
 @main.route('/home')
 def home():
@@ -81,14 +121,6 @@ def get_sdg_img_dirs():
     sdg_images = [path+'/'+img for img in os.listdir(img_dir) if img.endswith('png')]
     return jsonify({'sdg_images': sdg_images})
 
-products = [
-    {'title': 'Cloth 1 is very long title with long description in the title', 'price': 29.99, 'quantity': 2, 'location': 'Belmont', 'img':'product_image/image.jpg',
-     'description':'This is the description of the Cloth1.'*10},
-    {'title': 'Cloth 2', 'price': 39.99, 'quantity': 1, 'location': 'East Perth', 'img':'product_image/image2.jpg',
-     'description':'Cloth2.'*5},
-    {'title': 'Cloth 3', 'price': 19.99, 'quantity': 3, 'location': 'Nedlands', 'img':'product_image/image3.jpg'}
-]
-
 @main.route('/product')
 def product():
     products = Product.get_all(limit=10)
@@ -96,18 +128,9 @@ def product():
 
 @main.route('/categories')
 def categories():
-    categories = [
-        {'Men': products[0:2] },
-        {'Women': products[1:] }
-    ]
+    products = Product.get_all(limit=10)
     page = request.args.get('page', 1, type=int)
     view = request.args.get('view', 'grid', type=str)
-    if page==2:
-        categories = [
-            {'Men': [products[0]] },
-            {'Women': [products[2]] }
-        ]
-    pages=[1,2]
     return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
 @main.route('/product/<product_id>', methods=['GET'])
@@ -129,27 +152,30 @@ def contact_seller(product_id):
         return redirect(url_for('main.error'))
     form = Orderform()
     form.set_product_qty(product.quantity)
-    if form.validate_on_submit():
-        order = Order(
-            quantity=form.quantity.data,
-            first_name=form.first_name.data, 
-            last_name = form.last_name.data,
-            email_address = form.email_address.data,
-            postcode = form.postcode.data, 
-            contact_no = form.contact_no.data,
-            remarks = form.remarks.data,
-            product_id = product_id,
-            buyer = current_user
-        )
-        db.session.add(order)
-        db.session.commit()
-        flash('Your order request has been sent!', 'success')
-        return redirect(url_for('main.product'))
+    if request.method == "POST":
+        if product.user_id == current_user.id:
+            flash('Your cannot order your own item!', 'error')
+        elif form.validate_on_submit():
+            order = Order(
+                quantity=form.quantity.data,
+                first_name=form.first_name.data, 
+                last_name = form.last_name.data,
+                email_address = form.email_address.data,
+                postcode = form.postcode.data, 
+                contact_no = form.contact_no.data,
+                remarks = form.remarks.data,
+                product_id = product_id,
+                buyer = current_user
+            )
+            db.session.add(order)
+            db.session.commit()
+            flash('Your order request has been sent!', 'success')
+            return redirect(url_for('main.product'))
     return render_template('/product/product_detail.html', product=product, form=form, show_modal=True)
 
-@main.route('/seller')
+@main.route('/product_listing')
 @login_required
-def seller():
+def product_listing():
     if(not current_user.is_seller):
         return redirect(url_for('main.error'))
     page = request.args.get('page', 1, type=int)
@@ -158,15 +184,28 @@ def seller():
                            error_out=False)
     for pro in products:
         pro.orders = pro.get_pending_order_counts()
+    paginator = PaginatorHelper('main.seller', page, 
+                                products.has_prev, products.has_next, 
+                                products.prev_num, products.next_num)
+    next_url, prev_url, pages = paginator.get_pagination()
+    return render_template('/seller/product.html', products=products.items, pages = pages,
+                           next_url=next_url, prev_url=prev_url)
+@main.route('/order_listing')
+@login_required
+def order_listing():
+    page = request.args.get('page', 1, type=int)
+    buyer_orders = db.paginate(current_user.get_own_orders(), page=page, 
+                                             per_page=current_app.config['ORDER_LISTING_PER_PAGE'], 
+                                             error_out=False)
     next_url, prev_url, pages = None, None, []
-    if products.has_prev:
-        prev_url = url_for('main.seller', page=products.prev_num)
+    if buyer_orders.has_prev:
+        prev_url = url_for('main.order_listing', page=buyer_orders.prev_num)
         pages.append(page-1)
     pages.append(page)
-    if products.has_next:
-        next_url = url_for('main.seller', page=products.next_num)
+    if buyer_orders.has_next:
+        next_url = url_for('main.order_listing', page=buyer_orders.next_num)
         pages.append(page+1)
-    return render_template('/seller/product.html', products=products.items, pages = pages,
+    return render_template('/buyer/order.html', orders=buyer_orders.items, pages = pages,
                            next_url=next_url, prev_url=prev_url)
 
 @main.route('/profile')
@@ -245,7 +284,7 @@ def add_product():
             loop_times += 1  
         db.session.commit()
         flash('Product added successfully!', 'success')
-        return redirect(url_for('main.seller'))
+        return redirect(url_for('main.product_listing'))
     return render_template('/manage_product/add.html', form=form, images=images)
 
 @main.route('/edit_product/<id>', methods=['GET', 'POST'])
@@ -305,6 +344,7 @@ def update_account_type():
     user = User.get_by_username(current_user.username)
     if account_form.validate_on_submit():
         current_user.is_seller = not user.is_seller
+        current_user.shop_name = account_form.shop_name.data
         db.session.commit()
         flash('Your account type has been changed.', 'success')
         return redirect(url_for('main.profile'))
@@ -347,12 +387,10 @@ def get_product_orders(product_id):
         orders = db.paginate(Order.get_orders_by_product_id(product_id), page=page, 
                             per_page=current_app.config['ORDER_LISTING_PER_PAGE'], 
                             error_out=False)
-        pages = []
-        if orders.has_prev:
-            pages.append(page-1)
-        pages.append(page)
-        if orders.has_next:
-            pages.append(page+1)
+        paginator = PaginatorHelper('main.get_product_orders', page, 
+                                    orders.has_prev, orders.has_next, 
+                                    orders.prev_num, orders.next_num)
+        next_url, prev_url, pages = paginator.get_pagination()
         return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
@@ -411,5 +449,27 @@ def before_request():
     if current_user.is_authenticated:
         g.search_form = SearchForm()
 
-
-
+@main.route('/filter_products', methods=['GET', 'POST'])
+def filter_products():
+    filters = request.args.get('filters')
+    filters_dict = json.loads(filters.replace("'", '"')) if filters else None
+    form = SearchProductForm()
+    form.set_form_data(filters_dict)
+    if request.method == 'POST':
+        filtered = SearchProductForm(request.form)
+        filters = FilterHelper.filters_as_dict(request.form)
+    else:
+        filtered = form
+    page = request.args.get('page', 1, type=int)
+    view = request.args.get('view', 'grid', type=str)
+    query = FilterHelper.generate_query(filtered)
+    products = db.paginate(query, page=page, 
+                           per_page=current_app.config['FILTER_PRODUCT_PER_PAGE'], 
+                           error_out=False)
+    paginator = PaginatorHelper('main.filter_products', page, 
+                                products.has_prev, products.has_next, 
+                                products.prev_num, products.next_num, 
+                                view=view, filters=filters)
+    next_url, prev_url, pages = paginator.get_pagination()
+    return render_template('/product/categories.html', products=products, page=page, pages=pages, view=view, filters=filters,
+                           form=form, next_url=next_url, prev_url=prev_url)
