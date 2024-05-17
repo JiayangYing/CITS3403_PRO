@@ -11,7 +11,7 @@ class Config:
     PRODUCTS_PER_PAGE = 5
     PRODUCT_LISTING_PER_PAGE = 3
     ORDER_LISTING_PER_PAGE = 2
-    FILTER_PRODUCT_PER_PAGE = 8
+    FILTER_PRODUCT_PER_PAGE = 1
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
@@ -24,6 +24,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
 
 class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory"
     TESTING = True
     
 class ProductionConfig(Config):

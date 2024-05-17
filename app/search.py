@@ -1,5 +1,4 @@
 from flask import current_app, flash
-
 def add_to_index(index, model):
     if not current_app.elasticsearch:
         return
@@ -18,7 +17,6 @@ def remove_from_index(index, model):
         current_app.elasticsearch.delete(index=index, id=model.id)
     except BaseException as e:
         return
-
 
 def query_index(index, query, page, per_page):
     if not current_app.elasticsearch:
