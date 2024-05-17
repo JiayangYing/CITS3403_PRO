@@ -1,138 +1,138 @@
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Edit Product</h6>
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Edit Product</h6>
+  </div>
+  <form
+    id="editProductForm"
+    class="card-body"
+    action="/edit_product/{{form.id}}"
+    enctype="multipart/form-data"
+    method="POST"
+  >
+    {{ form.hidden_tag() }}
+    <div id="AlertModalDiv" class="hidden">
+      {% include "/layout/alert_modal.html" %}
     </div>
-    <form id="editProductForm" class="card-body" action="/edit_product/{{form.id}}" method="POST">
-        {{ form.hidden_tag() }}
-        <div id="AlertModalDiv" class="hidden">
-            {% include "/layout/alert_modal.html" %}
+    <div class="standard-form-table-container">
+      <div class="standard-form-table-column">
+        <div class="standard-form-row">
+          <span class="standard-form-label">
+            {{ form.product_name.label }}
+          </span>
+          <span class="standard-form-value">
+            {{ form.product_name(class="form-control") }} {% for error in
+            form.product_name.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </span>
         </div>
-        <div class="standard-form-table-container">
-            <div class="standard-form-table-column">
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        {{ form.product_name.label }}
-                    </span>
-                    <span class="standard-form-value">
-                        {{ form.product_name(class="form-control") }}
-                        {% for error in form.product_name.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                        {% endfor %}
-                    </span>
-                </div>
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        {{ form.category.label }}
-                    </span>
-                    <span class="standard-form-value">
-                        <div class="input-group">
-                            {{ form.category(class="form-select") }}
-                            {% for error in form.category.errors %}
-                                <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    </span>
-                </div>
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        {{ form.price.label }}
-                    </span>
-                    <span class="standard-form-value">
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            {{ form.price(class="form-control") }}
-                            {% for error in form.price.errors %}
-                                <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    </span>
-                </div>
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        {{ form.condition.label }}
-                    </span>
-                    <span class="standard-form-value">
-                        <div class="input-group">
-                            {{ form.condition(class="form-select") }}
-                            {% for error in form.condition.errors %}
-                                <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    </span>
-                </div>
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        {{ form.location.label }}
-                    </span>
-                    <span class="standard-form-value">
-                        {{ form.location(class="form-control") }}
-                        {% for error in form.location.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                        {% endfor %}
-                    </span>
-                </div>
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        {{ form.quantity.label }}
-                    </span>
-                    <span class="standard-form-value">
-                        {{ form.quantity(class="form-control", type="number") }}
-                        {% for error in form.quantity.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                        {% endfor %}
-                    </span>
-                </div>
+        <div class="standard-form-row">
+          <span class="standard-form-label"> {{ form.category.label }} </span>
+          <span class="standard-form-value">
+            <div class="input-group">
+              {{ form.category(class="form-select") }} {% for error in
+              form.category.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
             </div>
-            <div class="standard-form-table-column">
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        {{ form.description.label }}
-                    </span>
-                    <span class="standard-form-value">
-                        {{ form.description(class="form-control mh-100", type="number",id="remark",rows="3",placeholder="Enter Description",style="height: 100px;") }}
-                        {% for error in form.description.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                        {% endfor %}
-                    </span>
-                </div>
-                <div class="standard-form-row">
-                    <span class="standard-form-label">
-                        <span>
-                            Images<br />
-                            <small class="title-details">
-                                [636x165px]<br />
-                                Format-[PNG, JPG, JPEG]
-                            </small>
-                        </span>
-                    </span>
-                    <span class="standard-form-value">
-                        <div class="input-group file-upload-group">
-                            <div name="ManualUpload">
-                                {{ form.image(class="custom-file-input", id="imageInput") }}
-                                <label class="custom-file-label" for="imageInput">Upload</label>
-                            </div>
-                            {% for error in form.image.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                            {% for error in form.main_idx.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                            <div class="alert alert-info alert-dismissible">
-                                <h5><i class="icon fa fa-info-circle"></i> Information:</h5>
-                                <div class="text-xs">
-                                    <p class="mb-1">1. Max. 6 Images per Product</p>
-                                    <p class="mb-1">2. Tick the box beside the image to set it as the main image.</p>
-                                </div>
-                            </div>
-                            {{ form.main_idx() }}
-                            <div id="imagePreview" class="image-preview"></div>
-                        </div>
-                    </span>
-                </div>
+          </span>
+        </div>
+        <div class="standard-form-row">
+          <span class="standard-form-label"> {{ form.price.label }} </span>
+          <span class="standard-form-value">
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              {{ form.price(class="form-control") }} {% for error in
+              form.price.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
             </div>
+          </span>
         </div>
-        <div class="d-flex justify-content-end">
-            {{ form.submit(class="btn btn-primary") }}
+        <div class="standard-form-row">
+          <span class="standard-form-label"> {{ form.condition.label }} </span>
+          <span class="standard-form-value">
+            <div class="input-group">
+              {{ form.condition(class="form-select") }} {% for error in
+              form.condition.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </span>
         </div>
-    </form>
+        <div class="standard-form-row">
+          <span class="standard-form-label"> {{ form.location.label }} </span>
+          <span class="standard-form-value">
+            {{ form.location(class="form-control") }} 
+            {% for error in form.location.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </span>
+        </div>
+        <div class="standard-form-row">
+          <span class="standard-form-label"> {{ form.quantity.label }} </span>
+          <span class="standard-form-value">
+            {{ form.quantity(class="form-control", type="number") }} {% for
+            error in form.quantity.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </span>
+        </div>
+      </div>
+      <div class="standard-form-table-column">
+        <div class="standard-form-row">
+          <span class="standard-form-label">
+            {{ form.description.label }}
+          </span>
+          <span class="standard-form-value">
+            {{ form.description(class="form-control mh-100",
+            type="number",id="remark",rows="3",placeholder="Enter
+            Description",style="height: 100px;") }} {% for error in
+            form.description.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </span>
+        </div>
+        <div class="standard-form-row">
+          <span class="standard-form-label">
+            <span>
+              Images<br />
+              <small class="title-details">
+                [636x165px]<br />
+                Format-[PNG, JPG, JPEG]
+              </small>
+            </span>
+          </span>
+          <span class="standard-form-value">
+            <div class="input-group file-upload-group">
+              <div name="ManualUpload">
+                {{ form.image(class="custom-file-input", id="imageInput") }}
+                <label class="custom-file-label" for="imageInput">Upload</label>
+              </div>
+              {% for error in form.image.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %} {% for error in form.main_idx.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+              <div class="alert alert-info alert-dismissible">
+                <h5><i class="icon fa fa-info-circle"></i> Information:</h5>
+                <div class="text-xs">
+                  <p class="mb-1">1. Max. 6 Images per Product</p>
+                  <p class="mb-1"
+                    >2. Tick the box beside the image to set it as the main
+                    image.</p
+                  >
+                </div>
+              </div>
+              {{ form.main_idx() }}
+              <div id="imagePreview" class="image-preview"></div>
+            </div>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end">
+      {{ form.submit(class="btn btn-primary") }}
+    </div>
+  </form>
 </div>

@@ -242,7 +242,7 @@ def add_product():
     form = ProductForm()
     if request.method == 'GET':
         form.set_form_data()   
-    images = request.files.getlist('image')
+    images = request.files.getlist('image')[:6]
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
@@ -284,22 +284,70 @@ def add_product():
 @main.route('/edit_product/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_product(id):
-    product=Product.get_by_id(id)
-    form = EditProductForm(obj=product)
-    form.id = id
-    images = Image.get_images_by_product_id(id)
     product_images = ProductHelper.get_images_path(id)
-    idx = 0
-    for image in images:
-        if image.is_main:
-            form.main_idx.data = idx
-        idx+=1
-    if form.validate_on_submit():
-        form.populate_obj(product)
-        db.session.commit()
-        flash('Your product details have been saved.', 'success')
+    product = db.session.get(Product, id)
+    if request.method == 'GET':
+        form = EditProductForm(obj=product)
+        form.id = id
+        idx = 1
+        for image in Image.get_images_by_product_id(product.id):
+            if image.is_main:
+                form.main_idx.data = idx
+            idx+=1
+        return render_template('manage_product/edit.html', form=form, images={'paths':product_images})
+    else:
+        form = EditProductForm()
+        if form.validate_on_submit():
+            submit_images = request.files.getlist('image')[:6]
+            form.populate_obj(product)
+            db.session.flush()
+
+            if( form.image.data and len(submit_images) > 0):
+                images = product.get_product_images(id)
+                message ,  error = validate_images(submit_images)
+                if(error != 204 ):
+                    flash(message, 'error')
+                    return render_template('/manage_product/add.html', form=form, images=images)
+                
+                # delete images from db
+                for image in images:
+                    db.session.delete(image)
+                db.session.flush()
+
+                # delete image from our path
+                for image_path in product_images:
+                    new_path = main.root_path + image_path
+                    os.remove(new_path)
+
+                for image in submit_images:
+                    image_name = secure_filename(image.filename)
+                    image_ext = os.path.splitext(image_name)[1]
+                    image_instance = Image(image_name = image_name, product_id = product.id) 
+                    db.session.add(image_instance)
+                    db.session.flush()
+                    newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product.id))
+                    if not os.path.exists(newpath):
+                        os.makedirs(newpath)
+                    image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))
+
+
+            # reload product_image to add index
+            images = product.get_product_images(id)
+            loop_times = 1;
+            for image in images:
+                image.is_main = False
+                if(str(loop_times) == form.main_idx.data):
+                    image.is_main = True
+                loop_times += 1
+
+
+            db.session.commit()
+            flash('Your product details have been saved.', 'success')
         return redirect(url_for('main.edit_product', id=id))
-    return render_template('manage_product/edit.html', form=form, images={'paths':product_images})
+
+
+
+    
 
 @main.route('/logout')
 @login_required
