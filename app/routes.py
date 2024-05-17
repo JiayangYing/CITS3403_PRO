@@ -5,7 +5,7 @@ from app.models import User,Product, Order
 from app.forms import (
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm,
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform,
-    EditProductForm, SearchForm, ForgotPasswordForm, ResetPasswordForm
+    EditProductForm, SearchForm, ForgotPasswordForm, ResetPasswordForm, SearchProductForm
 )
 from urllib.parse import urlsplit
 import os, json
@@ -177,7 +177,7 @@ def product_listing():
                            error_out=False)
     for pro in products:
         pro.orders = pro.get_pending_order_counts()
-    paginator = PaginatorHelper('main.seller', page, 
+    paginator = PaginatorHelper('main.product_listing', page, 
                                 products.has_prev, products.has_next, 
                                 products.prev_num, products.next_num)
     next_url, prev_url, pages = paginator.get_pagination()
