@@ -15,7 +15,7 @@
                     <div class="carousel-inner">
                         {% for img in product.imgs %}
                             <div class="carousel-item">
-                                <img class="d-block w-100 rounded border-white" height="600" src=/static/img/{{ img }} alt="{{ product.product_name }}-{{ loop.index-1 }}">
+                                <img class="d-block w-100 rounded border-white" height="600" src="{{ img }}" alt="{{ product.product_name }}-{{ loop.index-1 }}">
                             </div>
                         {% endfor %}
                     </div>

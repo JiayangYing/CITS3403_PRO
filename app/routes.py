@@ -1,22 +1,17 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g, send_from_directory
 from flask_login import current_user, login_user,login_required,logout_user
 from app import db
-from app.models import User,Product, Order
+from app.models import User,Product, Order, Image
 from app.forms import (
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm,
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform,
     EditProductForm, SearchForm, ForgotPasswordForm, ResetPasswordForm, SearchProductForm
 )
-from app.models import User,Product, Order, Image
-from app.forms import \
-    LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm, \
-    ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform, \
-    EditProductForm, SearchForm
-from urllib.parse import urlsplit
-import os, json
 from app.blueprint import main
 from app.email import send_password_reset_email
-from app.helper import FilterHelper, PaginatorHelper
+from app.helper import FilterHelper, PaginatorHelper, ProductHelper
+from urllib.parse import urlsplit
+import os, json
 import imghdr
 
 from werkzeug.utils import secure_filename
@@ -124,14 +119,11 @@ def get_sdg_img_dirs():
 @main.route('/product')
 def product():
     products = Product.get_all(limit=10)
+    for product in products:
+        main_img = Image.get_main_image_by_product_id(product.id)
+        if main_img:
+            product.img = ProductHelper.get_main_image_path(product.id, main_img.id)
     return render_template('/product/product.html', products=products)
-
-@main.route('/categories')
-def categories():
-    products = Product.get_all(limit=10)
-    page = request.args.get('page', 1, type=int)
-    view = request.args.get('view', 'grid', type=str)
-    return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
 @main.route('/product/<product_id>', methods=['GET'])
 @login_required
@@ -139,6 +131,7 @@ def product_detail(product_id):
     product = Product.get_by_id(product_id)
     if not product:
         return redirect(url_for('main.error'))
+    product.imgs = ProductHelper.get_images_path(product.id)
     form = Orderform()
     form.set_product_qty(product.quantity)
     form.set_form_data()
@@ -184,6 +177,7 @@ def product_listing():
                            error_out=False)
     for pro in products:
         pro.orders = pro.get_pending_order_counts()
+        pro.imgs = ProductHelper.get_images_path(pro.id)
     paginator = PaginatorHelper('main.product_listing', page, 
                                 products.has_prev, products.has_next, 
                                 products.prev_num, products.next_num)
@@ -294,8 +288,7 @@ def edit_product(id):
     form = EditProductForm(obj=product)
     form.id = id
     images = Image.get_images_by_product_id(id)
-    img_dir = os.path.join(main.root_path, 'static', 'img', 'product_image', id)
-    product_images = [(f'/static/img/product_image/{id}/{img}') for img in os.listdir(img_dir) if img.lower().endswith(tuple(current_app.config['UPLOAD_EXTENSIONS']))]    
+    product_images = ProductHelper.get_images_path(id)
     idx = 0
     for image in images:
         if image.is_main:
@@ -466,6 +459,10 @@ def filter_products():
     products = db.paginate(query, page=page, 
                            per_page=current_app.config['FILTER_PRODUCT_PER_PAGE'], 
                            error_out=False)
+    for product in products:
+        main_img = Image.get_main_image_by_product_id(product.id)
+        if main_img:
+            product.img = ProductHelper.get_main_image_path(product.id, main_img.id)
     paginator = PaginatorHelper('main.filter_products', page, 
                                 products.has_prev, products.has_next, 
                                 products.prev_num, products.next_num, 

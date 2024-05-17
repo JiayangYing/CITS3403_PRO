@@ -178,7 +178,15 @@ class Product(SearchableMixin, db.Model):
         query = sa.select(Product).where(Product.is_active).order_by(Product.created_on.desc())
         if limit is not None:
             query = query.limit(limit)
-        return  db.session.scalars(query)
+        return  db.session.scalars(query).all()
+
+    @staticmethod
+    def get_product_images(id):
+        return db.session.scalars(
+            sa.select(Image)
+            .join(Product, Image.product_id == Product.id)
+            .where(Image.product_id == id)
+        ).all()
     
     @staticmethod
     def activation(id, current_user_id):
@@ -289,11 +297,9 @@ class Image(db.Model):
         return db.session.scalars(
             sa.select(Image).where(Image.product_id == id)
         )
-
+    
     @staticmethod
-    def get_image_id_main(product_id):
-        return db.session.scalars(
-            sa.select(Image.id).where(
-                sa.and_(Image.product_id == product_id, Image.is_main)
-            )
-        )
+    def get_main_image_by_product_id(id):
+        return db.session.query(Image). \
+            filter(Image.product_id == id). \
+            filter(Image.is_main).first()
