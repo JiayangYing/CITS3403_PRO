@@ -443,7 +443,7 @@ def reset_order(order_id):
 @main.route('/approve_order/<order_id>', methods=['POST'])
 def approve_order(order_id):
     if current_user.is_authenticated:
-        return jsonify(Order.set_pending_status(order_id, current_user.id, 'Approved'))
+        return jsonify(Order.set_pending_status(order_id, current_user.id, 'Approved', update_qty=True))
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
 @main.route('/reject_order/<order_id>', methods=['POST'])
