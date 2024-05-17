@@ -246,7 +246,7 @@ class Order(db.Model):
         return Order.query.get(id)
     
     @staticmethod
-    def set_pending_status(id, current_user_id,status):
+    def set_pending_status(id, current_user_id,status, update_qty=False):
         order = Order.get_by_id(id)
         if not order:
             return {'message': 'Order not found.', 'success': False}
@@ -260,6 +260,8 @@ class Order(db.Model):
         if not product.user_id == current_user_id:
             return {'message': 'This is not your product.', 'success': False}
         order.status = status
+        if update_qty:
+            product.quantity = product.quantity-order.quantity
         db.session.commit()
         return {'message': f'{status} the order.', 'success':True}        
 
