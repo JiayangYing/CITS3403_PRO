@@ -57,4 +57,9 @@ $(() => {
             getSdgImageDirs(body.classList.contains(darkModeClass));
         }, 100);
     });
+    
+    $(".category-body .category[data-id]").click(function(){
+        var url = $(this).data("id");
+        window.location.href = url;
+    });
 });

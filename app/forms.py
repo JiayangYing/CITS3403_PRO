@@ -1,9 +1,16 @@
 from flask import request
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import DecimalField, IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, TelField, HiddenField, RadioField
-from wtforms.validators import DataRequired,EqualTo,Length,ValidationError,Email, NumberRange
-from app.models import User, Product
+from wtforms import (
+    DecimalField, IntegerField, SelectField, StringField, PasswordField, 
+    BooleanField, SubmitField, TextAreaField, TelField, HiddenField, RadioField)
+from wtforms.validators import (
+    DataRequired,EqualTo,Length,ValidationError,Email, NumberRange)
+from app.models import User
+from app.fields import (
+    ProductConditionField, ProductConditionMultipleCheckboxField, 
+    ProductCategoryField, ProductCategoryMultipleCheckboxField, 
+    ProductPriceRangeField)
 
 class ProductConditionField(SelectField):
     def __init__(self, *args, **kwargs):
@@ -243,3 +250,15 @@ class SearchForm(FlaskForm):
         if 'meta' not in kwargs:
             kwargs['meta'] = {'csrf': False}
         super(SearchForm, self).__init__(*args, **kwargs)
+
+class SearchProductForm(FlaskForm):
+    categories = ProductCategoryMultipleCheckboxField('Categories')
+    price = ProductPriceRangeField('Price')
+    conditions = ProductConditionMultipleCheckboxField('Conditions')
+    submit = SubmitField('Apply Filters')
+    
+    def set_form_data(self, filters_dict):
+        if filters_dict:
+            self.categories.data = filters_dict.get('categories', [])
+            self.conditions.data = filters_dict.get('conditions', [])
+            self.price.data = filters_dict.get('price', '')
