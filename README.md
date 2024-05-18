@@ -10,25 +10,23 @@ EcoHUB's primary goal is to provide an easy-to-use platform for Australians to b
 - **Backend**: Flask, SQLite3, Elasticsearch (via Docker), email integration, JWT for token verification
 - **Testing**: Unit tests, Selenium tests
 ## Group members
-| UWA ID | Name          | GitHub Username |
-|--------|---------------|-----------------|
-| [23696808] | [wenbo li]        | [lwb611266]|
-|[23192082] | [Juan Lakonawa]        | [sleepadept] |
-| [23171563] | [Yiu Xuan Lok]        | [loklokyx] |
-| [23792058] | [Jiayang Ying]        | [JiayangYing] |
+| UWA ID | Name | GitHub Username |
+|:--------:|:------------:|:-----------:|
+| 23696808 | Wenbo li     | lwb611266   |
+| 23192082 | Juan Lakonawa| sleepadept  |
+| 23171563 | Yiu Xuan Lok | loklokyx    |
+| 23792058 | Jiayang Ying | JiayangYing |
 
 ## Installation
-To run EcoHub locally, follow these steps:
 
 #### Setting Up the Project
 Follow these steps to clone the repository, set up a virtual environment, and install dependencies:
 
 **1. Clone the Repository**
 
-First, clone the repository to your local machine:
-
+- First, clone the repository to your local machine:
 ```sh
-git clone <repository_url>
+git clone https://github.com/JiayangYing/CITS3403_PRO.git
 cd <repository_directory>
 ```
 
@@ -48,17 +46,16 @@ This command creates a virtual environment named venv.
 
 Activate the virtual environment using the command specific to your operating system:
 
-**For Linux and macOS:**
+- **For Linux and macOS:**
 ```sh
 source venv/bin/activate
 ```
 
-**For Linux and macOS:**
+- **For Linux and macOS:**
 ```sh
 .\venv\Scripts\activate
 ```
-
-You'll know the virtual environment is active when (venv) appears at the beginning of your command line prompt.
+You'll know the virtual environment is active when `(venv)` appears at the beginning of your command line prompt.
 
 **3. Install Dependencies**
 
@@ -77,7 +74,7 @@ pip install -r requirements.txt
 
 You should now have a fully set up development environment with all dependencies installed.
 
-## Initialization
+## Initialisation
 
 To start the application, run following command:
 ```sh
