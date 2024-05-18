@@ -186,6 +186,11 @@ class EditProfileForm(FlaskForm):
         self.avatar.data = current_user.avatar
         self.avatar_icon.data = get_avatar_icon(current_user.avatar)
 
+    def validate_email(self, email):
+        user = User.get_by_email(email.data)
+        if user is not None and user.email_address != current_user.email_address:
+            raise ValidationError('Please use a different email address.')
+
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField('Current Password', validators=[DataRequired(), Length(min=6)])
     new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
