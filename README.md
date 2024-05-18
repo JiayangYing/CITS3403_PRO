@@ -61,18 +61,39 @@ You'll know the virtual environment is active when `(venv)` appears at the begin
 
 With the virtual environment activated, install the required dependencies:
 ``` sh
-pip3 install flask
-pip3 install flask-sqlalchemy
-pip3 install flask-wtf
-pip3 install flask-login (used for session)
-pip3 install flask-mail
+pip install flask
+pip install flask-sqlalchemy
+pip install flask-wtf
+pip install flask-login
+pip install flask-mail
 ```
 If still having problem please install all dependency from requirment.txt
 ```sh
 pip install -r requirements.txt
 ```
 
+**4. Configure Environment Variables**
+
+Create a `.env` file in the root directory of your project to configure environment variables. The `.env` file should contain key-value pairs for your environment-specific settings.
+Here’s an example of what the `.env` file might look like:
+``` sh
+ELASTICSEARCH_URL = http://localhost:9200
+MAIL_SERVER = smtp.googlemail.com
+MAIL_PORT = 587
+MAIL_USE_TLS = 1
+MAIL_EMAIL = <your_email>
+MAIL_USERNAME = <your_username>
+MAIL_PASSWORD = <email_password>
+```
 You should now have a fully set up development environment with all dependencies installed.
+
+## Troubleshooting
+
+If you encounter issues with `app.db` such as database schema or you need to reset it, the following commands might be useful:
+```sh
+flask db downgrade base
+flask db upgrade
+```
 
 ## Initialisation
 
