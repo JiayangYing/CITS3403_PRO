@@ -1,9 +1,12 @@
 from sqlalchemy import select
+from app import db
 from app.models import Product,Image
 from app.fields import price_range_map
-from flask import url_for, current_app
+from flask import url_for, current_app, flash
 from app.blueprint import main
 import os
+import imghdr
+from werkzeug.utils import secure_filename
 
 class FilterHelper:
     @staticmethod
@@ -78,3 +81,49 @@ class ProductHelper:
             if os.path.exists(img_path):
                 return f'/{os.path.join(img_dir, img_filename)}'
         return None
+    
+    @staticmethod
+    def set_explore_product_image(products):
+        for product in products:
+            main_img = Image.get_main_image_by_product_id(product.id)
+            if main_img:
+                product.img = ProductHelper.get_main_image_path(product.id, main_img.id)
+        return products
+
+    @staticmethod
+    def validate_image(stream):
+        header = stream.read(512)
+        stream.seek(0)
+        format = imghdr.what(None, header)
+        if not format:
+            return None
+        return '.' + (format if format != 'jpeg' else 'jpg')
+
+    @staticmethod
+    def validate_images(images):
+        for image in images:
+            image_name = secure_filename(image.filename)
+            if image_name != '':
+                image_ext = os.path.splitext(image_name)[1]
+                if image_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
+                        image_ext != ProductHelper.validate_image(image.stream):
+                    flash("%s is Invalid image"%image_name, 'error')
+                    return False
+        return True
+    
+    @staticmethod
+    def add_product_imgs(images, main_idx, product_id):
+        loop_times = 1
+        for image in images:
+            image_name = secure_filename(image.filename)
+            image_ext = os.path.splitext(image_name)[1]
+            image_instance = Image(image_name = image_name, product_id = product_id)
+            if(str(loop_times) == main_idx):
+                image_instance.is_main = True
+            db.session.add(image_instance)
+            db.session.flush()
+            newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product_id))
+            if not os.path.exists(newpath):
+                os.makedirs(newpath)
+            image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))
+            loop_times += 1  

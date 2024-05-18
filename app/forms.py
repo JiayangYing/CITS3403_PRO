@@ -1,4 +1,4 @@
-from flask import request, current_app
+from flask import request
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import (
@@ -10,36 +10,8 @@ from app.models import User
 from app.fields import (
     ProductConditionField, ProductConditionMultipleCheckboxField, 
     ProductCategoryField, ProductCategoryMultipleCheckboxField, 
-    ProductPriceRangeField)
-from flask_wtf.file import MultipleFileField, FileRequired, FileAllowed
-
-class ProductConditionField(SelectField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Customize the choices for the field
-        self.choices = [
-            ('','--Selec Condition--'), ('Brand New', 'Brand New'), ('Used - Good', 'Used - Good'),
-            ('Used - Fair', 'Used - Fair'), ('Other', 'Other')
-        ]
-        
-class ProductCategoryField(SelectField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.choices = [
-            ('','--Selec Category--'), ('Clothing & Accessories', 'Clothing & Accessories'), ('Home & Garden', 'Home & Garden'), 
-            ('Electronics', 'Electronics'), ('Books & Media', 'Books & Media'), ('Sport & Leisure', 'Sport & Leisure'),
-            ('Others', 'Others')
-        ]
-
-class ProductImagesField(MultipleFileField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        exts = current_app.config['UPLOAD_EXTENSIONS']
-        self.validators=[
-            FileAllowed(
-                [ext.replace('.','') for ext in exts], 
-                message = f'Invalid File Type. Must be {", ".join(exts)}' 
-            )]
+    ProductPriceRangeField, ProductImagesField)
+from flask_wtf.file import FileRequired
 
 def validate_australian_postcode(postcode):
     city_ranges = {
@@ -140,8 +112,6 @@ class EditProductForm(FlaskForm):
                 self.main_idx.data = str(idx)
                 return
             idx+=1
-
-
 
 class ProfileForm(FlaskForm):
     first_name = StringField('First Name')

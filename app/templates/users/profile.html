@@ -14,11 +14,9 @@
                         <div class="text-center mb-4">
                             <i class="fa-rounded fa-solid {{ form.avatar_icon.data }} fa-4x"></i>
                         </div>
-                        {% if not form.errors %}
-                            <div id="AlertModalDiv">
-                            {% include "/layout/alert_modal.html" %}
-                            </div>
-                        {% endif %}
+                        <div id="AlertModalDiv">
+                        {% include "/layout/alert_modal.html" %}
+                        </div>
                         <form class="row g-3" action="/update_account_type"  method="POST">
                             {{ form.hidden_tag() }}
                             <div class="col-md-6">
@@ -44,11 +42,11 @@
                             <div class="col-mb-3">
                                 {{ form.account_type.label(class="form-label", for="accountType") }}
                             <div class="input-group">
-                                {% if verified %}
-                                    <span class="input-group-text" id="accountCheck"><i class="verified fa-regular fa-circle-check" title="Verified"></i></span>
-                                {% else %}
-                                    <span class="input-group-text" id="accountCheck"><i class="unverified fa-regular fa-circle-check" title="Verified"></i></span>
-                                {% endif %}
+                                <a href="{{ url_for('main.verify_user_email') }}">
+                                    <span class="input-group-text d-block rounded-0" id="accountCheck">
+                                        <i class="{% if current_user.is_verified %} verified {% else %} unverified {% endif %} fa-regular fa-circle-check" title="Verified"></i>
+                                    </span>
+                                </a>
                                 {{ form.account_type(class="form-control", disabled=True) }}
                               </div>
                             </div>
