@@ -4,7 +4,7 @@ from app.models import Product,Image
 from app.fields import price_range_map
 from flask import url_for, current_app, flash
 from app.blueprint import main
-import os
+import os, shutil
 import imghdr
 from werkzeug.utils import secure_filename
 
@@ -113,6 +113,10 @@ class ProductHelper:
     
     @staticmethod
     def add_product_imgs(images, main_idx, product_id):
+        newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product_id))
+        if os.path.exists(newpath):
+            shutil.rmtree(newpath)
+        os.makedirs(newpath)
         loop_times = 1
         for image in images:
             image_name = secure_filename(image.filename)
@@ -122,8 +126,5 @@ class ProductHelper:
                 image_instance.is_main = True
             db.session.add(image_instance)
             db.session.flush()
-            newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product_id))
-            if not os.path.exists(newpath):
-                os.makedirs(newpath)
             image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))
             loop_times += 1  
