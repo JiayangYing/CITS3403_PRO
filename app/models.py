@@ -207,7 +207,7 @@ class Order(db.Model):
     email_address: so.Mapped[str] = so.mapped_column(sa.String(120), index=True)
     postcode: so.Mapped[int] = so.mapped_column()
     contact_no: so.Mapped[str] = so.mapped_column(nullable=True)
-    remarks: so.Mapped[str] = so.mapped_column(sa.String(5000))
+    remarks: so.Mapped[str] = so.mapped_column(sa.String(5000), nullable=True)
     created_on: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now())
     product_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Product.id), index=True)
     status: so.Mapped[str] = so.mapped_column(sa.String(10), index=True, default="Pending")
