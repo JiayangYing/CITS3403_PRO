@@ -1,40 +1,60 @@
 import multiprocessing
+import threading
+from time import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from unittest import TestCase
+import unittest
 
 from app import create_app, db
 from config import TestingConfig
 
 localHost = "http://localhost:5000/"
 
-class SeleniumTestCase(TestCase):
+class SeleniumTestCase(unittest.TestCase):
+    client = None
+
+    @classmethod
+    def setUpClass(cls):
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        try:
+            # cls.client = webdriver.Firefox()
+            cls.client = webdriver.Chrome()
+        except:
+            pass
+        if cls.client:
+            cls.testApp = create_app(TestingConfig)
+            cls.app_context = cls.testApp.app_context()
+            cls.app_context.push()
+            db.create_all()
+
+            threading.Thread(target=cls.app.run).start()
+            time.sleep(1)
+            
+            cls.server_process = multiprocessing.Process(target=cls.testApp.run)
+            cls.server_process.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.client:
+            # stop the flask server and the browser
+            cls.client.get(localHost)
+            cls.client.close()
+            db.drop_all()
+            db.session.remove()
+            cls.app_context.pop()
+            cls.server_process.terminate()
+            # cls.driver.close()
 
     def setUp(self):
-        self.testApp = create_app(TestingConfig)
-        self.app_context = self.testApp.app_context()
-        self.app_context.push()
-        db.create_all()
-        self.server_process = multiprocessing.Process(target=self.testApp.run)
-        self.server_process.start()
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless=new")
-        self.driver = webdriver.Chrome(options=options)
-        self.driver.get(localHost)
+        if not self.client:
+            self.skipTest('Web browser not available')
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
-        self.server_process.terminate()
-        self.driver.close()
+        pass
 
     def test_home_page(self):
-        x=1
-        self.assertEqual(x,1)
-
-    # def test_home_page(self):
-    #     driver = self.driver
-    #     driver.get(self.base_url)
-    #     self.assertIn("Home",driver.title)
+        driver = self.driver
+        driver.get(self.base_url)
+        self.assertIn("Home",driver.title)
