@@ -5,6 +5,28 @@
 EcoHUB is developed to provide a robust, user-friendly platform that aligns with sustainable development goals by promoting the reuse and recycling of products. It enables sellers to list their second-hand or recyclable products and manage their inventories efficiently. Buyers can browse, filter, and order products with ease. The platform supports essential functionalities like email verification, profile management, and comprehensive order handling, ensuring a secure and smooth transaction experience.
 ## Purpose
 EcoHUB's primary goal is to provide an easy-to-use platform for Australians to buy and sell second-hand and recyclable products. This initiative aims to support sustainable development by reducing waste, promoting recycling, and fostering economic opportunities in line with specific Sustainable Development Goals.
+## Feature
+### User Features
+- **Signup/Login**: Users can sign up as either sellers or buyers. Sellers must provide a shop name.
+- **Email Verification**: Upon successful registration, users receive an email verification link with a 3-day expiry. Users can resend the verification email from their profile page.
+- **Profile Management**: Users can edit their profile details, change their password, and deactivate their account.
+
+### Seller Features
+- **Product Management**: Sellers can add and edit products. Instead of deleting, products can be marked as inactive.
+- **Image Upload**: Product images can be uploaded in jpg, jpeg, or png formats, with content verification.
+- **Order Management**: Sellers can approve or reject orders from buyers and cannot order their own products.
+
+### Buyer Features
+- **Order Products**: Buyers can order active products and cancel orders from their order listing page.
+- **Explore Products**: Buyers can explore product categories with filtering options for categories, conditions, and price ranges.
+- **Product Details**: Detailed product pages with a contact seller option and auto-filled order details.
+
+### General Features
+- **Product Categories**: Clothing & Accessories, Home & Garden, Electronics, Books & Media, Sport & Leisure, and Others.
+- **Responsive Design**: Filtering panel transforms to dropdowns on smaller screens; products can be viewed in grid or list format.
+- **Elastic Search**: Integrated search functionality using Elasticsearch within a Docker container.
+- **Dark/Light Theme**: Users can switch between dark and light themes for better user experience.
+
 ## Technologies
 - **Frontend**: HTML, CSS, Bootstrap V5.3, Jinja2, jQuery, AJAX
 - **Backend**: Flask, SQLite3, Elasticsearch (via Docker), email integration, JWT for token verification
@@ -105,17 +127,45 @@ The application should now be running at http://localhost:5000
 
 ## Run tests
 
-To run tests for the application, follow these steps:
+To run tests for the application, follow these steps to run tests using `selenium` and `unittest`.
 
-1. Ensure you are in the root directory of the project:
+**1. Selenium Testing**
+
+**Install Selenium**
+
+Make sure you have Selenium installed:
 ```sh
-   cd your-repo-name
+   pip install selenium
 ```
-2. Run the test command:
+
+**Running Selenium Tests**
+
+**Run Selenium Tests in PowerShell:**
+
+Open PowerShell and use the following command to run your Selenium tests:
 ```sh
-   python -m unittest discover tests
+   python3 -m unittest tests/selenium.py
+```
+This will open the Chrome browser and perform the actions defined in the `selenium.py`
+
+**2. Unittest**
+
+**Install Unittest**
+
+`unittest` is a built-in Python module used for writing and running tests. It is included with Python, but if for some reason it is not installed, you can install it via pip:
+```sh
+   pip install unittest
+```
+
+**Running Unittest**
+
+**Run Unittests in `WSL`/`venv`:**
+
+Open `WSL` and activate your virtual environment, then use the following command to run your unittests:
+```sh
+   python3 -m unittest tests/unit.py
 ```
 Test results will be displayed in the terminal window.
 
 ## Deliverables
-The "deliverables" folder contains progress updates captured as short screen-capture videos (.mp4) or image files (.jpeg, .png). Each file corresponds to a specific milestone in the project.
+The "deliverables" folder contains progress updates organised by specific topics, such as Product Implementation and SignUp Page Workflow. Each topic includes videos and images that showcase progress and provide prototypes related to that topic. This structured approach makes it easy to locate and review the relevant videos and prototypes for each aspect of the project.
