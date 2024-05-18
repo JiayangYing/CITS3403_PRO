@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from wtforms import (
@@ -11,6 +11,7 @@ from app.fields import (
     ProductConditionField, ProductConditionMultipleCheckboxField, 
     ProductCategoryField, ProductCategoryMultipleCheckboxField, 
     ProductPriceRangeField)
+from flask_wtf.file import MultipleFileField, FileRequired, FileAllowed
 
 class ProductConditionField(SelectField):
     def __init__(self, *args, **kwargs):
@@ -29,6 +30,16 @@ class ProductCategoryField(SelectField):
             ('Electronics', 'Electronics'), ('Books & Media', 'Books & Media'), ('Sport & Leisure', 'Sport & Leisure'),
             ('Others', 'Others')
         ]
+
+class ProductImagesField(MultipleFileField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        exts = current_app.config['UPLOAD_EXTENSIONS']
+        self.validators=[
+            FileAllowed(
+                [ext.replace('.','') for ext in exts], 
+                message = f'Invalid File Type. Must be {", ".join(exts)}' 
+            )]
 
 def validate_australian_postcode(postcode):
     city_ranges = {
@@ -96,6 +107,8 @@ class ProductForm(FlaskForm):
     category = ProductCategoryField('Category', validators=[DataRequired()])
     location = IntegerField('Location', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
+    main_idx = HiddenField('Main Idx', validators=[DataRequired(message="Please select only 1 as the main image.")])
+    image = ProductImagesField('Image', validators=[FileRequired(message='Please add at least 1 image.')])
     submit = SubmitField('Submit')
 
     def validate_location(self, postcode):
@@ -113,10 +126,22 @@ class EditProductForm(FlaskForm):
     category = ProductCategoryField('Category', validators=[DataRequired()])
     location = IntegerField('Location', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired(), Length(min=1, max=1000)])
+    main_idx = HiddenField('Main Idx', validators=[DataRequired(message="Please select only 1 as the main image.")])
+    image = ProductImagesField('Image')
     submit = SubmitField('Edit')
 
     def validate_location(self, postcode):
         validate_australian_postcode(postcode.data)
+    
+    def set_main_idx(self, images):
+        idx = 1
+        for image in images:
+            if image.is_main:
+                self.main_idx.data = str(idx)
+                return
+            idx+=1
+
+
 
 class ProfileForm(FlaskForm):
     first_name = StringField('First Name')

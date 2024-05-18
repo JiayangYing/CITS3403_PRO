@@ -20,10 +20,10 @@ function handleFileSelect(event) {
         reader.onload = function(event) { 
             const containerHTML = `
                 <div class="form-check image-container">
-                    <label for="checkbox-img${i}">
+                    <label for="checkbox-img-${i}">
                         <img src="${event.target.result}" class="custom-file-preview ms-4">
                     </label>
-                    <input type="checkbox" id="checkbox-img${i}" name="checkbox-img" class="main-image-checkbox">
+                    <input type="checkbox" id="checkbox-img-${i}" data-id="${i+1}" name="checkbox-img" class="main-image-checkbox">
                 </div>
             `;
             preview.innerHTML += containerHTML;
@@ -31,6 +31,8 @@ function handleFileSelect(event) {
             $(".form-check input:checkbox").on('change', function(e){
                 $(".form-check input:checkbox").prop('checked', false)
                 $(this).prop('checked', true)
+                const dataId = parseInt($(this).data('id'));
+                $('#main_idx').val(dataId)
             });
     
         }; 

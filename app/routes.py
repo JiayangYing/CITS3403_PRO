@@ -1,17 +1,20 @@
-from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g
+from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g, send_from_directory
 from flask_login import current_user, login_user,login_required,logout_user
 from app import db
-from app.models import User,Product, Order
+from app.models import User,Product, Order, Image
 from app.forms import (
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm,
     ChangePasswordForm, UpdateAccountForm, DeactivateAccountForm, Orderform,
     EditProductForm, SearchForm, ForgotPasswordForm, ResetPasswordForm, SearchProductForm
 )
-from urllib.parse import urlsplit
-import os, json
 from app.blueprint import main
 from app.email import send_password_reset_email
-from app.helper import FilterHelper, PaginatorHelper
+from app.helper import FilterHelper, PaginatorHelper, ProductHelper
+from urllib.parse import urlsplit
+import os, json
+import imghdr
+
+from werkzeug.utils import secure_filename
 
 @main.context_processor
 def inject_global_variable():
@@ -116,14 +119,11 @@ def get_sdg_img_dirs():
 @main.route('/product')
 def product():
     products = Product.get_all(limit=10)
+    for product in products:
+        main_img = Image.get_main_image_by_product_id(product.id)
+        if main_img:
+            product.img = ProductHelper.get_main_image_path(product.id, main_img.id)
     return render_template('/product/product.html', products=products)
-
-@main.route('/categories')
-def categories():
-    products = Product.get_all(limit=10)
-    page = request.args.get('page', 1, type=int)
-    view = request.args.get('view', 'grid', type=str)
-    return render_template('/product/categories.html', categories=categories, page=page, pages=pages, view=view)
 
 @main.route('/product/<product_id>', methods=['GET'])
 @login_required
@@ -131,6 +131,7 @@ def product_detail(product_id):
     product = Product.get_by_id(product_id)
     if not product:
         return redirect(url_for('main.error'))
+    product.imgs = ProductHelper.get_images_path(product.id)
     form = Orderform()
     form.set_product_qty(product.quantity)
     form.set_form_data()
@@ -160,7 +161,6 @@ def contact_seller(product_id):
                 buyer = current_user
             )
             db.session.add(order)
-            # current_user.add_order()
             db.session.commit()
             flash('Your order request has been sent!', 'success')
             return redirect(url_for('main.product'))
@@ -177,6 +177,7 @@ def product_listing():
                            error_out=False)
     for pro in products:
         pro.orders = pro.get_pending_order_counts()
+        pro.imgs = ProductHelper.get_images_path(pro.id)
     paginator = PaginatorHelper('main.product_listing', page, 
                                 products.has_prev, products.has_next, 
                                 products.prev_num, products.next_num)
@@ -211,13 +212,54 @@ def profile():
         form.set_form_data()
         account_form.set_form_data()
     return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form)
-    
+
+
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0)
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')
+
+def validate_images(images):
+    for image in images:
+        image_name = secure_filename(image.filename)
+        if image_name != '':
+            image_ext = os.path.splitext(image_name)[1]
+            if image_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
+                    image_ext != validate_image(image.stream):
+                flash("%s is Invalid image"%image_name, 'error')
+                return False
+    return True
+
+def add_product_imgs(images, main_idx, product_id):
+    loop_times = 1
+    for image in images:
+        image_name = secure_filename(image.filename)
+        image_ext = os.path.splitext(image_name)[1]
+        image_instance = Image(image_name = image_name, product_id = product_id)
+        if(str(loop_times) == main_idx):
+            image_instance.is_main = True
+        db.session.add(image_instance)
+        db.session.flush()
+        newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product_id))
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
+        image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))
+        loop_times += 1  
+
+@main.route('/uploads/<filename>')
+def upload(filename):
+    return send_from_directory(current_app.config['UPLOAD_PATH'], filename)
+
 @main.route('/manage_product/add', methods=['GET', 'POST'])
 @login_required
 def add_product():
     form = ProductForm()
     if request.method == 'GET':
-        form.set_form_data()
+        form.set_form_data()   
+    images = request.files.getlist('image')[:6]
     if form.validate_on_submit():
         product = Product(
             product_name=form.product_name.data,
@@ -230,23 +272,53 @@ def add_product():
             owner = current_user
         )
         db.session.add(product)
+        db.session.flush()
+        if not validate_images(images):
+            return render_template('/manage_product/add.html', form=form, images=images)
+
+        add_product_imgs(images, form.main_idx.data, product.id)
         db.session.commit()
         flash('Product added successfully!', 'success')
         return redirect(url_for('main.product_listing'))
-    return render_template('/manage_product/add.html', form=form)
+    return render_template('/manage_product/add.html', form=form, images=images)
 
 @main.route('/edit_product/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_product(id):
-    product=Product.get_by_id(id)
+    product_images = ProductHelper.get_images_path(id)
+    product = Product.get_by_id(id)
     form = EditProductForm(obj=product)
     form.id = id
+    if request.method == 'GET':
+        form.set_main_idx(Image.get_images_by_product_id(id))
     if form.validate_on_submit():
         form.populate_obj(product)
+        db.session.flush()
+        submit_images = request.files.getlist('image')[:6]
+        if form.image.data and len(submit_images) > 0:
+            if not validate_images(submit_images):
+                return redirect(url_for('main.edit_product', id=id))
+            images = product.get_product_images(id)
+            # delete images from db
+            for image in images:
+                db.session.delete(image)
+            db.session.flush()
+            # delete image from our path
+            for image_path in product_images:
+                new_path = main.root_path + image_path
+                os.remove(new_path)
+            add_product_imgs(submit_images, form.main_idx.data, product.id)
+        else:
+            loop_times = 1
+            for image in product.get_product_images(id):
+                image.is_main = False
+                if(str(loop_times) == form.main_idx.data):
+                    image.is_main = True
+                loop_times += 1
         db.session.commit()
         flash('Your product details have been saved.', 'success')
         return redirect(url_for('main.edit_product', id=id))
-    return render_template('manage_product/edit.html', form=form)
+    return render_template('manage_product/edit.html', form=form, images={'paths':product_images})
 
 @main.route('/logout')
 @login_required
@@ -344,7 +416,7 @@ def reset_order(order_id):
 @main.route('/approve_order/<order_id>', methods=['POST'])
 def approve_order(order_id):
     if current_user.is_authenticated:
-        return jsonify(Order.set_pending_status(order_id, current_user.id, 'Approved'))
+        return jsonify(Order.set_pending_status(order_id, current_user.id, 'Approved', update_qty=True))
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
 @main.route('/reject_order/<order_id>', methods=['POST'])
@@ -408,6 +480,10 @@ def filter_products():
     products = db.paginate(query, page=page, 
                            per_page=current_app.config['FILTER_PRODUCT_PER_PAGE'], 
                            error_out=False)
+    for product in products:
+        main_img = Image.get_main_image_by_product_id(product.id)
+        if main_img:
+            product.img = ProductHelper.get_main_image_path(product.id, main_img.id)
     paginator = PaginatorHelper('main.filter_products', page, 
                                 products.has_prev, products.has_next, 
                                 products.prev_num, products.next_num, 

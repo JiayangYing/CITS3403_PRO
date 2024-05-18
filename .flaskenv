@@ -1,2 +1,2 @@
-FLASK_APP=microblog.py
+FLASK_APP=ecohhub.py
 FLASK_ENV=development

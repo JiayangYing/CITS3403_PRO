@@ -28,6 +28,9 @@
                         <div class="d-flex mt-2 rejected col-6">
                             <span>Reject    : {{ pro.orders.rejected }}</span>
                         </div>
+                        <div class="d-flex mt-2 cancelled col-6">
+                            <span>Cancel    : {{ pro.orders.cancelled }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,7 +61,7 @@
                             <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Preview Product</div>
                             <div class="preview-img">
                                 {% for img in pro.imgs %}
-                                    <img class="rounded" src=/static/img/{{ img }}>
+                                    <img class="rounded" src="{{ img }}">
                                 {% endfor %}
                             </div>                    
                         </div>                    

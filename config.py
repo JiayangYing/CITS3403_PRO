@@ -19,6 +19,9 @@ class Config:
     MAIL_EMAIL = os.environ.get('MAIL_EMAIL')
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAX_CONTENT_LENGTH = 1024 * 1024
+    UPLOAD_EXTENSIONS = ['.jpg', '.png', '.jpeg']
+    UPLOAD_PATH = 'static/img/product_image'
 
 class DevelopmentConfig(Config):
     DEBUG = True

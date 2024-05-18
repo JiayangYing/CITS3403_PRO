@@ -1,7 +1,9 @@
 from sqlalchemy import select
-from app.models import Product
+from app.models import Product,Image
 from app.fields import price_range_map
-from flask import url_for
+from flask import url_for, current_app
+from app.blueprint import main
+import os
 
 class FilterHelper:
     @staticmethod
@@ -51,3 +53,28 @@ class PaginatorHelper:
             next_url = url_for(self.endpoint, page=self.next_num, **self.view_args)
             pages.append(self.page + 1)
         return next_url, prev_url, pages
+    
+
+class ProductHelper:
+    @staticmethod
+    def get_images_path(product_id):
+        img_dir = os.path.join('static', 'img', 'product_image', str(product_id))
+        full_dir = os.path.join(main.root_path, img_dir)
+        extensions = tuple(current_app.config['UPLOAD_EXTENSIONS'])
+        path_images = []
+        for img in os.listdir(full_dir):
+            if img.lower().endswith(extensions):
+                path_images.append(f'/{img_dir}/{img}')
+        return path_images
+
+    @staticmethod
+    def get_main_image_path(product_id, img_id):
+        img_dir = os.path.join('static', 'img', 'product_image', str(product_id))
+        full_dir = os.path.join(main.root_path, img_dir)
+        extensions = current_app.config['UPLOAD_EXTENSIONS']
+        for ext in extensions:
+            img_filename = f"{img_id}{ext}"
+            img_path = os.path.join(full_dir, img_filename)
+            if os.path.exists(img_path):
+                return f'/{os.path.join(img_dir, img_filename)}'
+        return None
