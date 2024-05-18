@@ -12,7 +12,7 @@ EcoHUB's primary goal is to provide an easy-to-use platform for Australians to b
 ## Group members
 | UWA ID | Name | GitHub Username |
 |:--------:|:------------:|:-----------:|
-| 23696808 | Wenbo li     | lwb611266   |
+| 23696808 | Wenbo Li     | lwb611266   |
 | 23192082 | Juan Lakonawa| sleepadept  |
 | 23171563 | Yiu Xuan Lok | loklokyx    |
 | 23792058 | Jiayang Ying | JiayangYing |
