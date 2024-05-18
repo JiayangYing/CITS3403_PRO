@@ -92,11 +92,11 @@ To run tests for the application, follow these steps:
 1. Ensure you are in the root directory of the project:
 ```sh
    cd your-repo-name
-
+```
 3. Run the test command:
+```sh
    npm test
 ```
-
 Test results will be displayed in the terminal window.
 
 ## Deliverables
