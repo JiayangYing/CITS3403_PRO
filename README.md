@@ -92,10 +92,7 @@ To run tests for the application, follow these steps:
 ```
 2. Run the test command:
 ```sh
-   npm test
-```
-```sh
-   npm run selenium-test
+   python -m unittest discover tests
 ```
 Test results will be displayed in the terminal window.
 
