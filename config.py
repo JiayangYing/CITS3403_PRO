@@ -28,6 +28,11 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory"
+    TESTING = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+class SeleniumTestingConfig(TestingConfig):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'tests', 'testapp.db')
     
 class ProductionConfig(Config):
     pass

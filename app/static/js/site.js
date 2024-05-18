@@ -120,6 +120,9 @@ function ScrollToTopPage() {
 }
 
 function stringToBool(_str) {
+  if (_str == null) {
+    return false;
+  }
   var str = _str.toLowerCase().trim();
   return str === "true" || str === "yes" || str === "1";
 }
