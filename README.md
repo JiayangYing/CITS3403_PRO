@@ -6,9 +6,9 @@ EcoHub is a project aimed at creating a platform that fosters environmental awar
 | UWA ID | Name          | GitHub Username |
 |--------|---------------|-----------------|
 | [23696808] | [wenbo li]        | [lwb611266]|
-|[UWA ID] | [Name]        | [GitHub Username] |
-| [UWA ID] | [Name]        | [GitHub Username] |
-| [UWA ID] | [Name]        | [GitHub Username] |
+|[23192082] | [Juan Lakonawa]        | [sleepadept] |
+| [23171563] | [Yiu Xuan Lok]        | [loklokyx] |
+| [23792058] | [Jiayang Ying]        | [JiayangYing] |
 ## Features
 - **Selling of Recyclable Products:** Users can list their recyclable products for sale on the platform, promoting recycling and reducing waste.
 - **Buying:** Browse through listings of recyclable products to purchase and contribute to environmental sustainability.
