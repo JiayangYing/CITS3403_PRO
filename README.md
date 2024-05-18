@@ -94,8 +94,8 @@ To run tests for the application, follow these steps:
    cd your-repo-name
 
 3. Run the test command:
-```sh
    npm test
+```
 
 Test results will be displayed in the terminal window.
 
