@@ -90,9 +90,11 @@ The application should now be running at http://localhost:5000
 To run tests for the application, follow these steps:
 
 1. Ensure you are in the root directory of the project:
+```sh
    cd your-repo-name
 
-2. Run the test command:
+3. Run the test command:
+```sh
    npm test
 
 Test results will be displayed in the terminal window.
