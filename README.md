@@ -39,15 +39,20 @@ python3 flask run
 To start the application, follow these steps:
 
 1. Clone this repository to your local machine:
-   git clone https://github.com/your-repo-name.git
+```bash
+git clone https://github.com/your-repo-name.git
+
 
 2. Navigate to the project directory:
+```bash
    cd your-repo-name
 
 3. Install the required dependencies:
+```bash
    npm install
 
 4. Start the application:
+```bash
    npm start
 
 The application should now be running at http://localhost:5000
@@ -55,9 +60,11 @@ The application should now be running at http://localhost:5000
 To run tests for the application, follow these steps:
 
 1. Ensure you are in the root directory of the project:
+```bash
    cd your-repo-name
 
 2. Run the test command:
+```bash
    npm test
 
 Test results will be displayed in the terminal window.
