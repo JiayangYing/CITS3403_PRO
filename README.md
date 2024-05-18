@@ -94,5 +94,4 @@ If applicable, demonstrate the use of the /populate feature to populate the data
 ## Data Retrieval:
 Optionally, showcase querying the database to retrieve and display data on relevant application pages, such as product listings or user profiles.
 
-These examples illustrate the progression of the project through different milestones, from initial setup to the implementation of key features. Adjust the specifics according to your project's requirements and the actual features developed at each stage.
 
