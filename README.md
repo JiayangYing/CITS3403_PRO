@@ -90,9 +90,12 @@ To run tests for the application, follow these steps:
 ```sh
    cd your-repo-name
 ```
-3. Run the test command:
+2. Run the test command:
 ```sh
    npm test
+```
+```sh
+   npm run selenium-test
 ```
 Test results will be displayed in the terminal window.
 
