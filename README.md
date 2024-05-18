@@ -19,15 +19,6 @@ EcoHUB's primary goal is to provide an easy-to-use platform for Australians to b
 
 ## Installation
 To run EcoHub locally, follow these steps:
-### Requirements
----bash
-pip3 install flask
-pip3 install flask-sqlalchemy
-pip3 install flask-wtf
-pip3 install flask-login (used for session)
-pip3 install flask-mail
-If still having problem please install all dependency from requirment.txt
-python3 flask run
 
 #### Setting Up the Project
 Follow these steps to clone the repository, set up a virtual environment, and install dependencies:
