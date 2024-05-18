@@ -26,34 +26,77 @@ EcoHUB's primary goal is to provide an easy-to-use platform for Australians to b
 | [23792058] | [Jiayang Ying]        | [JiayangYing] |
 
 ## Installation
+To run EcoHub locally, follow these steps:
 
-### Requirements
-- pip3 install flask
-- pip3 install flask-sqlalchemy
-- pip3 install flask-wtf
-- pip3 install flask-login (used for session)
-- pip3 install flask-mail
+### Before anything make sure python and pip are installed in your system/wsl
+
+#### Setting Up the Project
+Follow these steps to clone the repository, set up a virtual environment, and install dependencies:
+
+**1. Clone the Repository**
+
+First, clone the repository to your local machine:
+
+```sh
+git clone <repository_url>
+cd <repository_directory>
+```
+
+**2. Set Up a Virtual Environment**
+
+We recommend using venv to create a virtual environment. Detailed instructions can be found in the official [Python documentation](https://docs.python.org/3/library/venv.html).
+
+**Create the Virtual Environment**
+
+In the root directory of the cloned repository, execute the following command:
+```sh
+python3 -m venv venv
+```
+This command creates a virtual environment named venv.
+
+**Activate the Virtual Environment**
+
+Activate the virtual environment using the command specific to your operating system:
+
+**For Linux and macOS:**
+```sh
+source venv/bin/activate
+```
+
+**For Linux and macOS:**
+```sh
+.\venv\Scripts\activate
+```
+
+You'll know the virtual environment is active when (venv) appears at the beginning of your command line prompt.
+
+**3. Install Dependencies**
+
+With the virtual environment activated, install the required dependencies:
+``` sh
+pip3 install flask
+pip3 install flask-sqlalchemy
+pip3 install flask-wtf
+pip3 install flask-login (used for session)
+pip3 install flask-mail
+```
 If still having problem please install all dependency from requirment.txt
-python3 flask run
+```sh
+pip install -r requirements.txt
+```
+
+You should now have a fully set up development environment with all dependencies installed. You're ready to start working on the project!
+
 ## Initialization
-To start the application, follow these steps:
 
-1. Clone this repository to your local machine:
-```bash
-git clone https://github.com/your-repo-name.git
-
-
-2. Navigate to the project directory:
-   cd your-repo-name
-
-3. Install the required dependencies:
-   npm install
-
-4. Start the application:
-   npm start
-
+To start the application, run following command:
+```sh
+python3 flask run
+```
 The application should now be running at http://localhost:5000
+
 ## Run tests
+
 To run tests for the application, follow these steps:
 
 1. Ensure you are in the root directory of the project:
