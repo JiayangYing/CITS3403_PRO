@@ -22,6 +22,7 @@ def send_email(subject, sender, recipients, text_body, html_body,
                args=(current_app._get_current_object(), msg)).start()
 
 def send_password_reset_email(user):
+    print(current_app.config['MAIL_EMAIL'])
     token = user.get_reset_password_token()
     send_email(('[EcoHUB] Reset Your Password'),
                sender=current_app.config['MAIL_EMAIL'],
