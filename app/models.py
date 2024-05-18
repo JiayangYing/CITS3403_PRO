@@ -143,6 +143,7 @@ class Product(SearchableMixin, db.Model):
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     owner: so.Mapped[User] = so.relationship(back_populates='products')
     product_orders: so.WriteOnlyMapped['Order'] = so.relationship(back_populates='product')
+    images: so.WriteOnlyMapped['Image'] = so.relationship(back_populates='product')
 
     def __repr__(self):
         return '<Product {}>'.format(self.product_name)
@@ -177,7 +178,15 @@ class Product(SearchableMixin, db.Model):
         query = sa.select(Product).where(Product.is_active).order_by(Product.created_on.desc())
         if limit is not None:
             query = query.limit(limit)
-        return  db.session.scalars(query)
+        return  db.session.scalars(query).all()
+
+    @staticmethod
+    def get_product_images(id):
+        return db.session.scalars(
+            sa.select(Image)
+            .join(Product, Image.product_id == Product.id)
+            .where(Image.product_id == id)
+        ).all()
     
     @staticmethod
     def activation(id, current_user_id):
@@ -237,7 +246,7 @@ class Order(db.Model):
         return Order.query.get(id)
     
     @staticmethod
-    def set_pending_status(id, current_user_id,status):
+    def set_pending_status(id, current_user_id,status, update_qty=False):
         order = Order.get_by_id(id)
         if not order:
             return {'message': 'Order not found.', 'success': False}
@@ -251,6 +260,8 @@ class Order(db.Model):
         if not product.user_id == current_user_id:
             return {'message': 'This is not your product.', 'success': False}
         order.status = status
+        if update_qty:
+            product.quantity = product.quantity-order.quantity
         db.session.commit()
         return {'message': f'{status} the order.', 'success':True}        
 
@@ -275,3 +286,22 @@ class Order(db.Model):
         order.status = 'Pending'
         db.session.commit() 
 
+
+class Image(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    image_name: so.Mapped[str] = so.mapped_column(sa.String(255))
+    product_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Product.id))
+    product: so.Mapped[Product] = so.relationship(back_populates='images')
+    is_main: so.Mapped[bool] = so.mapped_column(unique=False, default=False)
+
+    @staticmethod
+    def get_images_by_product_id(id): 
+        return db.session.scalars(
+            sa.select(Image).where(Image.product_id == id)
+        )
+    
+    @staticmethod
+    def get_main_image_by_product_id(id):
+        return db.session.query(Image). \
+            filter(Image.product_id == id). \
+            filter(Image.is_main).first()
