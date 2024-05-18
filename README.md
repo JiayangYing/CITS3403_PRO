@@ -3,7 +3,6 @@
 ## Purpose
 EcoHub is a project aimed at creating a platform that fosters environmental awareness, education, and action. Our goal is to provide a centralized hub where users can access resources, connect with like-minded individuals, and contribute to environmental initiatives,through trading of recylable products.
 ## Group Members:
-## Group Members
 | UWA ID | Name          | GitHub Username |
 |--------|---------------|-----------------|
 | [23696808] | [wenbo li]        | [lwb611266]|
@@ -36,9 +35,9 @@ This will create the target directory for your virtual env. Next you need to act
 source venv/bin/activate
 You'll know it is active when (venv) appears on the command line before your username.
 Inside your virtual env all dependancies need to be installed, to do this run:
-## pip install -r requirements.txt
+pip install -r requirements.txt
 To run tests use:
-## pytest
+pytest
 The following tests are included:
 All routes defined in routes.py are checked for status 200
 User account creation and login
@@ -47,7 +46,7 @@ Jobs being returned from search
 User profile page displaying relevant data
 Multiple db queries
 To launch app use:
-## flask run
+flask run
 The application has been built to automatically create a db for you and perform all migrations in the background before the app launch
 Once the flask development server is running follow the link provided
 Initially the db will be empty. In order to simulate user interactions the /populate page has been created. This will allow you to populate the db with dummy data. To use this feature, add /populate  to the end of your development server ip. Then Follow the prompts displayed on the webpage to create dummy data. This might include options to specify the amount or type of data to generate.
@@ -73,13 +72,13 @@ Basic Project Structure: Display the project directory structure, including any 
 ## Description: 
 This milestone signifies the completion of implementing user authentication features, allowing users to sign up, log in, and manage their accounts.
 
-## Signup Page: 
+Signup Page: 
 Show the signup page where users can create new accounts by providing their email and password.
-## Login Page: 
+Login Page: 
 Demonstrate the login page where registered users can enter their credentials to access their accounts.
-## Authentication Flow: 
+Authentication Flow: 
 Showcase the flow of user authentication, including error handling for invalid credentials or registration attempts.
-##  Account Management: 
+Account Management: 
 If applicable, display the user profile page where users can update their information or change their passwords.
 
 ### [Tag 1.2.0] - Database Integration Complete
