@@ -9,9 +9,9 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
     PRODUCTS_PER_PAGE = 5
-    PRODUCT_LISTING_PER_PAGE = 3
-    ORDER_LISTING_PER_PAGE = 2
-    FILTER_PRODUCT_PER_PAGE = 25
+    PRODUCT_LISTING_PER_PAGE = 5
+    ORDER_LISTING_PER_PAGE = 5
+    FILTER_PRODUCT_PER_PAGE = 20
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
     MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
