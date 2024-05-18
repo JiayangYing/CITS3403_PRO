@@ -1,2 +1,2 @@
-FLASK_APP=ecohhub.py
+FLASK_APP=ecohub.py
 FLASK_ENV=development
