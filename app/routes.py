@@ -178,6 +178,7 @@ def contact_seller(product_id):
     product = Product.get_by_id(product_id)
     if not product:
         return redirect(url_for('main.error'))
+    product.imgs = ProductHelper.get_images_path(product.id)
     form = Orderform()
     form.set_product_qty(product.quantity)
     if request.method == "POST":

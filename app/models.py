@@ -219,7 +219,8 @@ class Product(SearchableMixin, db.Model):
     @staticmethod
     def get_by_category(category, limit = None):
         query = sa.select(Product)\
-            .where(Product.category == category)
+            .where(Product.category == category)\
+            .where(Product.is_active)
         if limit is not None:
             query = query.limit(limit)
         return db.session.scalars(query).all()
