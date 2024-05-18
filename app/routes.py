@@ -409,10 +409,10 @@ def get_product_orders(product_id):
         return jsonify({'orders': [o.to_json() for o in orders], 'pages':pages})
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
 
-@main.route('/reset_order/<order_id>', methods=['GET'])
-def reset_order(order_id):
-    Order.reset_pending(order_id)
-    return jsonify({'message': 'done.', 'success': True})
+# @main.route('/reset_order/<order_id>', methods=['GET'])
+# def reset_order(order_id):
+#     Order.reset_pending(order_id)
+#     return jsonify({'message': 'done.', 'success': True})
 
 @main.route('/approve_order/<order_id>', methods=['POST'])
 def approve_order(order_id):
