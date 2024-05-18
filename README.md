@@ -62,7 +62,8 @@ You'll know it is active when (venv) appears on the command line before your use
 Inside your virtual env all dependancies need to be installed, to do this run:
 pip install -r requirements.txt
 ## To run tests use:
-**-pytest**
+**pytest**
+
 The following tests are included:
 All routes defined in routes.py are checked for status 200
 User account creation and login
@@ -72,6 +73,7 @@ User profile page displaying relevant data
 Multiple db queries
 ## To launch app use:
  **flask run**
+ 
 The application has been built to automatically create a db for you and perform all migrations in the background before the app launch
 Once the flask development server is running follow the link provided
 Initially the db will be empty. In order to simulate user interactions the /populate page has been created. This will allow you to populate the db with dummy data. To use this feature, add /populate  to the end of your development server ip. Then Follow the prompts displayed on the webpage to create dummy data. This might include options to specify the amount or type of data to generate.
@@ -81,10 +83,13 @@ The "deliverables" folder contains progress updates captured as short screen-cap
 
 ### [Tag 1.0.0] - Initial Setup
 ## Description: 
+
 This milestone marks the initial setup of the project, including creating the repository, setting up the development environment, and configuring basic project structure.
 ## Repository Creation: 
+
 Show the creation of the private GitHub repository with the initial README file.
 ## Environment Setup:
+
 Demonstrate the installation of necessary dependencies and tools required to run the application.
 Basic Project Structure: Display the project directory structure, including any configuration files, folders for source code, and tests.
 
