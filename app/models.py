@@ -97,6 +97,20 @@ class User(UserMixin, db.Model):
             return
         return db.session.get(User, id)
 
+    def get_verify_email_token(self, expires_in=3*24*60*60):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in}, # 3 days
+            current_app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_verify_email_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except Exception:
+            return
+        return db.session.get(User, id)
+
     def get_products(self):
         return (
             sa.select(Product)
@@ -175,11 +189,41 @@ class Product(SearchableMixin, db.Model):
 
     @staticmethod
     def get_all(limit = None):
-        query = sa.select(Product).where(Product.is_active).order_by(Product.created_on.desc())
+        query = sa.select(Product)\
+            .where(Product.is_active)
+        if limit is not None:
+            query = query.limit(limit)
+        return  db.session.scalars(query).all()
+    
+    @staticmethod
+    def get_recently(limit = None):
+        query = sa.select(Product)\
+            .where(Product.is_active)\
+            .order_by(Product.created_on.desc())
         if limit is not None:
             query = query.limit(limit)
         return  db.session.scalars(query).all()
 
+    @staticmethod
+    def get_top_sales(limit = None):
+        product_orders_count = sa.func.count(Order.id).label('order_count')
+        query = sa.select(Product, product_orders_count)\
+            .join(Order, Product.id == Order.product_id)\
+            .where(Product.is_active)\
+            .group_by(Product.id)\
+            .order_by(product_orders_count.desc())
+        if limit is not None:
+            query = query.limit(limit)
+        return db.session.scalars(query).all()
+    
+    @staticmethod
+    def get_by_category(category, limit = None):
+        query = sa.select(Product)\
+            .where(Product.category == category)
+        if limit is not None:
+            query = query.limit(limit)
+        return db.session.scalars(query).all()
+    
     @staticmethod
     def get_product_images(id):
         return db.session.scalars(

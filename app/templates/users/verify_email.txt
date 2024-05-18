@@ -1,0 +1,12 @@
+G'day {{ user.username }},
+
+Welcome to {{company}}!
+
+Please verify your email address by clicking the link below:
+
+{{ url_for('main.verify_email', token=token, _external=True) }}
+
+If you didn't sign up, no worries—just ignore this email.
+
+Cheers,
+The {{company}} Corporation

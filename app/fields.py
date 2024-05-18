@@ -1,5 +1,7 @@
+from flask import current_app
 from wtforms import SelectField, SelectMultipleField
 from wtforms.widgets import CheckboxInput, ListWidget
+from flask_wtf.file import MultipleFileField, FileAllowed
 
 # Conditions options
 conditions = [
@@ -67,3 +69,13 @@ class ProductPriceRangeField(SelectField):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.choices = prices
+        
+class ProductImagesField(MultipleFileField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        exts = current_app.config['UPLOAD_EXTENSIONS']
+        self.validators=[
+            FileAllowed(
+                [ext.replace('.','') for ext in exts], 
+                message = f'Invalid File Type. Must be {", ".join(exts)}' 
+            )]

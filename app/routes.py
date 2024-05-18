@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect,request,jsonify,url_for,current_app, g, send_from_directory
 from flask_login import current_user, login_user,login_required,logout_user
-from app import db
+from app import db, fields
 from app.models import User,Product, Order, Image
 from app.forms import (
     LoginForm, RegistrationForm, ProductForm, ProfileForm, EditProfileForm,
@@ -8,13 +8,10 @@ from app.forms import (
     EditProductForm, SearchForm, ForgotPasswordForm, ResetPasswordForm, SearchProductForm
 )
 from app.blueprint import main
-from app.email import send_password_reset_email
+from app.email import send_password_reset_email, send_user_verification_email
 from app.helper import FilterHelper, PaginatorHelper, ProductHelper
 from urllib.parse import urlsplit
 import os, json
-import imghdr
-
-from werkzeug.utils import secure_filename
 
 @main.context_processor
 def inject_global_variable():
@@ -33,6 +30,8 @@ def forgot_password():
         user = User.get_by_email(forgot_pass_form.email.data)
         if not user:
             flash('Email address not registered.','error')
+        if not user.is_verified:
+            flash('Email address not verified.','error')
         else:
             send_password_reset_email(user)
             flash('Check your email for the instructions to reset your password','info')
@@ -54,6 +53,20 @@ def reset_password(token):
         flash('Your password has been reset.', 'success')
         return redirect(url_for('main.login'))
     return render_template('users/reset_password_form.html', form=form, token=token)
+
+@main.route('/verify_email/<token>', methods=['GET'])
+def verify_email(token):
+    if current_user.is_authenticated:
+        user = User.verify_verify_email_token(token)
+        if not user:
+            flash('Invalid method.','error')
+            return redirect(url_for('main.home'))
+        current_user.is_verified = True
+        db.session.commit()
+        flash('Thank you for verifying your email address!', 'success')
+        return redirect(url_for('main.profile'))
+    flash('You are not logged in!', 'error')
+    return redirect(url_for('main.home'))
 
 @main.route('/')
 @main.route('/login', methods=['GET', 'POST'])
@@ -82,6 +95,21 @@ def login():
 def home():
     return render_template('/home/home.html')
 
+@main.route('/verify_user_email', methods=['GET'])
+@login_required
+def verify_user_email():
+    if current_user.is_authenticated:
+        user = User.get_by_email(current_user.email_address)
+        if user.username != current_user.username:
+            flash('This method is not allowed!'.format(current_user.email_address), 'error')
+        elif user.is_verified:
+            flash('You have verified with {}. Thanks!'.format(current_user.email_address), 'info')
+        else:
+            send_user_verification_email(user)
+            flash('Email sent to {}. Please verify it in 3 days'.format(current_user.email_address), 'success')
+        return redirect(url_for('main.profile'))
+    return redirect(url_for('main.home'))
+
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
@@ -102,7 +130,8 @@ def signup():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Register successfully {}'.format(form.username.data), 'success')
+        flash('Register successfully {}. Email sent to {}. Please verify it in 3 days'.format(form.username.data, form.email_address.data), 'success')
+        send_user_verification_email(user)
         return redirect(url_for('main.login'))
     return render_template('/users/signup.html', form=form)
 
@@ -118,12 +147,18 @@ def get_sdg_img_dirs():
 
 @main.route('/product')
 def product():
-    products = Product.get_all(limit=10)
-    for product in products:
-        main_img = Image.get_main_image_by_product_id(product.id)
-        if main_img:
-            product.img = ProductHelper.get_main_image_path(product.id, main_img.id)
-    return render_template('/product/product.html', products=products)
+    limit = 15
+    top_products = Product.get_top_sales(limit)
+    top_products = ProductHelper.set_explore_product_image(top_products)
+    recent_products = Product.get_recently(limit)
+    recent_products = ProductHelper.set_explore_product_image(recent_products)
+    categories = []
+    for val, _ in fields.categories:
+        category_products = Product.get_by_category(val, limit)
+        category_products = ProductHelper.set_explore_product_image(category_products)
+        categories.append(category_products)
+    return render_template('/product/product.html', top_products=top_products,
+                           recent_products=recent_products, categories=categories)
 
 @main.route('/product/<product_id>', methods=['GET'])
 @login_required
@@ -184,6 +219,7 @@ def product_listing():
     next_url, prev_url, pages = paginator.get_pagination()
     return render_template('/seller/product.html', products=products.items, pages = pages,
                            next_url=next_url, prev_url=prev_url)
+
 @main.route('/order_listing')
 @login_required
 def order_listing():
@@ -213,42 +249,6 @@ def profile():
         account_form.set_form_data()
     return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form)
 
-
-def validate_image(stream):
-    header = stream.read(512)
-    stream.seek(0)
-    format = imghdr.what(None, header)
-    if not format:
-        return None
-    return '.' + (format if format != 'jpeg' else 'jpg')
-
-def validate_images(images):
-    for image in images:
-        image_name = secure_filename(image.filename)
-        if image_name != '':
-            image_ext = os.path.splitext(image_name)[1]
-            if image_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
-                    image_ext != validate_image(image.stream):
-                flash("%s is Invalid image"%image_name, 'error')
-                return False
-    return True
-
-def add_product_imgs(images, main_idx, product_id):
-    loop_times = 1
-    for image in images:
-        image_name = secure_filename(image.filename)
-        image_ext = os.path.splitext(image_name)[1]
-        image_instance = Image(image_name = image_name, product_id = product_id)
-        if(str(loop_times) == main_idx):
-            image_instance.is_main = True
-        db.session.add(image_instance)
-        db.session.flush()
-        newpath = os.path.join(main.root_path,current_app.config['UPLOAD_PATH'], "{}".format(product_id))
-        if not os.path.exists(newpath):
-            os.makedirs(newpath)
-        image.save(os.path.join(newpath, "{}{}".format( image_instance.id, image_ext)))
-        loop_times += 1  
-
 @main.route('/uploads/<filename>')
 def upload(filename):
     return send_from_directory(current_app.config['UPLOAD_PATH'], filename)
@@ -273,10 +273,10 @@ def add_product():
         )
         db.session.add(product)
         db.session.flush()
-        if not validate_images(images):
+        if not ProductHelper.validate_images(images):
             return render_template('/manage_product/add.html', form=form, images=images)
 
-        add_product_imgs(images, form.main_idx.data, product.id)
+        ProductHelper.add_product_imgs(images, form.main_idx.data, product.id)
         db.session.commit()
         flash('Product added successfully!', 'success')
         return redirect(url_for('main.product_listing'))
@@ -296,7 +296,7 @@ def edit_product(id):
         db.session.flush()
         submit_images = request.files.getlist('image')[:6]
         if form.image.data and len(submit_images) > 0:
-            if not validate_images(submit_images):
+            if not ProductHelper.validate_images(submit_images):
                 return redirect(url_for('main.edit_product', id=id))
             images = product.get_product_images(id)
             # delete images from db
@@ -307,7 +307,7 @@ def edit_product(id):
             for image_path in product_images:
                 new_path = main.root_path + image_path
                 os.remove(new_path)
-            add_product_imgs(submit_images, form.main_idx.data, product.id)
+            ProductHelper.add_product_imgs(submit_images, form.main_idx.data, product.id)
         else:
             loop_times = 1
             for image in product.get_product_images(id):
@@ -335,6 +335,8 @@ def edit_profile():
     if request.method == 'GET':
         form.set_form_data()
     elif form.validate_on_submit():
+        if current_user.email_address != form.email.data:
+            current_user.is_verified = False
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
         current_user.email_address = form.email.data
@@ -361,7 +363,6 @@ def update_account_type():
         flash('Your account type has been changed.', 'success')
         return redirect(url_for('main.profile'))
     return render_template('/users/profile.html', form=form, account_form=account_form, deactivate_form=deactivate_form, show=True)
-
 
 @main.route('/deactivate', methods=['GET', 'POST'])
 @login_required
@@ -436,10 +437,6 @@ def product_activation(product_id):
     if current_user.is_authenticated:
         return jsonify(Product.activation(product_id, current_user.id))
     return jsonify({'message': 'you are not allowed to do this method.', 'success': False})
-
-@main.route('/forget_password')
-def f_password():
-    return render_template('/users/f_password.html', forget_password=f_password)
 
 @main.route('/search')
 @login_required
