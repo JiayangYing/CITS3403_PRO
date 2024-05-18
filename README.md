@@ -85,7 +85,7 @@ If still having problem please install all dependency from requirment.txt
 pip install -r requirements.txt
 ```
 
-You should now have a fully set up development environment with all dependencies installed. You're ready to start working on the project!
+You should now have a fully set up development environment with all dependencies installed.
 
 ## Initialization
 
