@@ -21,6 +21,8 @@
                         <i class="fa-solid fa-icons"></i> Categories
                     </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1)}}">All</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Clothing & Accessories']}) }}">Clothing & Accessories</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Home & Garden']}) }}">Home & Garden</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('main.filter_products', page=1, filters={'categories':['Electronics']}) }}">Electronics</a></li>
